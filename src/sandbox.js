@@ -109,6 +109,10 @@ function Sandbox(global, params, prestate) {
    */
   var __out__ = configure("out", new Out());
 
+  // TODO
+  var __debug__ = configure("debug", false);
+
+
   //              __ _                   
   // __ ___ _ _  / _(_)__ _ _  _ _ _ ___ 
   /// _/ _ \ ' \|  _| / _` | || | '_/ -_)
@@ -124,11 +128,12 @@ function Sandbox(global, params, prestate) {
   //| .__/_| \___/__/\__\__,_|\__\___| /__/_||_\__,_| .__/__/_||_\___/\__|
   //|_|                                             |_|                   
 
-  var snapshot = new WeakMap();
+  // TODO
+  //var snapshot = new WeakMap();
 
-  if(prestate instanceof Array) for(var i in prestate) {
-    snapshot.push(prestate[i], clone(prestate[i])); // TODO, CLONE object and function obejcts
-  }
+  //if(prestate instanceof Array) for(var i in prestate) {
+  //  snapshot.push(prestate[i], clone(prestate[i])); // TODO, CLONE object and function obejcts
+  //}
 
   // _           
   //| |___  __ _ 
@@ -231,9 +236,17 @@ function Sandbox(global, params, prestate) {
   // \_/\_/|_| \__,_| .__/
   //                |_|   
 
+  /** Maps target values to sandbox proxies
+   */
   var cache = new WeakMap();
-  var reverse = new WeakMap();
-  var pool = new Set();
+
+  /** Stores the sandbox proies
+   */
+  var pool = new WeakSet();
+
+  // TODO
+  //var reverse = new WeakMap();
+  //var pool = new WeakSet();
 
   /** 
    * wrap(target)
@@ -243,33 +256,35 @@ function Sandbox(global, params, prestate) {
    * @return JavaScript Proxy 
    */
   function wrap(target) { 
-    logc("wrap");
+    //__verbose__ && logc("wrap");
 
     // If target is a primitive value, then return target
     if (target !== Object(target)) {
       return target;
     }
 
-    increment("wrap");
+    //__statistic__ && increment("wrap");
 
     // If target is undefined, then throw an exception
     // Matthias Keil: should never occur because of Object(target)
-    if(target===undefined)
-      throw new ReferenceError("Target is undefined.");
+    //if(target===undefined)
+    //  throw new ReferenceError("Target is undefined.");
 
     // avoids re-wrapping
     if(pool.has(target)) return target;
 
+    // TODO
     // Membrane ? 
-    if(!(__membrane__))
-      return target;
+    //if(!(__membrane__))
+    //  return target;
 
+    // TODO
     // Note: Matthias Keil
     // deprecated, use passthrough
     // Eval
-    if(isEval(target)) {
-      return undefined;
-    }
+    //if(isEval(target)) {
+    //  return undefined;
+    //}
 
     // Function pass throught
     if((target instanceof Function) && isPassThrough(target)) {
@@ -277,34 +292,36 @@ function Sandbox(global, params, prestate) {
       return target;
     }
 
+    // TODO
     // Pre-state snapshot
-    if(snapshot.has(target)) {
-      return snapshot.get(target); // TODO, new semantics 
-    }
+    //if(snapshot.has(target)) {
+    //  return snapshot.get(target); // TODO, new semantics 
+    //}
 
     // If target already wrapped, return cached proxy
     if(cache.has(target)) {
-      log("Cache hit.");
-      increment("Cache hit");
+      //log("Cache hit.");
+      //increment("Cache hit");
       return cache.get(target);
     } else {
-      log("Cache miss.");
-      increment("Cache miss");
+      //log("Cache miss.");
+      //increment("Cache miss");
 
       // TODO, check if  required
+
 
       // decompiles function or clones object
       // to preserve typeof/ instanceof
       // and to make an iterable image for loops
       if(target instanceof Function) {
         log("target instanceOf Function");
-        var scope = cloneFunction(target)
+        var scope = cloneFunction(target);
       } else {
         log("target instanceOf Object");
         var scope = cloneObject(target);
       }
 
-      function make(handler) {
+      /*function make(handler) {
         // meta handler ?
         if(!__metahandler__) return handler;
 
@@ -317,13 +334,18 @@ function Sandbox(global, params, prestate) {
           }
         };
         return new Proxy(handler, metahandler)
-      }
+      }*/
 
-      var handler = make(new Membrane(target));
+      // TODO
+      //var handler = make(new Membrane(target));
+      var handler = new Membrane(target);
       var proxy = new Proxy(scope, handler);
+
       cache.set(target, proxy);
-      reverse.set(proxy, target);
+//      reverse.set(proxy, target);
       pool.add(proxy);
+
+
       return proxy;
     }
   }
@@ -335,11 +357,11 @@ function Sandbox(global, params, prestate) {
    * @param value JavaScript Object
    * @return JavaScript Object
    */
-  function unwrap(value) {
+  /*function unwrap(value) {
     if (value !== Object(value)) return value;
     if(!reverse.has(value)) return value;
     return unwrap(reverse.get(value));
-  }
+  }*/ // TODO
 
   /**
    * clone(target)
@@ -348,10 +370,10 @@ function Sandbox(global, params, prestate) {
    * @param target JavaScript Object
    * @return JavaScript Object
    */
-  function clone(target) {
+  /*function clone(target) {
     if(target instanceof Function) return cloneFunction(target); 
     else return cloneObject(target);
-  }
+  }*/ // TODO, deprecated
 
   /**
    * cloneObject(target)
@@ -361,14 +383,16 @@ function Sandbox(global, params, prestate) {
    * @return JavaScript Object
    */
   function cloneObject(target) {
-    log("Clone Object.");
+    //log("Clone Object."); // TODO
 
+    // TODO
     // transparent ?
-    if(__transparent__)
-      return target;
+    //if(__transparent__)
+    //  return target;
 
-    if(!(target instanceof Object))
-      throw new Error("No JavaScript Object.");
+    // TODO, not required
+    //if(!(target instanceof Object))
+    //  throw new Error("No JavaScript Object.");
 
     var clone = Object.create(Object.getPrototypeOf(target));
 
@@ -399,11 +423,11 @@ function Sandbox(global, params, prestate) {
     var clone = decompile(target, wrap(global));
     // TODO XXX
     //clone.prototype = target.prototype;
-    print("@@@@ " + target.prototype);
-    var xxx = wrap(target.prototype);
-    print("#### " + wrap(target.prototype));
+    //print("@@@@ " + target.prototype);
+    //var xxx = wrap(target.prototype);
+    //print("#### " + wrap(target.prototype));
     clone.prototype = wrap(target.prototype); //wrap(target.prototype);
-    print("$$$$ " + clone.prototype);
+    //print("$$$$ " + clone.prototype);
     return clone;
   }
 
@@ -412,26 +436,32 @@ function Sandbox(global, params, prestate) {
   //| |\/| / -_) '  \| '_ \ '_/ _` | ' \/ -_)
   //|_|  |_\___|_|_|_|_.__/_| \__,_|_||_\___|
 
-  var switches = new WeakMap();
+  // XXX deprecated
+  //var switches = new WeakMap();
 
-  function getSwitchFor(target) {
+  /*function getSwitchFor(target) {
     if(!switches.has(target)) switches.set(target, new Set());
     return switches.get(target);
-  }
+  }*/
 
+  /// TODO
   /** Membrabe(global)
    * Implements a sandbox membrane.
    *
    * @param origin The current Global Object.
    */
-  function Membrane(origin) {
-    if(!(origin instanceof Object))
-      throw new TypeError("No Origin (Target) Object.");
 
+  function Membrane(origin) {
+    // TODO
+    //if(!(origin instanceof Object))
+    //  throw new TypeError("No Origin (Target) Object.");
+
+    // TODO
     /*
      * List of effected properties
      */
-    var properties = getSwitchFor(origin);
+    var properties = new Set();
+      //getSwitchFor(origin);
 
     /** Returns true if the property was touched by the sandbox, false otherwise
     */
@@ -463,9 +493,10 @@ function Sandbox(global, params, prestate) {
       var has = (affected(name)) ? (name in scope) : (name in origin);
 
       if(origin===global && has===false) {
+        // TODO
         // Note: Matthias Keil
         // If target is global, then return true
-        violation(name);
+        //violation(name);
         return true;
       } else {
         return (affected(name)) ? (name in scope) : (name in origin);
@@ -481,7 +512,7 @@ function Sandbox(global, params, prestate) {
     /** target, name, receiver -> any
     */
     function doGet(scope, name) {
-      var desc =  (affected(name)) ? 
+      var desc = (affected(name)) ? 
         Object.getOwnPropertyDescriptor(scope, name): 
         Object.getOwnPropertyDescriptor(origin, name);
 
@@ -588,8 +619,8 @@ function Sandbox(global, params, prestate) {
      * A trap for Object.getOwnPropertyDescriptor.
      */
     this.getOwnPropertyDescriptor = function(scope, name) {
-      logc("getOwnPropertyDescriptor", name);
-      trace(new Effect.GetOwnPropertyDescriptor(origin, name));
+      //__verbose__ && logc("getOwnPropertyDescriptor", name);
+      __effect__ && trace(new Effect.GetOwnPropertyDescriptor(origin, name));
 
       return doGetOwnPropertyDescriptor(scope, name);
     };
@@ -598,8 +629,8 @@ function Sandbox(global, params, prestate) {
     /** target -> [String]
     */
     this.getOwnPropertyNames = function(scope) {
-      logc("getOwnPropertyNames");
-      trace(new Effect.GetOwnPropertyNames(origin));
+      //__verbose__ && logc("getOwnPropertyNames");
+      __effect__ && trace(new Effect.GetOwnPropertyNames(origin));
 
       return doGetOwnPropertyNames(scope);
     };
@@ -608,8 +639,8 @@ function Sandbox(global, params, prestate) {
      * A trap for Object.defineProperty.
      */
     this.defineProperty = function(scope, name, desc) {
-      logc("defineProperty", name);
-      trace(new Effect.DefineProperty(origin, scope, name, desc));
+      //__verbose__ && logc("defineProperty", name);
+      __effect__ && trace(new Effect.DefineProperty(origin, scope, name, desc));
 
       return doDefineProperty(scope, name, desc);
     };
@@ -618,8 +649,8 @@ function Sandbox(global, params, prestate) {
      * A trap for the delete operator.
      */
     this.deleteProperty = function(scope, name) {
-      logc("deleteProperty", name);
-      trace(new Effect.DeleteProperty(origin, scope, name));
+      //__verbose__ && logc("deleteProperty", name);
+      __effect__ && trace(new Effect.DeleteProperty(origin, scope, name));
 
       return doDelete(scope, name);
     };
@@ -628,8 +659,8 @@ function Sandbox(global, params, prestate) {
     /** target -> boolean
     */
     this.freeze = function(scope) {
-      logc("freeze");
-      trace(new Effect.Freeze(origin, scope));
+      //__verbose__ && logc("freeze");
+      __effect__ && trace(new Effect.Freeze(origin, scope));
 
       return Object.freeze(scope);
     };
@@ -638,8 +669,8 @@ function Sandbox(global, params, prestate) {
     /** target -> boolean
     */
     this.seal = function(scope) {
-      logc("seal");
-      trace(new Effect.Seal(origin, scope));
+      //__verbose__ && logc("seal");
+      __effect__ && trace(new Effect.Seal(origin, scope));
 
       return Object.seal(scope);
     };
@@ -648,8 +679,8 @@ function Sandbox(global, params, prestate) {
      * A trap for Object.preventExtensions.
      */
     this.preventExtensions = function(scope) {
-      logc("preventExtensions");
-      trace(new Effect.PreventExtensions(origin, scope));
+      //__verbose__ && logc("preventExtensions");
+      __effect__ && trace(new Effect.PreventExtensions(origin, scope));
 
       return Object.preventExtensions(scope);
     };
@@ -658,8 +689,8 @@ function Sandbox(global, params, prestate) {
      * A trap for Object.isExtensible
      */
     this.isExtensible = function(scope) {
-      logc("isExtensible");
-      trace(new Effect.IsExtensible(origin));
+      //__verbose__ && logc("isExtensible");
+      __effect__ && trace(new Effect.IsExtensible(origin));
 
       return Object.isExtensible(scope);
     };
@@ -673,8 +704,8 @@ function Sandbox(global, params, prestate) {
       if(origin===global && name==='undefined') return true;
 
 
-      logc("has", name);
-      trace(new Effect.Has(origin, name));
+      //__verbose__ && logc("has", name);
+      __effect__ && trace(new Effect.Has(origin, name));
 
       return doHas(scope, name);
     };
@@ -683,8 +714,8 @@ function Sandbox(global, params, prestate) {
     /** target, name -> boolean
     */
     this.hasOwn = function(scope, name) {
-      logc("hasOwn", name);
-      trace(new Effect.HasOwn(origin, name));
+      //__verbose__ && logc("hasOwn", name);
+      __effect__ && trace(new Effect.HasOwn(origin, name));
 
       return doHasOwn(scope, name);
     };
@@ -698,8 +729,8 @@ function Sandbox(global, params, prestate) {
       // TODO, BUG, accesst to undefined;
       if(origin===global && name==='undefined') return undefined;
 
-      logc("get", name);
-      trace(new Effect.Get(origin, name, receiver));
+      //__verbose__ && logc("get", name);
+      __effect__ && trace(new Effect.Get(origin, name, receiver));
 
       return doGet(scope, name);
     };
@@ -708,9 +739,9 @@ function Sandbox(global, params, prestate) {
      * A trap for setting property values.
      */
     this.set = function(scope, name, value, receiver) {
-      logc("set", name);
+      //__verbose__ && logc("set", name);
       // TODO
-      trace(new Effect.Set(origin, scope, name, unwrap(value), receiver));
+      __effect__ && trace(new Effect.Set(origin, scope, name, unwrap(value), receiver));
 
       return doSet(scope, name, value);
     };
@@ -720,8 +751,8 @@ function Sandbox(global, params, prestate) {
      * A trap for for...in statements.
      */
     this.enumerate = function(scope) {
-      logc("enumerate");
-      trace(new Effect.Enumerate(origin));
+      //__verbose__ && logc("enumerate");
+      __effect__ && trace(new Effect.Enumerate(origin));
 
       return Object.getOwnPropertyNames(origin);
 
@@ -735,8 +766,8 @@ function Sandbox(global, params, prestate) {
     /** target -> iterator
     */
     this.__iterate__ = function(scope) {
-      logc("iterate");
-      trace(new Effect.Iterate(origin));
+      //__verbose__ && logc("iterate");
+      __effect__ && trace(new Effect.Iterate(origin));
       // TODO
       // NOTE: Trap is never called
       // return doIterate(scope);
@@ -748,8 +779,8 @@ function Sandbox(global, params, prestate) {
      * A trap for Object.getOwnPropertyNames.
      */
     this.ownKeys = function(scope) {
-      logc("keys");
-      trace(new Effect.Keys(origin));
+      //__verbose__ && logc("keys");
+      __effect__ && trace(new Effect.Keys(origin));
 
       return doKeys(scope);
     };
@@ -758,8 +789,8 @@ function Sandbox(global, params, prestate) {
     /** target) -> [String]
     */
     this.keys = function(scope) {
-      logc("keys");
-      trace(new Effect.Keys(origin));
+      //__verbose__ && logc("keys");
+      __effect__ && trace(new Effect.Keys(origin));
 
       return doKeys(scope);
     };
@@ -768,8 +799,8 @@ function Sandbox(global, params, prestate) {
      * A trap for a function call.
      */
     this.apply = function(scope, thisArg, argsArray) {
-      logc("apply", scope);
-      trace(new Effect.Apply(origin, thisArg, argsArray));
+      //__verbose__ && logc("apply", scope);
+      __effect__ && trace(new Effect.Apply(origin, thisArg, argsArray));
 
       thisArg = (thisArg!==undefined) ? thisArg : global;
       argsArray = (argsArray!==undefined) ? argsArray : new Array();
@@ -784,23 +815,13 @@ function Sandbox(global, params, prestate) {
      * A trap for the new operator. 
      */
     this.construct = function(scope, thisArg, argsArray) {
-      logc("construct");
-      trace(new Effect.Construct(origin, thisArg, argsArray));
+      //__verbose__ && logc("construct");
+      __effect__ && trace(new Effect.Construct(origin, thisArg, argsArray));
 
-      return new scope(wrap(argsArray));
-
-
-      print("=============> " + scope.prototype);
-
+      //return new scope(wrap(argsArray));
+      
       var newThis = Object.create(scope.prototype);
-
-      print("=============> " + newThis.toString());
-
-
       var val = scope.apply(newThis, wrap(argsArray));
-
-      print("=============> " + val);
-
       // return thisArg | val
       return (val instanceof Object) ? val : newThis;
     };
