@@ -84,25 +84,33 @@ var Effect = (function() {
   //|   / -_) _` / _` | | _||  _|  _/ -_) _|  _(_-<
   //|_|_\___\__,_\__,_| |___|_| |_| \___\__|\__/__/
 
-  /** target, name, receiver -> any
-  */
-  function Get(target, name) {
-    if(!(this instanceof Get)) return new Get(target, name);
+  /**
+   * An effect for Object.getPrototypeOf.
+   */
+  function GetPrototypeOf(target) {
+    if(!(this instanceof Get)) return new GetPrototypeOf(target);
     else Read.call(this, target);
-
-    Object.defineProperties(this, {
-      "name": {
-        value: name
-      }
-    });
   }
-  Get.prototype = Object.create(Read.prototype);
-  Get.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"get [name="+this.name+"]"; 
+  GetPrototypeOf.prototype = Object.create(Read.prototype);
+  GetPrototypeOf.prototype.toString = function() {
+    return "(" + this.date + ")"+" "+"getPrototypeOf"; 
   }
 
-  /** target, name -> PropertyDescriptor | undefined
-  */
+  /**
+   * An effect for Object.isExtensible
+   */
+  function IsExtensible(target) {
+    if(!(this instanceof IsExtensible)) return new IsExtensible(target);
+    else Read.call(this, target);
+  }
+  IsExtensible.prototype = Object.create(Read.prototype);
+  IsExtensible.prototype.toString = function() {
+    return "(" + this.date + ")"+" "+"isExtensible";
+  }
+
+  /** 
+   * An effect for Object.getOwnPropertyDescriptor.
+   */
   function GetOwnPropertyDescriptor(target, name) {
     if(!(this instanceof GetOwnPropertyDescriptor)) return new GetOwnPropertyDescriptor(target, name);
     else Read.call(this, target);
@@ -118,19 +126,9 @@ var Effect = (function() {
     return "(" + this.date + ")"+" "+"getOwnPropertyDescriptor [name="+this.name+"]"; 
   }
 
-  /** target -> [String]
-  */
-  function OwnKeys(target) {
-    if(!(this instanceof OwnKeys)) return new OwnKeys(target);
-    else Read.call(this, target);
-  }
-  OwnKeys.prototype = Object.create(Read.prototype);
-  OwnKeys.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"getOwnPropertyNames"; 
-  }
-
-  /** target, name -> boolean
-  */
+  /** 
+   * An effect for the in operator.
+   */
   function Has(target, name) {
     if(!(this instanceof Has)) return new Has(target, name);
     else Read.call(this, target);
@@ -146,10 +144,11 @@ var Effect = (function() {
     return "(" + this.date + ")"+" "+"has [name="+this.name+"]"; 
   }
 
-  /** target, name -> boolean
-  */
-  function HasOwn(target, name) {
-    if(!(this instanceof HasOwn)) return new HasOwn(target, name);
+  /**
+   * An effect for getting property values.
+   */
+  function Get(target, name) {
+    if(!(this instanceof Get)) return new Get(target, name);
     else Read.call(this, target);
 
     Object.defineProperties(this, {
@@ -158,67 +157,45 @@ var Effect = (function() {
       }
     });
   }
-  HasOwn.prototype = Object.create(Read.prototype);
-  HasOwn.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"hasOwn [name="+this.name+"]"; 
+  Get.prototype = Object.create(Read.prototype);
+  Get.prototype.toString = function() {
+    return "(" + this.date + ")"+" "+"get [name="+this.name+"]"; 
   }
 
-  /** target -> [String]
-  */
+  /** 
+   * An effect for for...in statements.
+   */
   function Enumerate(target) {
     if(!(this instanceof Enumerate)) return new Enumerate(target);
     else Read.call(this, target);
-    // TODO
   }
   Enumerate.prototype = Object.create(Read.prototype);
   Enumerate.prototype.toString = function() {
     return "(" + this.date + ")"+" "+"enumerate"; 
   }
 
-  /** target -> iterator
-  */
-  function Iterate(target) {
-    if(!(this instanceof Iterate)) return new Iterate(target);
-    else Read.call(this, target);
-    // TODO
-  }
-  Iterate.prototype = Object.create(Read.prototype);
-  Iterate.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"iterate"; 
-  }
-
-  /** target -> [String]
-  */
-  function Keys(target) {
-    if(!(this instanceof Keys)) return new Keys(target);
-    else Read.call(this, target);
-    // TODO
-  }
-  Keys.prototype = Object.create(Read.prototype);
-  Keys.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"keys"; 
-  }
-
-  /** target -> boolean
-   * (not documented)
+  /**
+   * An effect for Object.getOwnPropertyNames.
    */
-  function IsExtensible(target) {
-    if(!(this instanceof IsExtensible)) return new IsExtensible(target);
+  function OwnKeys(target) {
+    if(!(this instanceof OwnKeys)) return new OwnKeys(target);
     else Read.call(this, target);
-    // TODO
   }
-  IsExtensible.prototype = Object.create(Read.prototype);
-  IsExtensible.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"isExtensible";
+  OwnKeys.prototype = Object.create(Read.prototype);
+  OwnKeys.prototype.toString = function() {
+    return "(" + this.date + ")"+" "+"ownKeys"; 
   }
+
 
   //  ___      _ _   ___  __  __        _      
   // / __|__ _| | | | __|/ _|/ _|___ __| |_ ___
   //| (__/ _` | | | | _||  _|  _/ -_) _|  _(_-<
   // \___\__,_|_|_| |___|_| |_| \___\__|\__/__/
 
-  /** target, thisArg, argsArray -> any
-  */
+
+  /** 
+   * An effect for a function call.
+   */
   function Apply(target) {
     if(!(this instanceof Apply)) return new Apply(target);
     else Call.call(this, target);
@@ -228,8 +205,9 @@ var Effect = (function() {
     return "(" + this.date + ")"+" "+"apply"; 
   }
 
-  /** target, thisArg, argsArray -> obejct
-  */
+  /** 
+   * An effect for the new operator. 
+   */
   function Construct(target) {
     if(!(this instanceof Construct)) return new Construct(target);
     else Call.call(this, target);
@@ -244,25 +222,33 @@ var Effect = (function() {
   // \ \/\/ / '_| |  _/ -_) | _||  _|  _/ -_) _|  _(_-<
   //  \_/\_/|_| |_|\__\___| |___|_| |_| \___\__|\__/__/
 
-  /** target, name, propertyDescriptor -> any
-  */
-  function Set(target, name) {
-    if(!(this instanceof Set)) return new Set(target, name);
+  /**
+   * An effect for Object.setPrototypeOf.
+   */
+  function SetPrototypeOf(target) {
+    if(!(this instanceof Get)) return new SetPrototypeOf(target);
     else Write.call(this, target);
-
-    Object.defineProperties(this, {
-      "name": {
-        value: name
-      }
-    });
   }
-  Set.prototype = Object.create(Write.prototype);
-  Set.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"set [name="+this.name+"]";
+  SetPrototypeOf.prototype = Object.create(Write.prototype);
+  SetPrototypeOf.prototype.toString = function() {
+    return "(" + this.date + ")"+" "+"setPrototypeOf"; 
   }
 
-  /** target, name, propertyDescriptor -> any
-  */
+  /** 
+   * An effect for Object.preventExtensions.
+   */
+  function PreventExtensions(target) {
+    if(!(this instanceof PreventExtensions)) return new PreventExtensions(target);
+    else Write.call(this, target);
+  }
+  PreventExtensions.prototype = Object.create(Write.prototype);
+  PreventExtensions.prototype.toString = function() {
+    return "(" + this.date + ")"+" "+"preventExtensions";
+  }
+
+  /** 
+   * An effect for Object.defineProperty.
+   */
   function DefineProperty(target, name) {
     if(!(this instanceof DefineProperty)) return new DefineProperty(target, name);
     else Write.call(this, target);
@@ -278,8 +264,27 @@ var Effect = (function() {
     return "(" + this.date + ")"+" "+"defineProperty [name="+this.name+"]";
   }
 
-  /** target, name -> boolean
-  */
+  /** 
+   * An effect for setting property values.
+   */
+  function Set(target, name) {
+    if(!(this instanceof Set)) return new Set(target, name);
+    else Write.call(this, target);
+
+    Object.defineProperties(this, {
+      "name": {
+        value: name
+      }
+    });
+  }
+  Set.prototype = Object.create(Write.prototype);
+  Set.prototype.toString = function() {
+    return "(" + this.date + ")"+" "+"set [name="+this.name+"]";
+  }
+
+  /**
+   * An effect for the delete operator.
+   */
   function DeleteProperty(target, name) {
     if(!(this instanceof DeleteProperty)) return new DeleteProperty(target, name);
     else Write.call(this, target);
@@ -293,42 +298,6 @@ var Effect = (function() {
   DeleteProperty.prototype = Object.create(Write.prototype);
   DeleteProperty.prototype.toString = function() {
     return "(" + this.date + ")"+" "+"deleteProperty [name="+this.name+"]";
-  }
-
-  /** target -> boolean
-  */
-  function Freeze(target) {
-    if(!(this instanceof Freeze)) return new Freeze(target);
-    else Write.call(this, target);
-    // TODO
-  }
-  Freeze.prototype = Object.create(Write.prototype);
-  Freeze.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"freeze";
-  }
-
-  /** target -> boolean
-  */
-  function Seal(target) {
-    if(!(this instanceof Seal)) return new Seal(target);
-    else Write.call(this, target);
-    // TODO
-  }
-  Seal.prototype = Object.create(Write.prototype);
-  Seal.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"seal";
-  }
-
-  /** target -> boolean
-  */
-  function PreventExtensions(target) {
-    if(!(this instanceof PreventExtensions)) return new PreventExtensions(target);
-    else Write.call(this, target);
-    // TODO
-  }
-  PreventExtensions.prototype = Object.create(Write.prototype);
-  PreventExtensions.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"preventExtensions";
   }
 
   //  ___           __ _ _    _   
@@ -467,36 +436,29 @@ var Effect = (function() {
 
   var Effects = new Package("Effect");
 
-  // Core Prototype
-  Package.export("Effect", Effect, Effects);
-
   // Core Effects
+  Package.export("Effect", Effect, Effects);
   Package.export("Read", Read, Effects);
   Package.export("Write", Write, Effects);
   Package.export("Call", Call, Effects);
 
-  // Read Effects
-  Package.export("Get", Get, Effects);
+  // Effects
+  Package.export("GetPrototypeOf", GetPrototypeOf, Effects);
+  Package.export("SetPrototypeOf", SetPrototypeOf, Effects);
+  Package.export("IsExtensible", IsExtensible, Effects);
+  Package.export("PreventExtensions", PreventExtensions, Effects);
   Package.export("GetOwnPropertyDescriptor", GetOwnPropertyDescriptor, Effects);
-  Package.export("OwnKeys", OwnKeys, Effects);
+  Package.export("DefineProperty", DefineProperty, Effects);
   Package.export("Has", Has, Effects);
-  Package.export("HasOwn", HasOwn, Effects);
+  Package.export("Get", Get, Effects);
+  Package.export("Set", Set, Effects);
+  Package.export("DeleteProperty", DeleteProperty, Effects);
   Package.export("Enumerate", Enumerate, Effects);
-  Package.export("Iterate", Iterate, Effects);
-  Package.export("Keys", Keys, Effects);
+  Package.export("OwnKeys", OwnKeys, Effects);
   Package.export("Apply", Apply, Effects);
   Package.export("Construct", Construct, Effects);
-  Package.export("IsExtensible", IsExtensible, Effects);
-
-  // Write Effects
-  Package.export("Set", Set, Effects);
-  Package.export("DefineProperty", DefineProperty, Effects);
-  Package.export("DeleteProperty", DeleteProperty, Effects);
-  Package.export("Freeze", Freeze, Effects);
-  Package.export("Seal", Seal, Effects);
-  Package.export("PreventExtensions", PreventExtensions, Effects);
-
-  // Core Effects
+  
+  // Core Elements
   Package.export("Conflict", Conflict, Effects);
   Package.export("Difference", Difference, Effects);
   Package.export("Change", Change, Effects);
