@@ -1,5 +1,23 @@
 
 
+var mySet2 = new Set([1,2,3,4]);
+print(mySet2.size); // 4
+
+var map = new Map();
+map.set({}, 4711);
+map.set({}, 4712);
+
+
+for(var p of map) {
+print(p);
+}
+
+var array = [1,2,4,6,7,8];
+for(var p of array) {
+print(p);
+}
+
+
 
 load('test/examples.js');
 

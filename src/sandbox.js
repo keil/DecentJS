@@ -606,16 +606,24 @@ function Sandbox(global, params, prestate) {
      * A trap for Object.getPrototypeOf.
      */
     this.getPrototypeOf = function(shadow) {
-      // TODO
-      throw new Error("Unimplemented Trap iterate.");
+      __verbose__ && logc("getPrototypeOf");
+      __effect__  && trace(new Effect.GetPrototypeOf(origin));
+
+      // TODO, test with new engine
+      //throw new Error("Unimplemented Trap iterate.");
+      return Object.getPrototypeOf(shadow);
     }
 
     /**
      * A trap for Object.setPrototypeOf.
      */
-    this.setPrototypeOf = function(shadow) {
-      // TODO
-      throw new Error("Unimplemented Trap iterate.");
+    this.setPrototypeOf = function(shadow, prototype) {
+      __verbose__ && logc("setPrototypeOf");
+      __effect__  && trace(new Effect.SetPrototypeOf(origin));
+
+      // TODO, test with new engine
+      //throw new Error("Unimplemented Trap iterate.");
+      return Object.setPrototypeOf(shadow, prototype);
     }
 
     /**
@@ -645,8 +653,9 @@ function Sandbox(global, params, prestate) {
       __verbose__ && logc("getOwnPropertyDescriptor", name);
       __effect__  && trace(new Effect.GetOwnPropertyDescriptor(origin, name));
 
-      // TODO
-      return doGetOwnPropertyDescriptor(shadow, name);
+      return (affected(name)) ? 
+        Object.getOwnPropertyDescriptor(shadow, name):
+        wrap(Object.getOwnPropertyDescriptor(origin, name));
     };
 
     /** 
@@ -656,8 +665,11 @@ function Sandbox(global, params, prestate) {
       __verbose__ && logc("defineProperty", name);
       __effect__ &&  trace(new Effect.DefineProperty(origin, name));
 
-      // TODO
-      return doDefineProperty(shadow, name, desc);
+      touch(name);
+      // Note: Matthias Keil
+      // Object.defineProperty is not equivalent to the behavior 
+      // described in the ECMA Standard
+      return Object.defineProperty(shadow, name, desc);
     };
 
     /** 
@@ -667,10 +679,8 @@ function Sandbox(global, params, prestate) {
       __verbose__ && logc("has", name);
       __effect__  && trace(new Effect.Has(origin, name));
 
-      // TODO, BUG, access to undefined;
-      if(origin===global && name==='undefined') return true;
-      // TODO
-      return doHas(shadow, name);
+      if(origin===global) return true;
+      else return (affected(name)) ? (name in shadow) : (name in origin);
     };
 
     /**
@@ -682,8 +692,25 @@ function Sandbox(global, params, prestate) {
 
       // TODO, BUG, access to undefined;
       if(origin===global && name==='undefined') return undefined;
-      // TODO
-      return doGet(shadow, name);
+
+      if(affected(name)) {
+
+
+
+
+      } else {
+
+      }
+
+
+      var desc = (affected(name)) ? 
+        Object.getOwnPropertyDescriptor(scope, name): 
+        Object.getOwnPropertyDescriptor(origin, name);
+
+      var getter = desc ? desc.get : undefined;
+
+      if(getter) return evaluate(getter,((affected(name)) ? shadow : origin), []);
+      else return (affected(name)) ? shadow[name] : wrap(origin[name]);
     };
 
     /** 
@@ -692,6 +719,31 @@ function Sandbox(global, params, prestate) {
     this.set = function(shadow, name, value, receiver) {
       __verbose__ && logc("set", name);
       __effect__  && trace(new Effect.Set(origin, name));
+
+      if(affected(name)) {
+        var desc = Object.getOwnPropertyDescriptor(scope, name);
+
+      } else {
+
+
+        var desc = Object.getOwnPropertyDescriptor(shadow, name);
+
+
+      }
+
+      var desc =  (affected(name)) ? 
+        Object.getOwnPropertyDescriptor(scope, name): 
+        Object.getOwnPropertyDescriptor(origin, name);
+
+      var setter = desc ? desc.set : undefined;
+
+      if(setter) return evaluate(setter,((affected(name)) ? scope : origin), [value]);
+      else {
+        touch(scope, name); 
+        (scope[name]=value);
+      }
+      return true;
+
 
       // TODO
       return doSet(shadow, name, value);
@@ -704,8 +756,8 @@ function Sandbox(global, params, prestate) {
       __verbose__ && logc("deleteProperty", name);
       __effect__  && trace(new Effect.DeleteProperty(origin, name));
 
-      // TODO
-      return doDelete(shadow, name);
+      touch(name);
+      return (delete shadow[name]);
     };
 
     /** 
@@ -739,7 +791,8 @@ function Sandbox(global, params, prestate) {
       __verbose__ && logc("apply");
       __effect__  && trace(new Effect.Apply(origin));
 
-      thisArg = thisArg ? thisArg : global;
+      thisArg = thisArg ? thisArg : wrap(global);
+      return shadow.apply(thisArg, argumentsList);
       //argumentsList = argumentsList ? argumentsList : [];
 
       // Note: 
@@ -747,7 +800,7 @@ function Sandbox(global, params, prestate) {
       // TODO
       // This are and arguments list shoudl be wrapped at this time
       //return shadow.apply(wrap(thisArg), wrap(argsArray));
-      return shadow.apply(thisArg, argumentsList);
+
     };
 
     /** 
@@ -968,7 +1021,8 @@ function Sandbox(global, params, prestate) {
   var writeeffects = new WeakMap();
   var calleffects = new WeakMap();
 
-  var targets = new WeakSet();
+  //var targets = new WeakSet();
+  var targets = [];
 
   /**
     var readset = new WeakMap();
@@ -1014,7 +1068,8 @@ function Sandbox(global, params, prestate) {
     //
 
     // TODO
-    targets.set(effect.target);
+    //targets.set(effect.target);
+    target.push(effect.target);
 
 
     if(effect instanceof Effect.Read) {
@@ -1077,45 +1132,63 @@ function Sandbox(global, params, prestate) {
    * @return JavaScript Array [Effect]
    */
   define("effectsOf", function(target) {  
-    // TODO, merge array listst
-    //if(effectset.has(target)) return effectset.get(target);
-    //else return [];
+    var effectsOfTarget = readeffectsOf(target).concat(writeeffectsOf(target)).concat(calleffectsOf(target));
+    effectsOfTarget.sort();
+    return effectsOfTarget;
   }, this);
 
   /** Get All Read Effects
    * @return JavaScript Array [Effect]
    */
   getter("readeffects", function() {
-    // TODO, merge array listst
-    return [];
-    //return readeffects;
+    var readEffects = [];
+
+    for(var target of targets) {
+      readEffects = readEffects.concat(readeffectsOf(target));
+    } 
+    // TODO, it is easier to store all effects in an array?
+    // make three list, one with write target, on with read targets
+    return readEffects;
   }, this);
 
   /** Get All Write Effects
    * @return JavaScript Array [Effect]
    */
   getter("writeeffects", function() {
-    // TODO, merge array listst
-    return [];
-    //rreturn writeeffects;
+    var writeEffects = [];
+
+    for(var target of targets) {
+      writeEffects = writeEffects.concat(writeeffectsOf(target));
+    } 
+    // TODO, it is easier to store all effects in an array?
+    return writeEffects;
+
   }, this);
 
   /** Get All Call Effects
    * @return JavaScript Array [Effect]
    */
   getter("calleffects", function() {
-    // TODO, merge array listst
-    return [];
-    //rreturn calleffects;
+    var callEffects = [];
+
+    for(var target of targets) {
+      callEffects = callEffects.concat(calleffectsOf(target));
+    } 
+    // TODO, it is easier to store all effects in an array?
+    return writeEffects;
   }, this);
 
   /** Get All Effects
    * @return JavaScript Array [Effect]
    */
   getter("effects", function() {
-    // TODO, merge array listst
-    return [];
-    //rreturn effects;
+    var effects = [];
+
+    for(var target of targets) {
+      effects = effects.concat(effectsOf(target));
+    } 
+    // TODO, it is easier to store all effects in an array?
+    return effects;
   }, this);
 
   /** In Read-Write Conflict
