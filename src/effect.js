@@ -428,7 +428,6 @@ var Effect = (function() {
     return "[[DecentJS/Transaction]]";
   };
 
-
   // ___  __  __        _      
   //| __|/ _|/ _|___ __| |_ ___
   //| _||  _|  _/ -_) _|  _(_-<
@@ -457,7 +456,7 @@ var Effect = (function() {
   Package.export("OwnKeys", OwnKeys, Effects);
   Package.export("Apply", Apply, Effects);
   Package.export("Construct", Construct, Effects);
-  
+
   // Core Elements
   Package.export("Conflict", Conflict, Effects);
   Package.export("Difference", Difference, Effects);
