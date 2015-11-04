@@ -120,12 +120,12 @@ var Effect = (function() {
 
   /** target -> [String]
   */
-  function GetOwnPropertyNames(target) {
-    if(!(this instanceof GetOwnPropertyNames)) return new GetOwnPropertyNames(target);
+  function OwnKeys(target) {
+    if(!(this instanceof OwnKeys)) return new OwnKeys(target);
     else Read.call(this, target);
   }
-  GetOwnPropertyNames.prototype = Object.create(Read.prototype);
-  GetOwnPropertyNames.prototype.toString = function() {
+  OwnKeys.prototype = Object.create(Read.prototype);
+  OwnKeys.prototype.toString = function() {
     return "(" + this.date + ")"+" "+"getOwnPropertyNames"; 
   }
 
@@ -478,7 +478,7 @@ var Effect = (function() {
   // Read Effects
   Package.export("Get", Get, Effects);
   Package.export("GetOwnPropertyDescriptor", GetOwnPropertyDescriptor, Effects);
-  Package.export("GetOwnPropertyNames", GetOwnPropertyNames, Effects);
+  Package.export("OwnKeys", OwnKeys, Effects);
   Package.export("Has", Has, Effects);
   Package.export("HasOwn", HasOwn, Effects);
   Package.export("Enumerate", Enumerate, Effects);

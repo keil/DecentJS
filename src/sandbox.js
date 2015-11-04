@@ -602,228 +602,167 @@ function Sandbox(global, params, prestate) {
     //  |_||_| \__,_| .__/__/
     //              |_|      
 
-    // TODO, new trap in ES6
     /**
      * A trap for Object.getPrototypeOf.
      */
-    this.getPrototypeOf = function(target) {
+    this.getPrototypeOf = function(shadow) {
+      // TODO
+      throw new Error("Unimplemented Trap iterate.");
     }
 
-    // TODO, new trap in ES6
     /**
      * A trap for Object.setPrototypeOf.
      */
-    this.setPrototypeOf = function(traget) {}
+    this.setPrototypeOf = function(shadow) {
+      // TODO
+      throw new Error("Unimplemented Trap iterate.");
+    }
 
-    /** target, name -> PropertyDescriptor | undefined
-     * A trap for Object.getOwnPropertyDescriptor.
-     */
-    this.getOwnPropertyDescriptor = function(shadow, name) {
-      //__verbose__ && logc("getOwnPropertyDescriptor", name);
-      __effect__ && trace(new Effect.GetOwnPropertyDescriptor(origin, name));
-
-      return doGetOwnPropertyDescriptor(shadow, name);
-    };
-
-    // TODO, deprecated
-    /** target -> [String]
-    */
-    this.getOwnPropertyNames = function(shadow) {
-      //__verbose__ && logc("getOwnPropertyNames");
-      __effect__ && trace(new Effect.GetOwnPropertyNames(origin));
-
-      return doGetOwnPropertyNames(shadow);
-    };
-
-    /** target, name, propertyDescriptor -> any
-     * A trap for Object.defineProperty.
-     */
-    this.defineProperty = function(shadow, name, desc) {
-      //__verbose__ && logc("defineProperty", name);
-      __effect__ && trace(new Effect.DefineProperty(origin, name));
-
-      return doDefineProperty(shadow, name, desc);
-    };
-
-    /** target, name -> boolean
-     * A trap for the delete operator.
-     */
-    this.deleteProperty = function(shadow, name) {
-      //__verbose__ && logc("deleteProperty", name);
-      __effect__ && trace(new Effect.DeleteProperty(origin, name));
-
-      return doDelete(shadow, name);
-    };
-
-    // TODO, deprecated
-    /** target -> boolean
-    */
-    this.freeze = function(shadow) {
-      //__verbose__ && logc("freeze");
-      __effect__ && trace(new Effect.Freeze(origin));
-
-      return Object.freeze(shadow);
-    };
-
-    // TODO, deprecated
-    /** target -> boolean
-    */
-    this.seal = function(shadow) {
-      //__verbose__ && logc("seal");
-      __effect__ && trace(new Effect.Seal(origin));
-
-      return Object.seal(shadow);
-    };
-
-    /** target -> boolean
-     * A trap for Object.preventExtensions.
-     */
-    this.preventExtensions = function(shadow) {
-      //__verbose__ && logc("preventExtensions");
-      __effect__ && trace(new Effect.PreventExtensions(origin));
-
-      return Object.preventExtensions(shadow);
-    };
-
-    /** target -> boolean
+    /**
      * A trap for Object.isExtensible
      */
     this.isExtensible = function(shadow) {
-      //__verbose__ && logc("isExtensible");
-      __effect__ && trace(new Effect.IsExtensible(origin));
+      __verbose__ && logc("isExtensible");
+      __effect__  && trace(new Effect.IsExtensible(origin));
 
       return Object.isExtensible(shadow);
     };
 
-    /** target, name -> boolean
+    /** 
+     * A trap for Object.preventExtensions.
+     */
+    this.preventExtensions = function(shadow) {
+      __verbose__ && logc("preventExtensions");
+      __effect__  && trace(new Effect.PreventExtensions(origin));
+
+      return Object.preventExtensions(shadow);
+    };
+
+    /** 
+     * A trap for Object.getOwnPropertyDescriptor.
+     */
+    this.getOwnPropertyDescriptor = function(shadow, name) {
+      __verbose__ && logc("getOwnPropertyDescriptor", name);
+      __effect__  && trace(new Effect.GetOwnPropertyDescriptor(origin, name));
+
+      // TODO
+      return doGetOwnPropertyDescriptor(shadow, name);
+    };
+
+    /** 
+     * A trap for Object.defineProperty.
+     */
+    this.defineProperty = function(shadow, name, desc) {
+      __verbose__ && logc("defineProperty", name);
+      __effect__ &&  trace(new Effect.DefineProperty(origin, name));
+
+      // TODO
+      return doDefineProperty(shadow, name, desc);
+    };
+
+    /** 
      * A trap for the in operator.
      */
     this.has = function(shadow, name) {
+      __verbose__ && logc("has", name);
+      __effect__  && trace(new Effect.Has(origin, name));
 
-      // TODO, BUG, accesst to undefined;
+      // TODO, BUG, access to undefined;
       if(origin===global && name==='undefined') return true;
-
-
-      //__verbose__ && logc("has", name);
-      __effect__ && trace(new Effect.Has(origin, name));
-
+      // TODO
       return doHas(shadow, name);
     };
 
-    // TODO, deprecated
-    /** target, name -> boolean
-    */
-    this.hasOwn = function(shadow, name) {
-      //__verbose__ && logc("hasOwn", name);
-      __effect__ && trace(new Effect.HasOwn(origin, name));
-
-      return doHasOwn(shadow, name);
-    };
-
-
-    /** target, name, receiver -> any
+    /**
      * A trap for getting property values.
      */
     this.get = function(shadow, name, receiver) {
+      __verbose__ && logc("get", name);
+      __effect__  && trace(new Effect.Get(origin, name));
 
-      // TODO, BUG, accesst to undefined;
+      // TODO, BUG, access to undefined;
       if(origin===global && name==='undefined') return undefined;
-
-      //__verbose__ && logc("get", name);
-      __effect__ && trace(new Effect.Get(origin, name));
-
+      // TODO
       return doGet(shadow, name);
     };
 
-    /** target, name, val, receiver -> boolean
+    /** 
      * A trap for setting property values.
      */
     this.set = function(shadow, name, value, receiver) {
-      //__verbose__ && logc("set", name);
-      // TODO
-      __effect__ && trace(new Effect.Set(origin, name));
+      __verbose__ && logc("set", name);
+      __effect__  && trace(new Effect.Set(origin, name));
 
+      // TODO
       return doSet(shadow, name, value);
     };
 
-    // TODO, new trap in ES6
-    /** target -> [String]
+    /**
+     * A trap for the delete operator.
+     */
+    this.deleteProperty = function(shadow, name) {
+      __verbose__ && logc("deleteProperty", name);
+      __effect__  && trace(new Effect.DeleteProperty(origin, name));
+
+      // TODO
+      return doDelete(shadow, name);
+    };
+
+    /** 
      * A trap for for...in statements.
      */
     this.enumerate = function(shadow) {
-      //__verbose__ && logc("enumerate");
-      __effect__ && trace(new Effect.Enumerate(origin));
-
-      return Object.getOwnPropertyNames(origin);
+      __verbose__ && logc("enumerate");
+      __effect__  && trace(new Effect.Enumerate(origin));
 
       // TODO
-      // NOTE: Trap is never called
-      // return doEnumnerate(scope);
+      return Object.getOwnPropertyNames(origin);
+      // TODO
       throw new Error("Unimplemented Trap enumerate.");
     };
 
-    // TODO, deprecated
-    /** target -> iterator
-    */
-    this.__iterate__ = function(shadow) {
-      //__verbose__ && logc("iterate");
-      __effect__ && trace(new Effect.Iterate(origin));
-      // TODO
-      // NOTE: Trap is never called
-      // return doIterate(scope);
-      throw new Error("Unimplemented Trap iterate.");
-    };
-
-    // TODO, new in ES6
-    /** target) -> [String]
+    /**
      * A trap for Object.getOwnPropertyNames.
      */
     this.ownKeys = function(shadow) {
-      //__verbose__ && logc("keys");
-      __effect__ && trace(new Effect.Keys(origin));
+      __verbose__ && logc("ownKeys");
+      __effect__  && trace(new Effect.OwnKeys(origin));
 
-      return doKeys(shadow);
+      // TODO
+      return doOwnKeys(shadow);
     };
 
-    // TODO, deprecated
-    /** target) -> [String]
-    */
-    this.keys = function(shadow) {
-      //__verbose__ && logc("keys");
-      __effect__ && trace(new Effect.Keys(origin));
-
-      return doKeys(shadow);
-    };
-
-    /** target, thisValue, args -> any
+    /** 
      * A trap for a function call.
      */
-    this.apply = function(shadow, thisArg, argsArray) {
-      //__verbose__ && logc("apply", scope);
-      __effect__ && trace(new Effect.Apply(origin));
+    this.apply = function(shadow, thisArg, argumentsList) {
+      __verbose__ && logc("apply");
+      __effect__  && trace(new Effect.Apply(origin));
 
-      thisArg = (thisArg!==undefined) ? thisArg : global;
-      argsArray = (argsArray!==undefined) ? argsArray : new Array();
+      thisArg = thisArg ? thisArg : global;
+      //argumentsList = argumentsList ? argumentsList : [];
 
       // Note: 
       // The function in scope is already decompiled.
-      return shadow.apply(wrap(thisArg), wrap(argsArray));
+      // TODO
+      // This are and arguments list shoudl be wrapped at this time
+      //return shadow.apply(wrap(thisArg), wrap(argsArray));
+      return shadow.apply(thisArg, argumentsList);
     };
 
-
-    /** target, args -> object
+    /** 
      * A trap for the new operator. 
      */
-    this.construct = function(shadow, thisArg, argsArray) {
-      //__verbose__ && logc("construct");
-      __effect__ && trace(new Effect.Construct(origin));
+    this.construct = function(shadow, argumentsList) {
+      __verbose__ && logc("construct");
+      __effect__  && trace(new Effect.Construct(origin));
 
       //return new scope(wrap(argsArray));
 
-      var newThis = Object.create(shadow.prototype);
-      var val = shadow.apply(newThis, wrap(argsArray));
+      var thisArg = Object.create(shadow.prototype);
+      var result = shadow.apply(thisArg, argumentsList);
       // return thisArg | val
-      return (val instanceof Object) ? val : newThis;
+      return (result instanceof Object) ? result : thisArg;
     };
   };
 
