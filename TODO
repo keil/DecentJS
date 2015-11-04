@@ -1,3 +1,9 @@
+- new style in native function compilation
+- smaller effects
+
+- reame scope in shadow
+- new egine test/ implement new traps
+
 *** ToDos ***
 
 - search for todo's

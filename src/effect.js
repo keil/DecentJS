@@ -23,9 +23,6 @@ var Effect = (function() {
   function Effect(target) {
     if(!(this instanceof Effect)) return new Effect(target);
 
-    if(!(target instanceof Object))
-      throw new TypeError("No traget object.");
-
     Object.defineProperties(this, {
       "date": {
         value: Date.now() 
@@ -37,7 +34,7 @@ var Effect = (function() {
   }
   Effect.prototype = {};
   Effect.prototype.toString = function() {
-    return "[[Effect]]";
+    return "[[DecentJS/Effect]]";
   }
 
   // ___             _   ___  __  __        _   
@@ -51,46 +48,21 @@ var Effect = (function() {
   }
   Read.prototype = Object.create(Effect.prototype);
   Read.prototype.toString = function() {
-    return "[[ReadEffect]]";
+    return "[[DecentJS/ReadEffect]]";
   }
-  Read.prototype.diff = function() {
-    throw new ReferenceError("Diff not implemented");
-  }
-
 
   //__      __   _ _         ___  __  __        _   
   //\ \    / / _(_) |_ ___  | __|/ _|/ _|___ __| |_ 
   // \ \/\/ / '_| |  _/ -_) | _||  _|  _/ -_) _|  _|
   //  \_/\_/|_| |_|\__\___| |___|_| |_| \___\__|\__|
 
-  function Write(target, scope) {
-    if(!(this instanceof Write)) return new Write(target, scope);
+  function Write(target) {
+    if(!(this instanceof Write)) return new Write(target);
     else Effect.call(this, target);
-
-    if(!(scope instanceof Object))
-      throw new TypeError("No scope object.");
-
-    Object.defineProperties(this, {
-      "scope": {
-        value: scope
-      }
-    });
   }
   Write.prototype = Object.create(Effect.prototype);
   Write.prototype.toString = function() {
-    return "[[WriteEffect]]";
-  }
-  Write.prototype.commit = function() {
-    throw new ReferenceError("Commit not implemented");
-  }
-  Write.prototype.rollback = function() {
-    throw new ReferenceError("Rollback not implemented");
-  }
-  Write.prototype.stat = function() {
-    throw new ReferenceError("Stat not implemented");
-  }
-  Write.prototype.diff = function() {
-    throw new ReferenceError("Diff not implemented");
+    return "[[DecentJS/WriteEffect]]";
   }
 
   //  ___      _ _   ___  __  __        _   
@@ -104,7 +76,7 @@ var Effect = (function() {
   }
   Call.prototype = Object.create(Effect.prototype);
   Call.prototype.toString = function() {
-    return "[[CallEffect]]";
+    return "[[TreatJS/CallEffect]]";
   }
 
   // ___             _   ___  __  __        _      
@@ -121,16 +93,8 @@ var Effect = (function() {
     Object.defineProperties(this, {
       "name": {
         value: name
-      },
-      "origin": {
-        value: target[name]
       }
     });
-
-    // define diff
-    Object.defineProperty(this, "diff", {get:function() {
-      return (target[name]!==this.origin);
-    }});
   }
   Get.prototype = Object.create(Read.prototype);
   Get.prototype.toString = function() {
@@ -146,16 +110,8 @@ var Effect = (function() {
     Object.defineProperties(this, {
       "name": {
         value: name
-      },
-      "origin": {
-        value: Object.getOwnPropertyDescriptor(target, name)
       }
     });
-
-    // define diff
-    Object.defineProperty(this, "diff", {get:function() {
-      return (Object.getOwnPropertyDescriptor(target, name)!==this.origin); // TODO
-    }});
   }
   GetOwnPropertyDescriptor.prototype = Object.create(Read.prototype);
   GetOwnPropertyDescriptor.prototype.toString = function() {
@@ -167,17 +123,6 @@ var Effect = (function() {
   function GetOwnPropertyNames(target) {
     if(!(this instanceof GetOwnPropertyNames)) return new GetOwnPropertyNames(target);
     else Read.call(this, target);
-
-    Object.defineProperties(this, {
-      "origin": {
-        value: Object.getOwnPropertyNames(target)
-      }
-    });
-
-    // define diff
-    Object.defineProperty(this, "diff", {get:function() {
-      return (Object.getOwnPropertyNames(target, name)!==this.origin); // TODO
-    }});
   }
   GetOwnPropertyNames.prototype = Object.create(Read.prototype);
   GetOwnPropertyNames.prototype.toString = function() {
@@ -193,16 +138,8 @@ var Effect = (function() {
     Object.defineProperties(this, {
       "name": {
         value: name
-      },
-      "origin": {
-        value: (name in target)
       }
     });
-
-    // define diff
-    Object.defineProperty(this, "diff", {get:function() {
-      return false; // TODO
-    }});
   }
   Has.prototype = Object.create(Read.prototype);
   Has.prototype.toString = function() {
@@ -218,16 +155,8 @@ var Effect = (function() {
     Object.defineProperties(this, {
       "name": {
         value: name
-      },
-      "origin": {
-        value: target.hasOwnProperty(name)
       }
     });
-
-    // define diff
-    Object.defineProperty(this, "diff", {get:function() {
-      return (target.hasOwnProperty(name)!==this.origin); // TODO
-    }});
   }
   HasOwn.prototype = Object.create(Read.prototype);
   HasOwn.prototype.toString = function() {
@@ -239,18 +168,7 @@ var Effect = (function() {
   function Enumerate(target) {
     if(!(this instanceof Enumerate)) return new Enumerate(target);
     else Read.call(this, target);
-
-    Object.defineProperties(this, {
-      "origin": {
-        value: Object.getOwnPropertyNames(target)
-//      target[name] // TODO
-      }
-    });
-
-    // define diff
-    Object.defineProperty(this, "diff", {get:function() {
-      return false // TODO
-    }});
+    // TODO
   }
   Enumerate.prototype = Object.create(Read.prototype);
   Enumerate.prototype.toString = function() {
@@ -262,17 +180,7 @@ var Effect = (function() {
   function Iterate(target) {
     if(!(this instanceof Iterate)) return new Iterate(target);
     else Read.call(this, target);
-
-    Object.defineProperties(this, {
-      "origin": {
-        value: Object.getOwnPropertyNames(target) // TODO
-      }
-    });
-
-    // define diff
-    Object.defineProperty(this, "diff", {get:function() {
-      return false; // TODO
-    }});
+    // TODO
   }
   Iterate.prototype = Object.create(Read.prototype);
   Iterate.prototype.toString = function() {
@@ -284,17 +192,7 @@ var Effect = (function() {
   function Keys(target) {
     if(!(this instanceof Keys)) return new Keys(target);
     else Read.call(this, target);
-
-    Object.defineProperties(this, {
-      "origin": {
-        value: Object.getOwnPropertyNames(target)
-      }
-    });
-
-    // define diff
-    Object.defineProperty(this, "diff", {get:function() {
-      return false; // TODO
-    }});
+    // TODO
   }
   Keys.prototype = Object.create(Read.prototype);
   Keys.prototype.toString = function() {
@@ -307,14 +205,7 @@ var Effect = (function() {
   function IsExtensible(target) {
     if(!(this instanceof IsExtensible)) return new IsExtensible(target);
     else Read.call(this, target);
-
     // TODO
-
-    // define diff
-    Object.defineProperty(this, "diff", {get:function() {
-      return false; // TODO
-    }});
-
   }
   IsExtensible.prototype = Object.create(Read.prototype);
   IsExtensible.prototype.toString = function() {
@@ -328,18 +219,9 @@ var Effect = (function() {
 
   /** target, thisArg, argsArray -> any
   */
-  function Apply(target, thisArg, argsArray) {
-    if(!(this instanceof Apply)) return new Apply(target, thisArg, argsArray);
+  function Apply(target) {
+    if(!(this instanceof Apply)) return new Apply(target);
     else Call.call(this, target);
-
-    Object.defineProperties(this, {
-      "thisArg": {
-        value: thisArg
-      },
-      "argsArray": {
-        value: argsArray
-      }
-    });
   }
   Apply.prototype = Object.create(Call.prototype);
   Apply.prototype.toString = function() {
@@ -348,18 +230,9 @@ var Effect = (function() {
 
   /** target, thisArg, argsArray -> obejct
   */
-  function Construct(target, thisArg, argsArray) {
-    if(!(this instanceof Construct)) return new Construct(target, thisArg, argsArray);
+  function Construct(target) {
+    if(!(this instanceof Construct)) return new Construct(target);
     else Call.call(this, target);
-
-    Object.defineProperties(this, {
-      "thisArg": {
-        value: thisArg
-      },
-      "argsArray": {
-        value: argsArray
-      }
-    });
   }
   Construct.prototype = Object.create(Call.prototype);
   Construct.prototype.toString = function() {
@@ -371,53 +244,17 @@ var Effect = (function() {
   // \ \/\/ / '_| |  _/ -_) | _||  _|  _/ -_) _|  _(_-<
   //  \_/\_/|_| |_|\__\___| |___|_| |_| \___\__|\__/__/
 
-  /**
-   * @target
-   * @scope
-   * @name
-   * @value
-   */
-
-  function Set(target, scope, name, value) {
-    if(!(this instanceof Set)) return new Set(target, scope, name, value);
-    else Write.call(this, target, scope);
+  /** target, name, propertyDescriptor -> any
+  */
+  function Set(target, name) {
+    if(!(this instanceof Set)) return new Set(target, name);
+    else Write.call(this, target);
 
     Object.defineProperties(this, {
       "name": {
         value: name
-      },
-      "value": {
-        value: value
-      },
-      "origin": {
-        value: target[name]
-      },
-      "snapshot": {
-        value: scope[name] // TODO, backup affected?
       }
     });
-
-    // define commit
-    Object.defineProperty(this, "commit", {value:function() {
-      return target[name]=value;
-    }});
-
-    Object.defineProperty(this, "rollback", {value:function() {
-      return scope[name]=this.snapshot;
-    }});
-
-    // define stat
-    Object.defineProperty(this, "stat", {get:function() {
-      return (target[name]!==value);
-    }});
-
-    // define diff
-    Object.defineProperty(this, "diff", {get:function() {
-      return (target[name]!==this.origin);
-    }});
-
-
-    // TODO stat -- status
   }
   Set.prototype = Object.create(Write.prototype);
   Set.prototype.toString = function() {
@@ -426,43 +263,15 @@ var Effect = (function() {
 
   /** target, name, propertyDescriptor -> any
   */
-  function DefineProperty(target, scope, name, desc) {
-    if(!(this instanceof DefineProperty)) return new DefineProperty(target, scope, name, desc);
-    else Write.call(this, target, scope);
+  function DefineProperty(target, name) {
+    if(!(this instanceof DefineProperty)) return new DefineProperty(target, name);
+    else Write.call(this, target);
 
     Object.defineProperties(this, {
       "name": {
         value: name
-      },
-      "desc": {
-        value: desc
-      },
-      "origin": {
-        value: Object.getOwnPropertyDescriptor(target, name)
-      },
-      "snapshot": {
-        value: Object.getOwnPropertyDescriptor(scope, name)
       }
     });
-
-    // define commit
-    Object.defineProperty(this, "commit", {value:function() {
-      return Object.defineProperty(target, name, desc);
-    }});
-    // define rollback
-    Object.defineProperty(this, "rollback", {value:function() {
-      return Object.defineProperty(target, name, this.snapshot);
-    }});
-    // define stat
-    Object.defineProperty(this, "stat", {get:function() {
-      return (target[name]!==value);
-    }});
-    // define diff
-    Object.defineProperty(this, "diff", {get:function() {
-      return (target[name]!==this.origin);
-    }});
-
-
   }
   DefineProperty.prototype = Object.create(Write.prototype);
   DefineProperty.prototype.toString = function() {
@@ -471,40 +280,15 @@ var Effect = (function() {
 
   /** target, name -> boolean
   */
-  function DeleteProperty(target, scope, name) {
-    if(!(this instanceof DeleteProperty)) return new DeleteProperty(target, scope, name);
-    else Write.call(this, target, scope);
+  function DeleteProperty(target, name) {
+    if(!(this instanceof DeleteProperty)) return new DeleteProperty(target, name);
+    else Write.call(this, target);
 
     Object.defineProperties(this, {
       "name": {
         value: name
-      },
-      "origin": {
-        value: (Object.prototype.hasOwnProperty.call(target, name) ? target[name] : undefined)
-      },
-      "snapshot": {
-        value: (Object.prototype.hasOwnProperty.call(scope, name) ? scope[name] : undefined)
       }
     });
-
-    // define commit
-    Object.defineProperty(this, "commit", {value:function() {
-      return (delete target[name]);
-    }});
-    // define rollback
-    Object.defineProperty(this, "rollback", {value:function() {
-      return (target[name]=this.snapshot);
-    }});
-    // define stat
-    Object.defineProperty(this, "stat", {get:function() {
-      return (Object.prototype.hasOwnProperty.call(target, name) ? target[name] : undefined)===value; // TODO
-    }});
-    // define diff
-    Object.defineProperty(this, "diff", {get:function() {
-      return (Object.prototype.hasOwnProperty.call(target, name) ? target[name] : undefined)===this.origin;
-    }});
-
-
   }
   DeleteProperty.prototype = Object.create(Write.prototype);
   DeleteProperty.prototype.toString = function() {
@@ -513,36 +297,10 @@ var Effect = (function() {
 
   /** target -> boolean
   */
-  function Freeze(target, scope) {
-    if(!(this instanceof Freeze)) return new Freeze(target, scope);
-    else Write.call(this, target, scope);
-
-    Object.defineProperties(this, {
-      "origin": {
-        value: Object.isFrozen(target)
-      },
-      "snapshot": {
-        value: Object.isFrozen(scope)
-      }  
-    });
-
-    // define commit
-    Object.defineProperty(this, "commit", {value:function() {
-      return Object.freeze(target);
-    }});
-    // define rollback
-    Object.defineProperty(this, "rollback", {value:function() {
-      throw new Error("Rollback not possible");
-    }});
-    // define stat
-    Object.defineProperty(this, "stat", {get:function() {
-      return (Object.isFrozen(target)===true);
-    }});
-    // define diff
-    Object.defineProperty(this, "diff", {get:function() {
-      return (Object.isFrozen(target)===this.origin);
-    }});
-
+  function Freeze(target) {
+    if(!(this instanceof Freeze)) return new Freeze(target);
+    else Write.call(this, target);
+    // TODO
   }
   Freeze.prototype = Object.create(Write.prototype);
   Freeze.prototype.toString = function() {
@@ -551,37 +309,10 @@ var Effect = (function() {
 
   /** target -> boolean
   */
-  function Seal(target, scope) {
-    if(!(this instanceof Seal)) return new Seal(target, scope);
-    else Write.call(this, target, scope);
-
-    Object.defineProperties(this, {
-      "origin": {
-        value: Object.isSealed(target)
-      },
-      "snapshot": {
-        value: Object.isSealed(scope)
-      }  
-    });
-
-    // define commit
-    Object.defineProperty(this, "commit", {value:function() {
-      return Object.seal(target);
-    }});
-    // define rollback
-    Object.defineProperty(this, "rollback", {value:function() {
-      throw new Error("Rollback not possible");
-    }});
-    // define stat
-    Object.defineProperty(this, "stat", {get:function() {
-      return (Object.isSealed(target)===true);
-    }});
-    // define diff
-    Object.defineProperty(this, "diff", {get:function() {
-      return (Object.isSealed(target)===this.origin);
-    }});
-
-
+  function Seal(target) {
+    if(!(this instanceof Seal)) return new Seal(target);
+    else Write.call(this, target);
+    // TODO
   }
   Seal.prototype = Object.create(Write.prototype);
   Seal.prototype.toString = function() {
@@ -590,36 +321,10 @@ var Effect = (function() {
 
   /** target -> boolean
   */
-  function PreventExtensions(target, scope) {
-    if(!(this instanceof PreventExtensions)) return new PreventExtensions(target, scope);
-    else Write.call(this, target, scope);
-
-    Object.defineProperties(this, {
-      "origin": {
-        value: Object.isExtensible(target)
-      },
-      "snapshot": {
-        value: Object.isExtensible(scope)
-      }  
-    });
-
-    // define commit
-    Object.defineProperty(this, "commit", {value:function() {
-      return Object.preventExtensions(target);
-    }});
-    // define rollback
-    Object.defineProperty(this, "rollback", {value:function() {
-      throw new Error("Rollback not possible");
-    }});
-    // define stat
-    Object.defineProperty(this, "stat", {get:function() {
-      return (Object.isExtensible(target)===true);
-    }});
-    // define diff
-    Object.defineProperty(this, "diff", {get:function() {
-      return (Object.isExtensible(target)===this.origin);
-    }});
-
+  function PreventExtensions(target) {
+    if(!(this instanceof PreventExtensions)) return new PreventExtensions(target);
+    else Write.call(this, target);
+    // TODO
   }
   PreventExtensions.prototype = Object.create(Write.prototype);
   PreventExtensions.prototype.toString = function() {
@@ -632,6 +337,7 @@ var Effect = (function() {
   // \___\___/_||_|_| |_|_\__|\__|
 
   function Conflict(sbxA, effectA, sbxB, effectB) {
+    if(!(this instanceof Conflict)) return new Conflict(sbxA, effectA, sbxB, effectB);
 
     if(!(sbxA instanceof Sandbox))
       throw new TypeError("No sandbox object.");
@@ -672,6 +378,7 @@ var Effect = (function() {
   //|___/|_|_| |_| \___|_| \___|_||_\__\___|
 
   function Difference(sbx, effect) {
+    if(!(this instanceof Difference)) return new Difference(sbx, effect);
 
     if(!(sbx instanceof Sandbox))
       throw new TypeError("No sandbox object.");
@@ -701,6 +408,7 @@ var Effect = (function() {
   //                    |___/        
 
   function Change(sbx, effect) {
+    if(!(this instanceof Change)) return new Change(sbx, effect);
 
     if(!(sbx instanceof Sandbox))
       throw new TypeError("No sandbox object.");
@@ -729,11 +437,28 @@ var Effect = (function() {
   //  |_||_| \__,_|_||_/__/\__,_\__|\__|_\___/_||_|
 
   function Transaction(effects) {
+    if(!(this instanceof Transaction)) return new Transaction(effects);
+
+    Object.defineProperties(this, {
+      "effects": {
+        value: effects
+      }  
+    });
+
+    // TODO
+    // Implement differences/ changes/ conflicts ?
+    // Or delete
+
     // TODO
     // add features
     // set of write effects
-    this.effects=effects;
+    //this.effects=effects;
   }
+  Transaction.prototype = {};
+  Transaction.prototype.toString = function() {
+    return "[[DecentJS/Transaction]]";
+  };
+
 
   // ___  __  __        _      
   //| __|/ _|/ _|___ __| |_ ___
