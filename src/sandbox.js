@@ -451,6 +451,8 @@ function Sandbox(global, params, prestate) {
    * @param origin The current Global Object.
    */
 
+  var switches = new WeakMap();
+
   function Membrane(origin) {
     // TODO
     //if(!(origin instanceof Object))
@@ -461,6 +463,7 @@ function Sandbox(global, params, prestate) {
      * List of effected properties
      */
     var properties = new Set();
+    switches.set(origin, properties);
     //getSwitchFor(origin);
 
     /** Returns true if the property was touched by the sandbox, false otherwise
@@ -1022,7 +1025,11 @@ function Sandbox(global, params, prestate) {
   var calleffects = new WeakMap();
 
   //var targets = new WeakSet();
-  var targets = [];
+  //var targets = [];
+  var readtargets = [];
+  var writetargets = [];
+  var calltargets = [];
+
 
   /**
     var readset = new WeakMap();
@@ -1069,7 +1076,7 @@ function Sandbox(global, params, prestate) {
 
     // TODO
     //targets.set(effect.target);
-    target.push(effect.target);
+    //targets.push(effect.target);
 
 
     if(effect instanceof Effect.Read) {
@@ -1077,6 +1084,8 @@ function Sandbox(global, params, prestate) {
       if(!readeffects.has(effect.target)) readeffects.set(effect.target, []);
 
       readeffects.get(effect.target).push(effect);
+      readtargets.push(effect.target);
+
 
       //readeffects.push(effect);
       //readtargets.push(effect.target);
@@ -1087,7 +1096,7 @@ function Sandbox(global, params, prestate) {
 
       writeeffects.get(effect.target).push(effect);
       //writeeffects.push(effect);
-      //writetargets.push(effect.target);
+      writetargets.push(effect.target);
 
     } else if(effect instanceof Effect.Call) {
       // introduce new target
@@ -1095,7 +1104,7 @@ function Sandbox(global, params, prestate) {
 
       calleffects.get(effect.target).push(effect);
       //calleffects.push(effect);
-      //calltargets.push(effect.target);
+      calltargets.push(effect.target);
 
     }
   }
@@ -1143,7 +1152,7 @@ function Sandbox(global, params, prestate) {
   getter("readeffects", function() {
     var readEffects = [];
 
-    for(var target of targets) {
+    for(var target of readtargets) {
       readEffects = readEffects.concat(readeffectsOf(target));
     } 
     // TODO, it is easier to store all effects in an array?
@@ -1157,7 +1166,7 @@ function Sandbox(global, params, prestate) {
   getter("writeeffects", function() {
     var writeEffects = [];
 
-    for(var target of targets) {
+    for(var target of writetargets) {
       writeEffects = writeEffects.concat(writeeffectsOf(target));
     } 
     // TODO, it is easier to store all effects in an array?
@@ -1171,7 +1180,7 @@ function Sandbox(global, params, prestate) {
   getter("calleffects", function() {
     var callEffects = [];
 
-    for(var target of targets) {
+    for(var target of calltargets) {
       callEffects = callEffects.concat(calleffectsOf(target));
     } 
     // TODO, it is easier to store all effects in an array?
@@ -1182,247 +1191,168 @@ function Sandbox(global, params, prestate) {
    * @return JavaScript Array [Effect]
    */
   getter("effects", function() {
-    var effects = [];
+    var effects = readeffects.concat(writeeffects).concat(calleffectsOf);
+    effects.sort();
+    return effects;
 
-    for(var target of targets) {
-      effects = effects.concat(effectsOf(target));
-    } 
+    /*
+       for(var target of targets) {
+       effects = effects.concat(effectsOf(target));
+       } 
     // TODO, it is easier to store all effects in an array?
     return effects;
+    */
   }, this);
+
+
+
+
+
+
+  //  _____             __ _ _      _       
+  // / ____|           / _| (_)    | |      
+  //| |     ___  _ __ | |_| |_  ___| |_ ___ 
+  //| |    / _ \| '_ \|  _| | |/ __| __/ __|
+  //| |___| (_) | | | | | | | | (__| |_\__ \
+  // \_____\___/|_| |_|_| |_|_|\___|\__|___/
+
 
   /** In Read-Write Conflict
    * @param read Read Effect
    * @param write Write Effect
    * @return true|false
    */
-  /*function inReadWriteConflict(read, write) {
+  function inReadWriteConflict(read, write) {
     if(!(read instanceof Effect.Read))
-    throw new TypeError("No Read Effect.");
+      throw new TypeError("No Read Effect.");
 
     if(!(write instanceof Effect.Write))
-    throw new TypeError("No Write Effect.");
+      throw new TypeError("No Write Effect.");
 
-    if(read.target!==write.target)
-    return false;
+    if((read.target!==write.target) || (read.name!==write.name) || (read.date<write.date))
+      return false;
+    else 
+      return true;
+
+    /*
+
+       if(read.target!==write.target)
+       return false;
+
+    // TODO, should make a distinction between names and unnamed effects
+
+    if(read instanceof NamedReadEffect)
+
 
     switch(true) {
     case (write instanceof Effect.Set):
     case (write instanceof Effect.DefineProperty):
     case (write instanceof Effect.DeleteProperty):
-  // property specific write effects
-  switch(true) { 
-  case (read instanceof Effect.Get):
-  case (read instanceof Effect.GetOwnPropertyDescriptor):
-  case (read instanceof Effect.Has):
-  case (read instanceof Effect.HasOwn):
-  // property specific read effects
-  return (read.name===write.name) && (read.date>write.date);
-  break;
-  case (read instanceof Effect.GetOwnPropertyNames):
-  case (read instanceof Effect.Enumerate):
-  case (read instanceof Effect.Iterate):
-  case (read instanceof Effect.Keys):
-  case (read instanceof Effect.Apply):
-  case (read instanceof Effect.Construct):
-  case (read instanceof Effect.IsExtensible):
-  // property unspecific read effects 
-  return true;
-  break;
+    // property specific write effects
+    switch(true) { 
+    case (read instanceof Effect.Get):
+    case (read instanceof Effect.GetOwnPropertyDescriptor):
+    case (read instanceof Effect.Has):
+    case (read instanceof Effect.HasOwn):
+    // property specific read effects
+    return (read.name===write.name) && (read.date>write.date);
+    break;
+    case (read instanceof Effect.GetOwnPropertyNames):
+    case (read instanceof Effect.Enumerate):
+    case (read instanceof Effect.Iterate):
+    case (read instanceof Effect.Keys):
+    case (read instanceof Effect.Apply):
+    case (read instanceof Effect.Construct):
+    case (read instanceof Effect.IsExtensible):
+    // property unspecific read effects 
+    return true;
+    break;
+    }
+    break;
+    case (write instanceof Effect.Freeze):
+    case (write instanceof Effect.Seal):
+    case (write instanceof Effect.PreventExtensions):
+    // property unspecific write effects
+    return false;
+    break;
+    }
+    */
   }
-  break;
-  case (write instanceof Effect.Freeze):
-  case (write instanceof Effect.Seal):
-  case (write instanceof Effect.PreventExtensions):
-  // property unspecific write effects
-  return false;
-  break;
-  }
-  }*/ // TODO
 
   /** In Write-Write Conflict
    * @param write Write Effect
    * @param writep Write Effect
    * @return true|false
    */
-  /*function inWriteWriteConflict(write, writep) {
+  function inWriteWriteConflict(write, writep) {
     if(!(write instanceof Effect.Write))
-    throw new TypeError("No Write Effect.");
+      throw new TypeError("No Write Effect.");
 
     if(!(writep instanceof Effect.Write))
-    throw new TypeError("No Write Effect.");
+      throw new TypeError("No Write Effect.");
 
-    if(write.target!==writep.target)
-    return false;
+    if((write.target!==writep.target) || (write.name!==writep.name))
+      return false;
+    else 
+      return true;
 
+
+    /*
+       if(write.target!==writep.target)
+       return false;
+
+       switch(true) {
+       case (write instanceof Effect.Set):
+       case (write instanceof Effect.DefineProperty):
+       case (write instanceof Effect.DeleteProperty):
+    // property specific write effects
     switch(true) {
-    case (write instanceof Effect.Set):
-    case (write instanceof Effect.DefineProperty):
-    case (write instanceof Effect.DeleteProperty):
-  // property specific write effects
-  switch(true) {
-  case (writep instanceof Effect.Set):
-  case (writep instanceof Effect.DefineProperty):
-  case (writep instanceof Effect.DeleteProperty):
-  // property specific write effects
-  return (write.name===writep.name);
-  break;
-  case (writep instanceof Effect.Freeze):
-  case (writep instanceof Effect.Seal):
-  case (writep instanceof Effect.PreventExtensions):
-  // property unspecific write effects
-  return true;
-  break;
+    case (writep instanceof Effect.Set):
+    case (writep instanceof Effect.DefineProperty):
+    case (writep instanceof Effect.DeleteProperty):
+    // property specific write effects
+    return (write.name===writep.name);
+    break;
+    case (writep instanceof Effect.Freeze):
+    case (writep instanceof Effect.Seal):
+    case (writep instanceof Effect.PreventExtensions):
+    // property unspecific write effects
+    return true;
+    break;
+    }
+    break;
+    case (write instanceof Effect.Freeze):
+    case (write instanceof Effect.Seal):
+    case (write instanceof Effect.PreventExtensions):
+    // property unspecific write effects
+    return false;
+    break;
+    }
+    */
+
   }
-  break;
-  case (write instanceof Effect.Freeze):
-  case (write instanceof Effect.Seal):
-  case (write instanceof Effect.PreventExtensions):
-  // property unspecific write effects
-  return false;
-  break;
-  }
-  }*/ // TODO
+
 
   /** In Conflict
    * @param e Effect
    * @[aram f Effect
    * @return true|false
    */
-  /*function inConflict(e, f) {
+  function inConflict(e, f) {
     if((e instanceof Effect.Read) && (f instanceof Effect.Read))
-    return false;
+      return false;
     else if((e instanceof Effect.Read) && (f instanceof Effect.Write))
-    return inReadWriteConflict(e, f);
+      return inReadWriteConflict(e, f);
     else if((e instanceof Effect.Write) && (f instanceof Effect.Read))
-    return inReadWriteConflict(f, e);
+      return inReadWriteConflict(f, e);
     else if((e instanceof Effect.Write) && (f instanceof Effect.Write))
-    return inWriteWriteConflict(e, f);
+      return inWriteWriteConflict(e, f);
     else 
-    return false;
-    }*/ // TODO
+      return false;
+  }
 
-  /** Has Changes With
-   * @param target JavaScript Object
-   * return true|false
-   */
-  /*define("hasChangesOn", function(target) {
-    var es = this.writeeffectsOf(target);
 
-    var changes = false;
-    for(var e in es) {
-    var result =  es[e].stat;
-    log("check " + es[e] + " = " + result);
-    changes = (result) ? true : changes;
-    }
-    return changes;
-    }, this);*/ // TODO
 
-  /** Has Changes
-   * return true|false
-   */
-  /*getter("hasChanges", function() {
-    var changes = false;
-    for(var i in writetargets) {
-    changes = (this.hasChangesOn(writetargets[i])) ? true : changes;
-    }
-    return changes;
-
-    }, this);*/ // TODO
-
-  /** Changes Of
-   * @param target JavaScript Object
-   * return [Differences]
-   */
-  /*define("changesOf", function(target) {
-    var sbxA = this;
-    var es = this.effectsOf(target);
-
-    var changes = [];
-    for(var e in es) {
-    var result =  es[e].stat;
-    log("check " + es[e] + " = " + result);
-    if(result) changes.push(new Effect.Change(sbxA, es[e]));
-    }
-    return changes;
-    }, this);*/ // TODO
-
-  /** Changes 
-   * return [Changes]
-   */
-  /*getter("changes", function() {
-    var sbxA = this;
-    var es = writeeffects;
-
-    var changes = [];
-    for(var e in es) {
-    var result =  es[e].stat;
-    log("check " + es[e] + " = " + result);
-    if(result) changes.push(new Effect.Change(sbxA, es[e]));
-    }
-    return changes;
-    }, this);*/ // TODO
-
-  /** Has Difference With
-   * @param target JavaScript Object
-   * return true|false
-   */
-  /*define("hasDifferenceWith", function(target) {
-    var es = this.effectsOf(target);
-
-    var difference = false;
-    for(var e in es) {
-    var result =  es[e].diff;
-    log("check " + es[e] + " = " + result);
-    difference = (result) ? true : difference;
-    }
-    return difference;
-    }, this);*/ // TODO
-
-  /** Has Difference
-   * return true|false
-   */
-  /*getter("hasDifference", function() {
-    var difference = false;
-    for(var i in targets) {
-    difference = (this.hasDifferenceWith(targets[i])) ? true : difference;
-    }
-    return difference;
-
-    }, this);*/ // TODO
-
-  /** Differences Of
-   * @param target JavaScript Object
-   * return [Differences]
-   */
-  /*define("differencesOf", function(target) {
-    var sbxA = this;
-    var es = this.effectsOf(target);
-
-    var differences = [];
-    for(var e in es) {
-    var result =  es[e].diff;
-    log("check " + es[e] + " = " + result);
-    if(result) differences.push(new Effect.Difference(sbxA, es[e]));
-    }
-    return differences;
-    }, this);*/ // TODO
-
-  /** Differences 
-   * return [Differences]
-   */
-  /*getter("differences", function() {
-    var sbxA = this;
-    var es = this.effects;
-
-    var differences = [];
-    for(var e in es) {
-    var result =  es[e].diff;
-    log("check " + es[e] + " = " + result);
-    if(result) differences.push(new Effect.Difference(sbxA, es[e]));
-    }
-    return differences;
-    }, this);*/ // TODO
 
   /** Conflicts
    * @param sbx Sandbox
@@ -1501,6 +1431,176 @@ function Sandbox(global, params, prestate) {
     return conflict;
 
     }, this);*/ // TODO
+
+
+
+
+  //  _____ _                                 
+  // / ____| |                                
+  //| |    | |__   __ _ _ __   __ _  ___  ___ 
+  //| |    | '_ \ / _` | '_ \ / _` |/ _ \/ __|
+  //| |____| | | | (_| | | | | (_| |  __/\__ \
+  // \_____|_| |_|\__,_|_| |_|\__, |\___||___/
+  //                           __/ |          
+  //                          |___/           
+
+  /** Has Changes With
+   * @param target JavaScript Object
+   * return true|false
+   */
+  define("hasChangesOn", function(target) {
+    var es = this.writeeffectsOf(target);
+
+    var changes = false;
+    for(var e in es) {
+      // TODO, unroll needed
+      var result =  es[e].stat;
+      log("check " + es[e] + " = " + result);
+      changes = (result) ? true : changes;
+    }
+    return changes;
+  }, this);
+
+  /** Has Changes
+   * return true|false
+   */
+  /*getter("hasChanges", function() {
+    var changes = false;
+    for(var i in writetargets) {
+    changes = (this.hasChangesOn(writetargets[i])) ? true : changes;
+    }
+    return changes;
+
+    }, this);*/ // TODO
+
+  /** Changes Of
+   * @param target JavaScript Object
+   * return [Differences]
+   */
+  /*define("changesOf", function(target) {
+    var sbxA = this;
+    var es = this.effectsOf(target);
+
+    var changes = [];
+    for(var e in es) {
+    var result =  es[e].stat;
+    log("check " + es[e] + " = " + result);
+    if(result) changes.push(new Effect.Change(sbxA, es[e]));
+    }
+    return changes;
+    }, this);*/ // TODO
+
+  /** Changes 
+   * return [Changes]
+   */
+  /*getter("changes", function() {
+    var sbxA = this;
+    var es = writeeffects;
+
+    var changes = [];
+    for(var e in es) {
+    var result =  es[e].stat;
+    log("check " + es[e] + " = " + result);
+    if(result) changes.push(new Effect.Change(sbxA, es[e]));
+    }
+    return changes;
+    }, this);*/ // TODO
+
+
+  // _____  _  __  __                                  
+  //|  __ \(_)/ _|/ _|                                 
+  //| |  | |_| |_| |_ ___ _ __ ___ _ __   ___ ___  ___ 
+  //| |  | | |  _|  _/ _ \ '__/ _ \ '_ \ / __/ _ \/ __|
+  //| |__| | | | | ||  __/ | |  __/ | | | (_|  __/\__ \
+  //|_____/|_|_| |_| \___|_|  \___|_| |_|\___\___||___/
+
+  /** Has Difference With
+   * @param target JavaScript Object
+   * return true|false
+   */
+  /*define("hasDifferenceWith", function(target) {
+    var es = this.effectsOf(target);
+
+    var difference = false;
+    for(var e in es) {
+    var result =  es[e].diff;
+    log("check " + es[e] + " = " + result);
+    difference = (result) ? true : difference;
+    }
+    return difference;
+    }, this);*/ // TODO
+
+  /** Has Difference
+   * return true|false
+   */
+  /*getter("hasDifference", function() {
+    var difference = false;
+    for(var i in targets) {
+    difference = (this.hasDifferenceWith(targets[i])) ? true : difference;
+    }
+    return difference;
+
+    }, this);*/ // TODO
+
+  /** Differences Of
+   * @param target JavaScript Object
+   * return [Differences]
+   */
+  /*define("differencesOf", function(target) {
+    var sbxA = this;
+    var es = this.effectsOf(target);
+
+    var differences = [];
+    for(var e in es) {
+    var result =  es[e].diff;
+    log("check " + es[e] + " = " + result);
+    if(result) differences.push(new Effect.Difference(sbxA, es[e]));
+    }
+    return differences;
+    }, this);*/ // TODO
+
+  /** Differences 
+   * return [Differences]
+   */
+  /*getter("differences", function() {
+    var sbxA = this;
+    var es = this.effects;
+
+    var differences = [];
+    for(var e in es) {
+    var result =  es[e].diff;
+    log("check " + es[e] + " = " + result);
+    if(result) differences.push(new Effect.Difference(sbxA, es[e]));
+    }
+    return differences;
+    }, this);*/ // TODO
+
+
+
+  //  _____                          _ _   
+  // / ____|                        (_) |  
+  //| |     ___  _ __ ___  _ __ ___  _| |_ 
+  //| |    / _ \| '_ ` _ \| '_ ` _ \| | __|
+  //| |___| (_) | | | | | | | | | | | | |_ 
+  // \_____\___/|_| |_| |_|_| |_| |_|_|\__|
+
+
+  // _____       _ _ _                _    
+  //|  __ \     | | | |              | |   
+  //| |__) |___ | | | |__   __ _  ___| | __
+  //|  _  // _ \| | | '_ \ / _` |/ __| |/ /
+  //| | \ \ (_) | | | |_) | (_| | (__|   < 
+  //|_|  \_\___/|_|_|_.__/ \__,_|\___|_|\_\
+
+
+  // _____                     _   
+  //|  __ \                   | |  
+  //| |__) |_____   _____ _ __| |_ 
+  //|  _  // _ \ \ / / _ \ '__| __|
+  //| | \ \  __/\ V /  __/ |  | |_ 
+  //|_|  \_\___| \_/ \___|_|   \__|
+
+
 
   /** Rollback Of
    * @param target JavaScript Object

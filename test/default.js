@@ -2,6 +2,9 @@
 
 var mySet2 = new Set([1,2,3,4]);
 print(mySet2.size); // 4
+mySet2.clear();
+print(mySet2.size); // 4
+
 
 var map = new Map();
 map.set({}, 4711);
