@@ -1,0 +1,22 @@
+*** TreatJS Sandbox 0.5.2 (PoC)
+
+- clenaup
+- new ES6 traps
+
+*** TreatJS Sandbox 0.5.1 (PoC)
+
+- New: Sandbox revert
+
+*** TreatJS Sandbox 0.4.2 (PoC)
+
+- New semantics of stat and diff
+
+*** TreatJS Sandbox 0.4.1 (PoC)
+
+- New: fine-graned effect selection
+- New Call-effects in seperation to Read/Write-effects
+
+*** TreatJS Sandbox 0.4.0 (PoC)
+
+- Deprecated: nativePassThrought
+- New: Function pass-throught

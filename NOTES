@@ -1,0 +1,164 @@
+* No rollback in freeze seal because if missin trap
+
+* Limitations*
+
+a) getOwnPropertyDescriptor
+b) function.bind
+
+
+*Strict Mode*
+
+ Normal Mode: if this===undefined use the global object as this
+ Strict Mode: this is forbidden.
+
+*Sandbox*
+
+ a) Sandbox Features
+    - apply
+    (function[, global[, thisArg[, argsArray]]]);
+
+    - call
+    (function[, global[, thisArg[, argsArray]]]);
+
+    - bind
+    (function[, global[, thisArg[, argsArray]]]);
+
+ b) Effect Features
+    - getReadEffects: target -> Array
+
+    - getWriteEffects: target -> Array
+
+    - getEffects: target -> Array
+
+
+*Effects*
+
+  a) Read Effects
+     target -> timestamp -> (read operation)
+
+  b) Write Effects
+     target -> timestamp -> (write operation) -> value
+
+     - commit
+       commits the effect to the target
+
+     - rollback
+       rollback the commit/operation if possible
+       (not possible for Object.freeze/ Object.seal/ Object.preventExtensions)
+
+     - stat 
+       returns true if a difference between target* and origin exists
+       (target or target[name], depending on the effect)
+
+     - diff 
+       returns true if the outside value changed
+       (target or target[name], depending on the effect)
+
+     - origin
+       returns the origin value
+       (depending on the effect)
+
+     - [name, value, receiver, decs, thisArg, ArgsArray]
+       returns the corresponding arguments
+
+
+*Rollback*
+
+ a) Disable Sandbox Isolation (Membrane/Decompile)
+    and enable Effects to do an rollback.
+
+
+*Pre State Snapshot*
+
+ a) Clone global when installing a sandbox will build an shadow tree
+    Some unused values will also be wrapped (recursively)
+
+ b) Partial wrapping and merging 
+    Scope (clone has to be of the same type/ instance of the origin)
+    Function Prototypes has to be set when decompiling a value
+
+
+*Read Conflicts*
+
+ A value read access is after a value write access.
+ --> This makes it necessary to compare sandbox executions
+
+
+*Name and Working Title*
+ 
+ Proxy-based Transactional Sandbox
+ 
+ Transactional Sandboxing of Higher-order Programs
+
+# Project Name
+
+Working Name:
+* TreatJS-Sandbox (TJSSB)
+
+
+Final Name:
+* Decent JS
+* Sandbox JS
+* JS TM (JS Transactional Memory/SDandbo
+
+
+
+*Features*
+
+- wrap
+- call/apply/bind
+
+- Effects
+  - Read Effects
+  - Write Effects
+  - Call Effects
+
+
+### Features of Sabdbox ###
+
+A) 
+
+readeffectsOf(target)
+writeeffectsOf(target)
+calleffectsOf(target)
+
+effectsOf(target)
+
+B) 
+
+readeffects
+writeeffects
+calleffects
+
+effects
+
+c)
+
+rollbackOf(target)
+rollback()
+
+hasChangesOn(target) --> true
+hasChanges()
+
+changesOf(target)
+changes()
+
+hasDifferenceWith(target) --> true
+hasDifference()
+
+differencesOf(target)
+differences()
+
+inConflictWith(sbx, traget)
+inConflict(sbx)
+
+conflictsOf(dbx, traget)
+conflicts(sbx)
+
+commit()
+commitOf(target)
+
+### Features of Effect ###
+
+### Features of Transaction ###
+

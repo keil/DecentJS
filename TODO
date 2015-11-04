@@ -1,0 +1,41 @@
+*** ToDos ***
+
+- search for todo's
+
+
+*** Bugs ***
+
+- clone needs to preserve object identity
+
+- new engine/ changes in proxy API
+
+- To many conflicts in test case. Is this a bug?
+
+
+*** Minor Features *** 
+
+- recursive rollback, 
+
+- rebase, (different semantics to revert) reset only the snapshot values
+  (requires that the clone is a target --> revert/rebase do the same)
+
+- Better pre-state snapshot mode
+
+- Transaction Handling
+
+- Clear Effects/Tragets when revert
+
+- If a sandbox commits, read effects have to be removed or considered when calculating conflicts.
+
+- Conflicts may compare values
+(maybe introduce a raw mode, that compares the values recursively -- based on effects)?
+
+- Make sbx.conflicts(sbx2); -- to -- sbx.conflictsWith(sbx2);
+
+- Add an event observer, for example ACP/TratJS to protext ressources
+
+- Merge from TreatJS/ degubber/ out
+
+
+
+*** Majpr Features *** 

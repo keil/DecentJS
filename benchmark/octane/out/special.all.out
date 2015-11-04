@@ -1,0 +1,161 @@
+*** Include benchmark/sbxbench/richards.js ***
+Richards: 5757
+----
+Score (version 9): 5757
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/deltablue.js ***
+DeltaBlue: 2806
+----
+Score (version 9): 2806
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/crypto.js ***
+Crypto: 7445
+----
+Score (version 9): 7445
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/raytrace.js ***
+RayTrace: 3094
+----
+Score (version 9): 3094
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/earley-boyer.js ***
+EarleyBoyer: 787
+----
+Score (version 9): 787
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/regexp.js ***
+RegExp: 885
+----
+Score (version 9): 885
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/splay.js ***
+Splay: 780
+SplayLatency: 1281
+----
+Score (version 9): 1000
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/navier-stokes.js ***
+NavierStokes: 929
+----
+Score (version 9): 929
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/pdfjs.js ***
+PdfJS: 1623
+----
+Score (version 9): 1623
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/mandreel.js ***
+Mandreel: 502
+MandreelLatency: 3359
+----
+Score (version 9): 1298
+Statistic: 
+[[--end-of-text--]]
+
+Process 19059 terminated (ok).
+Task completed after 9 min, 5 sec.
+Charging 551s processor usage (19.66 Euro).
+
+Resource usage:
+Average processor load: 101%
+
+Processor idle time: 53459 sec
+Total execution time: 546 sec
+Total processing time: 551 sec
+Kernel mode time: 2 sec
+User mode time: 549 sec
+
+Virtual memory size: 386 MByte
+Resident set size: 320 MByte
+Text/Data segment size: 369 MByte
+Shared memory segment: 5 MByte
+
+./js --available-memory=6000 -f bootstrap.js -f benchmark/sbxbench/octane.js
+
+
+
+*** Include benchmark/sbxbench/gbemu-part1.js,benchmark/sbxbench/gbemu-part2.js ***
+65538
+Gameboy: 7321
+----
+Score (version 9): 7321
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/code-load.js ***
+CodeLoad: 5597
+----
+Score (version 9): 5597
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/box2d.js ***
+Box2D: 1628
+----
+Score (version 9): 1628
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/zlib.js,benchmark/sbxbench/zlib-data.js ***
+zlib: 29003
+----
+Score (version 9): 29003
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/typescript-input.js,benchmark/sbxbench/typescript-compiler.js,benchmark/sbxbench/typescript.js ***
+Typescript: 6802
+----
+Score (version 9): 6802
+Statistic: 
+[[--end-of-text--]]
+
+Process 19623 terminated (ok).
+Task completed after 1 min, 53 sec.
+Charging 116s processor usage (4.14 Euro).
+
+Resource usage:
+Average processor load: 103%
+
+Processor idle time: 11051 sec
+Total execution time: 113 sec
+Total processing time: 116 sec
+Kernel mode time: 0 sec
+User mode time: 115 sec
+
+Virtual memory size: 453 MByte
+Resident set size: 271 MByte
+Text/Data segment size: 436 MByte
+Shared memory segment: 6 MByte
+

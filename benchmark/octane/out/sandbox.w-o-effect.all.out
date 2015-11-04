@@ -1,0 +1,119 @@
+*** Include benchmark/sbxbench/richards.js ***
+Richards: 4270
+----
+Score (version 9): 4270
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/deltablue.js ***
+DeltaBlue: 333
+----
+Score (version 9): 333
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/crypto.js ***
+Crypto: 1917
+----
+Score (version 9): 1917
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/raytrace.js ***
+RayTrace: 211
+----
+Score (version 9): 211
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/earley-boyer.js ***
+EarleyBoyer: 677
+----
+Score (version 9): 677
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/regexp.js ***
+RegExp: 900
+----
+Score (version 9): 900
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/splay.js ***
+Splay: 774
+SplayLatency: 2567
+----
+Score (version 9): 1410
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/navier-stokes.js ***
+NavierStokes: 865
+----
+Score (version 9): 865
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/pdfjs.js ***
+PdfJS: 121
+----
+Score (version 9): 121
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/mandreel.js ***
+Mandreel: 122
+MandreelLatency: 621
+----
+Score (version 9): 275
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/gbemu-part1.js,benchmark/sbxbench/gbemu-part2.js ***
+65538
+Gameboy: 5081
+----
+Score (version 9): 5081
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/code-load.js ***
+CodeLoad: 5264
+----
+Score (version 9): 5264
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/box2d.js ***
+Box2D: 121 
+----
+Score (version 9): 121
+Statistic: 
+
+
+
+*** Include benchmark/sbxbench/zlib.js,benchmark/sbxbench/zlib-data.js ***
+zlib: 28948
+----
+Score (version 9): 28948
+
+
+
+*** Include benchmark/sbxbench/typescript-input.js,benchmark/sbxbench/typescript-compiler.js,benchmark/sbxbench/typescript.js ***
+Typescript: 886
+----
+Score (version 9): 886
+Statistic: 
