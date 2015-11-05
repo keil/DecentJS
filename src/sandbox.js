@@ -112,7 +112,9 @@ function Sandbox(global, params, prestate) {
   // TODO
   var __debug__ = configure("debug", false);
 
-
+  // TODO, native pass-through
+  
+  
   //              __ _                   
   // __ ___ _ _  / _(_)__ _ _  _ _ _ ___ 
   /// _/ _ \ ' \|  _| / _` | || | '_/ -_)
@@ -458,35 +460,47 @@ function Sandbox(global, params, prestate) {
   // TODO
   var switches = new WeakMap();
 
-  function Membrane(origin) {
-    // TODO
+
+
+  /**
+   * Sandbox Handler
+   * @param origin - Outside Value
+   * @param native - Flag for Native Functions
+   */
+  function Membrane(origin, native = false) {
+    // XXX
+    //if(!(this instanceof Membrane)) return new Membrane(origin, native);
+
+    // XXX
     //if(!(origin instanceof Object))
     //  throw new TypeError("No Origin (Target) Object.");
 
-    // TODO
     /*
-     * List of effected properties
+     * List of modified properties
      */
-    var properties = new Set();
-    switches.set(origin, properties);
-    //getSwitchFor(origin);
+    Object.defineProperty(this, "touchedPropertyNames", {
+      value : new Set()
+    });
 
     /** Returns true if the property was touched by the sandbox, false otherwise
     */
-    function affected(property) {
-      return properties.has(property);
+    function touched(property) {
+      return this.touchedPropertyNames.has(property);
     }
     /** Returns true if the property was not touched by the sandbox, false otherwise
     */
-    function unaffected(property) {
-      return !affected(property);
+    function untouched(property) {
+      return !this.touchedPropertyNames.has(property);
     }
     /** Flags a property as touched
     */
     function touch(scope, name) {
-      if(unaffected(name)) {
-        properties.add(name);
-      }
+      this.touchedPropertyNames.add(name);
+      
+      // TODO, not required because of set
+      //if(unaffected(name)) {
+      //  properties.add(name);
+      //}
     }
 
     //  ___                     _   _             
@@ -497,7 +511,7 @@ function Sandbox(global, params, prestate) {
 
     /** target, name -> boolean
     */
-    function doHas(scope, name) {
+    /*function doHas(scope, name) {
       var has = (affected(name)) ? (name in scope) : (name in origin);
 
       if(origin===global && has===false) {
@@ -509,17 +523,17 @@ function Sandbox(global, params, prestate) {
       } else {
         return (affected(name)) ? (name in scope) : (name in origin);
       }
-    }
+    }*/
     /** target, name -> boolean
     */
-    function doHasOwn(scope, name) {
+    /*function doHasOwn(scope, name) {
       return (affected(name)) ? 
         Object.prototype.hasOwnProperty.call(scope, name): 
         Object.prototype.hasOwnProperty.call(origin, name);
-    }
+    }*/
     /** target, name, receiver -> any
     */
-    function doGet(scope, name) {
+    /*function doGet(scope, name) {
       var desc = (affected(name)) ? 
         Object.getOwnPropertyDescriptor(scope, name): 
         Object.getOwnPropertyDescriptor(origin, name);
@@ -528,10 +542,10 @@ function Sandbox(global, params, prestate) {
 
       if(getter) return evaluate(getter,((affected(name)) ? scope : origin), []);
       else return (affected(name)) ? scope[name] : wrap(origin[name]);
-    }
+    }*/
     /** target, name, val, receiver -> boolean
     */
-    function doSet(scope, name, value) {
+    /*function doSet(scope, name, value) {
       var desc =  (affected(name)) ? 
         Object.getOwnPropertyDescriptor(scope, name): 
         Object.getOwnPropertyDescriptor(origin, name);
@@ -544,44 +558,44 @@ function Sandbox(global, params, prestate) {
         (scope[name]=value);
       }
       return true;
-    }
+    }*/
     /** target, name, propertyDescriptor -> any
     */
-    function doDefineProperty(shadow, name, desc) {
+    /*function doDefineProperty(shadow, name, desc) {
       touch(shadow, name);
       // Note: Matthias Keil
       // Object.defineProperty is not equivalent to the behavior 
       // described in the ECMA Standard
       return Object.defineProperty(shadow, name, desc);
-    }
+    }*/
     /** target, name -> boolean
     */
-    function doDelete(shadow, name) {
+    /*function doDelete(shadow, name) {
       touch(shadow, name);
       return (delete shadow[name]);
-    }
+    }*/
     /** target -> [String]
     */
-    function doEnumerate(shadow) {
+    /*function doEnumerate(shadow) {
       // Note: Trap is never called
-    }
+    }*/
     /** target -> iterator
     */
-    function doIterate(shadow) {
+    /*function doIterate(shadow) {
       // Note: Trap is never called
-    }
+    }*/
     /** target -> [String]
     */
-    function doKeys(shadow) {
+    /*function doKeys(shadow) {
       // NOTE: Matthias Keil (May 21 2014)
       // The order of
       // *Object.getOwnPropertyNames*
       // corresponds to the order provided by the for...in loop.
       return Object.keys(shadow);
-    }
+    }*/
     /** target, name -> PropertyDescriptor | undefined
     */
-    function doGetOwnPropertyDescriptor(shadow, name) {
+    /*function doGetOwnPropertyDescriptor(shadow, name) {
       if(affected(name)) {
         return Object.getOwnPropertyDescriptor(shadow, name);
       } else {
@@ -593,16 +607,16 @@ function Sandbox(global, params, prestate) {
         }
         return desc;
       }
-    }
+    }*/
     /** target -> [String]
     */
-    function doGetOwnPropertyNames(shadow) {
+    /*function doGetOwnPropertyNames(shadow) {
       // NOTE: Matthias Keil (May 21 2014)
       // The order of
       // *Object.getOwnPropertyNames*
       // corresponds to the order provided by the for...in loop.
       return Object.getOwnPropertyNames(shadow);
-    }
+    }*/
 
     // _____                 
     //|_   _| _ __ _ _ __ ___
