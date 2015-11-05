@@ -696,24 +696,29 @@ function Sandbox(global, params, prestate) {
       // TODO, BUG, access to undefined;
       if(origin===global && name==='undefined') return undefined;
 
-      if(affected(name)) {
+
+      // TODO
+      return (affected(name)) ? shadow[name] : wrap(origin[name]);
+
+      /*if(affected(name)) {
 
 
 
 
-      } else {
+        } else {
 
-      }
+        }
 
 
-      var desc = (affected(name)) ? 
+        var desc = (affected(name)) ? 
         Object.getOwnPropertyDescriptor(scope, name): 
         Object.getOwnPropertyDescriptor(origin, name);
 
-      var getter = desc ? desc.get : undefined;
+        var getter = desc ? desc.get : undefined;
 
-      if(getter) return evaluate(getter,((affected(name)) ? shadow : origin), []);
-      else return (affected(name)) ? shadow[name] : wrap(origin[name]);
+        if(getter) return evaluate(getter,((affected(name)) ? shadow : origin), []);
+        else return (affected(name)) ? shadow[name] : wrap(origin[name]);
+        */
     };
 
     /** 
@@ -723,33 +728,40 @@ function Sandbox(global, params, prestate) {
       __verbose__ && logc("set", name);
       __effect__  && trace(new Effect.Set(origin, name));
 
-      if(affected(name)) {
+
+      // TODO
+      touch(name); 
+      return (shadow[name]=value);
+
+      /*if(affected(name)) {
         var desc = Object.getOwnPropertyDescriptor(scope, name);
 
-      } else {
+        } else {
 
 
         var desc = Object.getOwnPropertyDescriptor(shadow, name);
 
 
-      }
+        }
 
-      var desc =  (affected(name)) ? 
+        var desc =  (affected(name)) ? 
         Object.getOwnPropertyDescriptor(scope, name): 
         Object.getOwnPropertyDescriptor(origin, name);
 
-      var setter = desc ? desc.set : undefined;
+        var setter = desc ? desc.set : undefined;
 
-      if(setter) return evaluate(setter,((affected(name)) ? scope : origin), [value]);
-      else {
+        if(setter) return evaluate(setter,((affected(name)) ? scope : origin), [value]);
+        else {
         touch(scope, name); 
         (scope[name]=value);
-      }
-      return true;
+        }
+        return true;
 
 
       // TODO
-      return doSet(shadow, name, value);
+      return doSet(shadow, name, value);*/
+
+
     };
 
     /**
