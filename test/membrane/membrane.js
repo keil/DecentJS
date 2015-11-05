@@ -13,6 +13,12 @@
  * http://www.informatik.uni-freiburg.de/~keilr/
  */
 
+
+// Object.isExtensible
+// Note: Proxy Trap does not exist
+load("test/membrane/Object.isExtensible.js");
+quit();
+
 //                 _                       
 // _ __  ___ _ __ | |__  __ _ _ _ _ _  ___ 
 //| '  \/ -_) '  \| '_ \/ _` | '_| ' \/ -_)
@@ -26,9 +32,10 @@
 // A test for Object.isExtensible.
 
 // A test for Object.preventExtensions.
+load("test/membrane/Object.preventExtensions.js");
 
 // A test for Object.getOwnPropertyDescriptor.
-load("test/membrane/Object.getOwnPropertyDescriptor.js");
+//load("test/membrane/Object.getOwnPropertyDescriptor.js");// TODO
 
 // A test for Object.defineProperty.
 load("test/membrane/Object.defineProperty.js");
@@ -59,35 +66,11 @@ load("test/membrane/Object.construct.js");
 
 
 
-
-/// TODO test native
-
-// Object.construct
-
-
-// Object.defineProperty
+// TODO
+// test native function
+// and construct e.g. from Date
 
 
-// Object.deleteProperty
-
-
-// Object.enumerate
-// Note: Proxy Trap ist not implemented
-
-
-// Object.freeze
-// Note: Proxy Trap ist not implemented
-//// load("test/membrane/Object.freeze.js");
-
-// Object.get
-
-// Object.getOwnPropertyDescriptor
-
-
-// Object.getOwnPropertyNames
-
-
-// Object.has
 
 
 // Object.hasOwn
@@ -97,34 +80,41 @@ load("test/membrane/Object.construct.js");
 // Note: Proxy Trap does not exist
 load("test/membrane/Object.isExtensible.js");
 
-// Object.isFrozen
-// Note: Proxy Trap does not exist
-//load("test/membrane/Object.isFrozen.js");
 
-// Object.isSealed
-// Note: Proxy Trap does not exist
-//load("test/membrane/Object.isSealed.js");
 
-// Object.iterate
+
+
 // Note: Proxy Trap ist not implemented
-//load("test/membrane/Object.iterate.js");
 
 // Object.keys
 //load("test/membrane/Object.keys.js"); 
 
 // Object.preventExtensions
-//load("test/membrane/Object.preventExtensions.js");
 
-// Object.seal
-// Note: Proxy Trap ist not implemented
-// load("test/membrane/Object.seal.js");
 
-// Object.set
+
 
 // _         _             _         
 //| |__  ___| |_  __ ___ _(_)___ _ _ 
 //| '_ \/ -_) ' \/ _` \ V / / _ \ '_|
 //|_.__/\___|_||_\__,_|\_/|_\___/_|  
+
+// Object.iterate
+load("test/membrane/Object.iterate.js");
+
+// Object.freeze
+//load("test/membrane/Object.freeze.js"); // TODO
+
+// Object.isFrozen
+//load("test/membrane/Object.isFrozen.js"); // TODO
+
+// Object.seal
+//load("test/membrane/Object.seal.js"); // TODO
+
+// Object.isSealed
+//load("test/membrane/Object.isSealed.js"); // TODO
+
+
 
 // typeof proxy
 // TODO

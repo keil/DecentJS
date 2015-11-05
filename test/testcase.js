@@ -37,7 +37,15 @@ function Testcase(fun, globalArg, thisArg, argsArray, name, quitOnExit) {
       Object.prototype.toString,
       Object.defineProperty,
       Object.getOwnPropertyDescriptor,
-      Object.getOwnPropertyNames
+      Object.getOwnPropertyNames,
+      Object.getPrototypeOf,
+      Object.setPrototypeOf,
+      Object.seal,
+      Object.isSealed,
+      Object.freeze,
+      Object.isFrozen,
+      Object.preventExtensions,
+      Object.isExtensible
     ],
     out: out
   }

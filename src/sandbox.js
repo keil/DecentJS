@@ -98,6 +98,12 @@ function Sandbox(global, params, prestate) {
   var __metahandler__ = configure("metahandler", true);
 
   /*
+   * Debug Mode
+   * (default: false)
+   */
+  var __debug__ = configure("debug", false);
+
+  /*
    * Function pass-through
    * (default: {})
    */
@@ -108,12 +114,6 @@ function Sandbox(global, params, prestate) {
    * (default:null);
    */
   var __out__ = configure("out", new Out());
-
-  // TODO
-  var __debug__ = configure("debug", false);
-
-  // TODO, native pass-through
-  
   
   //              __ _                   
   // __ ___ _ _  / _(_)__ _ _  _ _ _ ___ 
@@ -399,7 +399,16 @@ function Sandbox(global, params, prestate) {
     //  throw new Error("No JavaScript Object.");
 
     var clone = Object.create(Object.getPrototypeOf(target));
-    
+   
+    for (var property in target) {
+      if (target.hasOwnProperty(property)) {
+        clone[property] = undefined; // soft clone
+        //var descriptor = Object.getOwnPropertyDescriptor(target, property);
+        //Object.defineProperty(clone, property, {});
+      }  
+    }
+
+
     /*for (var property in target) {
       if (target.hasOwnProperty(property)) {
         var descriptor = Object.getOwnPropertyDescriptor(target, property);
@@ -863,9 +872,12 @@ function Sandbox(global, params, prestate) {
       __verbose__ && logc("ownKeys");
       __effect__  && trace(new Effect.OwnKeys(origin));
 
+      //return [];
+
       var properties = new Set();
       for(var property in (ownProperties = Object.getOwnPropertyNames(origin))) {
-        properties.add(ownProperties[property]);
+        //properties.add(ownProperties[property]);
+        print('----------------------', ownProperties[property]);
       }
       for(var property in (ownProperties = Object.getOwnPropertyNames(shadow))) {
         properties.add(ownProperties[property]);
@@ -1959,7 +1971,7 @@ Object.defineProperty(Sandbox, "DEFAULT", {
      */ verbose:false,
     /** Enable Statistic
      * (default: false)
-     */ statistic:true,
+     */ statistic:false,
     /** Decompile
      * (default: true)
      */ decompile:true,
@@ -1974,7 +1986,10 @@ Object.defineProperty(Sandbox, "DEFAULT", {
      */ transparent:false,
     /** MetaHandler
      * (default: true)
-     */ metahandler:true,
+     */ metahandler:false,
+    /** Debug Mode
+     * (default: false)
+     */ debug:false,
     /** Function pass-through
      * (default: [])
      */ passthrough:[],
@@ -2006,7 +2021,10 @@ Object.defineProperty(Sandbox, "TRANSPARENT", {
      */ transparent:true,
     /** MetaHandler
      * (default: true)
-     */ metahandler:true,
+     */ metahandler:false,
+    /** Debug Mode
+     * (default: false)
+     */ debug:false,
     /** Function pass-through
      * (default: [])
      */ passthrough:[],
@@ -2039,6 +2057,9 @@ Object.defineProperty(Sandbox, "DEBUG", {
     /** MetaHandler
      * (default: true)
      */ metahandler:true,
+    /** Debug Mode
+     * (default: false)
+     */ debug:true,
     /** Function pass-through
      * (default: [])
      */ passthrough:[print],
