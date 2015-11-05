@@ -14,6 +14,8 @@
  */
 
 (new Testcase(function(object) {
+  object.y = "~";
+  object.z = "~";
   object.a = "~";
   object.x = "~";
 

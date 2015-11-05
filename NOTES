@@ -1,6 +1,9 @@
 - CHANGES
 - PRE STATE SNAPSHOT
 
+test protoyype and is extensoible
+new test cases for new traps
+
 * No rollback in freeze seal because if missin trap
 
 * Limitations*

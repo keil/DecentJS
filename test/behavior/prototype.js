@@ -13,7 +13,7 @@
  * http://www.informatik.uni-freiburg.de/~keilr/
  */
 
-(new Testcase(function(B) {
+(new Testcase(function({B:B, A:A}) {
   var b = new B();
   var outcome = "" ; 
 
@@ -23,6 +23,8 @@
   outcome += (b.a);
   outcome += (b.b);
   outcome += (B.prototype.a);
+  //outcome += (b instanceof A);
+  outcome += (b instanceof B);
 
   return outcome;
 }, {}, {}, [(function() {
@@ -35,6 +37,6 @@
   }
   B.prototype = new A();
 
-  return B;
+  return {B:B, A:A};
 
 })()], "Prototype")).run();

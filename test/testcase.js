@@ -21,6 +21,8 @@ function Testcase(fun, globalArg, thisArg, argsArray, name, quitOnExit) {
 
   var params = {
     verbose: true,
+    statistic: true,
+    debug:true,
     passthrough:[
       print, 
       valueOf,
@@ -32,7 +34,10 @@ function Testcase(fun, globalArg, thisArg, argsArray, name, quitOnExit) {
       Object.hasOwnProperty,
       Object.prototype.keys, 
       Object.prototype.getPrototypeOf,
-      Object.prototype.toString
+      Object.prototype.toString,
+      Object.defineProperty,
+      Object.getOwnPropertyDescriptor,
+      Object.getOwnPropertyNames
     ],
     out: out
   }

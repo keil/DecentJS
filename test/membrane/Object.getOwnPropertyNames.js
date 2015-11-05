@@ -24,7 +24,7 @@
   var n = Object.getOwnPropertyNames(object.c);
 
   var outcome = "";
-  for(var p in m) outcome = outcome + p;
-  for(var p in n) outcome = outcome + p;
+  for(var p in m) outcome = outcome + m[p];
+  for(var p in n) outcome = outcome + n[p];
   return outcome;
 }, this, {}, [{a:4711, b:4712, c:{x:4713, y:4714}}], "Object.getOwnPropertyNames")).run();

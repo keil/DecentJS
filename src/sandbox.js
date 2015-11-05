@@ -240,17 +240,13 @@ function Sandbox(global, params, prestate) {
 
   /** Maps target values to sandbox proxies
   */
-  var cache = new WeakMap();
+  var targets = new WeakMap();
 
-  /** Maps sandbox proxies to shadow objects
-  */ // TODO
-  var state = new WeakMap();
-
-  /** Stores the sandbox proies
+  /** Maps sandbox proxies to handler objects
   */
-  var pool = new WeakSet();
+  var proxies = new WeakMap();
 
-  // TODO
+  // TODO 
   //var reverse = new WeakMap();
   //var pool = new WeakSet();
 
@@ -262,14 +258,13 @@ function Sandbox(global, params, prestate) {
    * @return JavaScript Proxy 
    */
   function wrap(target) { 
-    //__verbose__ && logc("wrap");
+    __verbose__   && logc("wrap");
+    __statistic__ && increment("wrap");
 
     // If target is a primitive value, then return target
     if (target !== Object(target)) {
       return target;
     }
-
-    //__statistic__ && increment("wrap");
 
     // If target is undefined, then throw an exception
     // Matthias Keil: should never occur because of Object(target)
@@ -277,7 +272,7 @@ function Sandbox(global, params, prestate) {
     //  throw new ReferenceError("Target is undefined.");
 
     // avoids re-wrapping
-    if(pool.has(target)) return target;
+    if(proxies.has(target)) return target;
 
     // TODO
     // Membrane ? 
@@ -292,10 +287,13 @@ function Sandbox(global, params, prestate) {
     //  return undefined;
     //}
 
+    // TODO, reactivate old native pass throught 
     // Function pass throught
     if((target instanceof Function) && isPassThrough(target)) {
-      log("target pass-throught");
-      return target;
+      __verbose__ && log("target pass-throught");
+      var native = true;
+    } else {
+      var native = false;
     }
 
     // TODO
@@ -305,13 +303,13 @@ function Sandbox(global, params, prestate) {
     //}
 
     // If target already wrapped, return cached proxy
-    if(cache.has(target)) {
-      //log("Cache hit.");
-      //increment("Cache hit");
-      return cache.get(target);
+    if(targets.has(target)) {
+      __verbose__   && log("Cache hit.");
+      __statistic__ && increment("Cache hit");
+      return targets.get(target);
     } else {
-      //log("Cache miss.");
-      //increment("Cache miss");
+      __verbose__   && log("Cache miss.");
+      __statistic__ && increment("Cache miss");
 
       // TODO, check if  required
 
@@ -321,10 +319,10 @@ function Sandbox(global, params, prestate) {
       // and to make an iterable image for loops
       if(target instanceof Function) {
         log("target instanceOf Function");
-        var scope = cloneFunction(target);
-      } else {
+        var shadow = cloneFunction(target, native);
+        } else {  
         log("target instanceOf Object");
-        var scope = cloneObject(target);
+        var shadow = cloneObject(target);
       }
 
       /*function make(handler) {
@@ -344,12 +342,12 @@ function Sandbox(global, params, prestate) {
 
       // TODO
       //var handler = make(new Membrane(target));
-      var handler = new Membrane(target);
-      var proxy = new Proxy(scope, handler);
+      var handler = new Membrane(target, native);
+      var proxy = new Proxy(shadow, handler);
 
-      cache.set(target, proxy);
-      //      reverse.set(proxy, target);
-      pool.add(proxy);
+      targets.set(target, proxy);
+      //reverse.set(proxy, target);
+      proxies.set(proxy, handler);
 
 
       return proxy;
@@ -401,15 +399,13 @@ function Sandbox(global, params, prestate) {
     //  throw new Error("No JavaScript Object.");
 
     var clone = Object.create(Object.getPrototypeOf(target));
-
-    // TODO
-    //print(target);
-    for (var property in target) {
+    
+    /*for (var property in target) {
       if (target.hasOwnProperty(property)) {
         var descriptor = Object.getOwnPropertyDescriptor(target, property);
         Object.defineProperty(clone, property, descriptor);
       }  
-    }
+    }*/
     return clone;
   }
 
@@ -420,13 +416,13 @@ function Sandbox(global, params, prestate) {
    * @param target JavaScript Function
    * @return JavaScript Function
    */
-  function cloneFunction(target) {
+  function cloneFunction(target, native) {
     log("Clone Function.");
 
     if(!(target instanceof Function))
       throw new Error("No JavaScript Function.");
 
-    var clone = decompile(target, wrap(global));
+    var clone = native ? (function(){}) : decompile(target, wrap(global));
     // TODO XXX
     //clone.prototype = target.prototype;
     //print("@@@@ " + target.prototype);
@@ -458,7 +454,7 @@ function Sandbox(global, params, prestate) {
    */
 
   // TODO
-  var switches = new WeakMap();
+  //var switches = new WeakMap();
 
 
 
@@ -478,24 +474,30 @@ function Sandbox(global, params, prestate) {
     /*
      * List of modified properties
      */
+    var touchedPropertyNames = new Set();
+    
+    // XXX
     Object.defineProperty(this, "touchedPropertyNames", {
-      value : new Set()
+      value : touchedPropertyNames
     });
 
     /** Returns true if the property was touched by the sandbox, false otherwise
     */
     function touched(property) {
-      return this.touchedPropertyNames.has(property);
+      return touchedPropertyNames.has(property);
     }
     /** Returns true if the property was not touched by the sandbox, false otherwise
     */
     function untouched(property) {
-      return !this.touchedPropertyNames.has(property);
+      return !touchedPropertyNames.has(property);
     }
     /** Flags a property as touched
     */
-    function touch(scope, name) {
-      this.touchedPropertyNames.add(name);
+    function touch(name) {
+      __verbose__   && logc("touch", name);
+      __statistic__ && increment("Touched");
+
+      touchedPropertyNames.add(name);
       
       // TODO, not required because of set
       //if(unaffected(name)) {
@@ -675,9 +677,25 @@ function Sandbox(global, params, prestate) {
       __verbose__ && logc("getOwnPropertyDescriptor", name);
       __effect__  && trace(new Effect.GetOwnPropertyDescriptor(origin, name));
 
-      return (affected(name)) ? 
+      /*return (touched(name)) ? 
         Object.getOwnPropertyDescriptor(shadow, name):
         wrap(Object.getOwnPropertyDescriptor(origin, name));
+        */
+
+      var returnx =  (touched(name)) ? 
+        Object.getOwnPropertyDescriptor(shadow, name):
+        wrap(Object.getOwnPropertyDescriptor(origin, name));
+
+      //print("@@@@@@@@@@@@", "-", isProxy(returnx.value));
+
+      //returnx = new Proxy(returnx, new Proxy({get:function(target, name) {print("$$$ " + name);}}, {get:function(target, name) {print("@@@ " + name); return target[name]}}));
+
+      //for(var s in returnx) 
+      print(typeof returnx.value, isProxy(returnx.value), returnx.value);
+      //for(var s in returnx.value) print(typeof s, s, typeof returnx[s], isProxy(returnx[s]), returnx[s]);
+      //print("$$$$$$$$$$$$", 4711);
+
+      return returnx;
     };
 
     /** 
@@ -687,11 +705,21 @@ function Sandbox(global, params, prestate) {
       __verbose__ && logc("defineProperty", name);
       __effect__ &&  trace(new Effect.DefineProperty(origin, name));
 
-      touch(name);
       // Note: Matthias Keil
       // Object.defineProperty is not equivalent to the behavior 
       // described in the ECMA Standard
-      return Object.defineProperty(shadow, name, desc);
+      var current = ((touched(name)) ? 
+        Object.getOwnPropertyDescriptor(shadow, name):
+        wrap(Object.getOwnPropertyDescriptor(origin, name))) || {};
+
+//      current = current || [];
+
+      for(var key in desc) {
+        current[key] = desc[key];
+      }
+
+      touch(name);
+      return Object.defineProperty(shadow, name, current);
     };
 
     /** 
@@ -702,7 +730,7 @@ function Sandbox(global, params, prestate) {
       __effect__  && trace(new Effect.Has(origin, name));
 
       if(origin===global) return true;
-      else return (affected(name)) ? (name in shadow) : (name in origin);
+      else return (touched(name)) ? (name in shadow) : (name in origin);
     };
 
     /**
@@ -717,7 +745,7 @@ function Sandbox(global, params, prestate) {
 
 
       // TODO
-      return (affected(name)) ? shadow[name] : wrap(origin[name]);
+      return touched(name) ? shadow[name] : wrap(origin[name]);
 
       /*if(affected(name)) {
 
@@ -801,10 +829,31 @@ function Sandbox(global, params, prestate) {
       __verbose__ && logc("enumerate");
       __effect__  && trace(new Effect.Enumerate(origin));
 
+      var properties = new Set();
+      for(var property in origin) {
+        properties.add(property);
+      }
+      for(var property in shadow) {
+        properties.add(property);
+      }
+      return Array.from(properties)[Symbol.iterator]();
+
+
+/*      var properties = Object.keys(origin);
+      var modified = new Set(Object.getOwnPropertyNames(shadow));
+      for(var name of properties) {
+        if(modified.has(name)) {
+          modified.delete(name);
+        }
+      }
+      return properties.concat(Array.from(modified))[Symbol.iterator]();
+*/
+
       // TODO
-      return Object.getOwnPropertyNames(origin);
+      //return ["a", "b", "c"][Symbol.iterator]();
+      //return Object.getOwnPropertyNames(shadow)[Symbol.iterator]();
       // TODO
-      throw new Error("Unimplemented Trap enumerate.");
+      //throw new Error("Unimplemented Trap enumerate.");
     };
 
     /**
@@ -814,8 +863,28 @@ function Sandbox(global, params, prestate) {
       __verbose__ && logc("ownKeys");
       __effect__  && trace(new Effect.OwnKeys(origin));
 
+      var properties = new Set();
+      for(var property in (ownProperties = Object.getOwnPropertyNames(origin))) {
+        properties.add(ownProperties[property]);
+      }
+      for(var property in (ownProperties = Object.getOwnPropertyNames(shadow))) {
+        properties.add(ownProperties[property]);
+      }
+      return Array.from(properties); //[Symbol.iterator]();
+
+      /*
+      var properties = ;
+      var modified = new Set();
+      for(var name of properties) {
+        if(modified.has(name)) {
+          modified.delete(name);
+        }
+      }
+      return properties.concat(Array.from(modified))[Symbol.iterator]();
+      */
+
       // TODO
-      return doOwnKeys(shadow);
+      //return doOwnKeys(shadow);
     };
 
     /** 
@@ -826,7 +895,8 @@ function Sandbox(global, params, prestate) {
       __effect__  && trace(new Effect.Apply(origin));
 
       thisArg = thisArg ? thisArg : wrap(global);
-      return shadow.apply(thisArg, argumentsList);
+      return native ? origin.apply(thisArg, argumentsList) :
+        shadow.apply(thisArg, argumentsList);
       //argumentsList = argumentsList ? argumentsList : [];
 
       // Note: 
@@ -895,7 +965,7 @@ function Sandbox(global, params, prestate) {
       var sbxed = eval("(function() { with(env) { return " + body + " }})();");
       return sbxed;
     } catch(error) {
-      throw new SyntaxError("Incompatible function object." + "\n" + fun);
+      throw new SyntaxError("Incompatible function object." + "\n" + fun + "\n" + error);
     } 
   }
 

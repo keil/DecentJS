@@ -22,7 +22,7 @@
 load("test/behavior/prototype.js");
 
 // decompile
-load("test/behavior/decompile.js");
+//load("test/behavior/decompile.js");
 
 // eval
-load("test/behavior/eval.js");
+//load("test/behavior/eval.js");
