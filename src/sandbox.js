@@ -240,6 +240,10 @@ function Sandbox(global, params, prestate) {
   */
   var cache = new WeakMap();
 
+  /** Maps sandbox proxies to shadow objects
+  */ // TODO
+  var state = new WeakMap();
+
   /** Stores the sandbox proies
   */
   var pool = new WeakSet();
@@ -451,6 +455,7 @@ function Sandbox(global, params, prestate) {
    * @param origin The current Global Object.
    */
 
+  // TODO
   var switches = new WeakMap();
 
   function Membrane(origin) {
@@ -1444,87 +1449,40 @@ function Sandbox(global, params, prestate) {
 
     }, this);*/ // TODO
 
-
-
-
-  //  _____ _                                 
-  // / ____| |                                
-  //| |    | |__   __ _ _ __   __ _  ___  ___ 
-  //| |    | '_ \ / _` | '_ \ / _` |/ _ \/ __|
-  //| |____| | | | (_| | | | | (_| |  __/\__ \
-  // \_____|_| |_|\__,_|_| |_|\__, |\___||___/
-  //                           __/ |          
-  //                          |___/           
-
-  /** Has Changes With
-   * @param target JavaScript Object
-   * return true|false
-   */
-  define("hasChangesOn", function(target) {
-    var es = this.writeeffectsOf(target);
-
-    var changes = false;
-    for(var e in es) {
-      // TODO, unroll needed
-      var result =  es[e].stat;
-      log("check " + es[e] + " = " + result);
-      changes = (result) ? true : changes;
-    }
-    return changes;
-  }, this);
-
-  /** Has Changes
-   * return true|false
-   */
-  /*getter("hasChanges", function() {
-    var changes = false;
-    for(var i in writetargets) {
-    changes = (this.hasChangesOn(writetargets[i])) ? true : changes;
-    }
-    return changes;
-
-    }, this);*/ // TODO
-
-  /** Changes Of
-   * @param target JavaScript Object
-   * return [Differences]
-   */
-  /*define("changesOf", function(target) {
-    var sbxA = this;
-    var es = this.effectsOf(target);
-
-    var changes = [];
-    for(var e in es) {
-    var result =  es[e].stat;
-    log("check " + es[e] + " = " + result);
-    if(result) changes.push(new Effect.Change(sbxA, es[e]));
-    }
-    return changes;
-    }, this);*/ // TODO
-
-  /** Changes 
-   * return [Changes]
-   */
-  /*getter("changes", function() {
-    var sbxA = this;
-    var es = writeeffects;
-
-    var changes = [];
-    for(var e in es) {
-    var result =  es[e].stat;
-    log("check " + es[e] + " = " + result);
-    if(result) changes.push(new Effect.Change(sbxA, es[e]));
-    }
-    return changes;
-    }, this);*/ // TODO
-
-
   // _____  _  __  __                                  
   //|  __ \(_)/ _|/ _|                                 
   //| |  | |_| |_| |_ ___ _ __ ___ _ __   ___ ___  ___ 
   //| |  | | |  _|  _/ _ \ '__/ _ \ '_ \ / __/ _ \/ __|
   //| |__| | | | | ||  __/ | |  __/ | | | (_|  __/\__ \
   //|_____/|_|_| |_| \___|_|  \___|_| |_|\___\___||___/
+
+  
+  
+  function hasDifferences(effect, shadow, target) {
+
+    if(effect instanceof Effect.SetPrototypeOf) {
+      return Object.getPrototypeOf(origin) !== Object.getPrototypeOf(shadow);
+
+    } else if(effect instanceof Effect.PreventExtensions) {
+      return Object.isExtensible(origin) !== Object.isExtensible(shadow);
+
+    } else if(effect instanceof Effect.DefineProperty) {
+      (Object.getOwnPropertyDescriptor(shadow, effect.name) !== Object.getOwnPropertyDescriptor(origin, effect.name)
+      
+      (target[name]!==this.origin)
+      Object.defineProperty(origin, effect.name,  Object.getOwnPropertyDescriptor(shadow, effect.name));
+
+    } else if(effect instanceof Effect.Set) {
+      // TODO, compare proeprty descriptoes
+      return (origin[effect.name] !== shadow[effect.name]);
+
+    } else if(effect instanceof Effect.DeleteProperty) {
+      return (Object.getOwnPropertyDescriptor(shadow, effect.name) !== Object.getOwnPropertyDescriptor(origin, effect.name));
+
+    }
+  }
+
+
 
   /** Has Difference With
    * @param target JavaScript Object
@@ -1589,6 +1547,124 @@ function Sandbox(global, params, prestate) {
 
 
 
+
+  //  _____ _                                 
+  // / ____| |                                
+  //| |    | |__   __ _ _ __   __ _  ___  ___ 
+  //| |    | '_ \ / _` | '_ \ / _` |/ _ \/ __|
+  //| |____| | | | (_| | | | | (_| |  __/\__ \
+  // \_____|_| |_|\__,_|_| |_|\__, |\___||___/
+  //                           __/ |          
+  //                          |___/           
+
+  // TODo, changes will not work as before, because we do not see the 
+  // value returned at effect time.
+
+  function comparePropertyDescriptor(desc1, desc2) {
+    var keys = ["configurable", "enumerable", "value", "writable", "get", "set"];
+    for (var key in keys) {
+      print("compare key", key); // TODO
+      if(desc1[key]===desc2[key]) 
+        continue;
+      else
+        return false;
+    }
+    return true;
+  }
+
+  // how to knwo if the value inssnt writte inside if teh sandbox?
+  // changes and differences should only consider the last effect on
+
+  function hasChanges(effect, shadow, origin) {
+
+    if(effect instanceof Effect.GetPrototypeOf) {
+      return Object.getPrototypeOf(shadow) !== Object.getPrototypeOf(origin);
+
+    } else if(effect instanceof Effect.IsExtensible) {
+      return Object.isExtensible(shadow) !== Object.isExtensible(origin)
+
+    } else if(effect instanceof Effect.GetOwnPropertyDescriptor) {
+      return comparePropertyDescriptor(Object.getOwnPropertyDescriptor(shadow, effect.name), Object.getOwnPropertyDescriptor(origin, effect.name));
+
+    } else if(effect instanceof Effect.Has) {
+      return (effect.name in shadow) === (effect.name in origin);
+
+    } else if(effect instanceof Effect.Get) {
+
+    } else if(effect instanceof Effect.Enumerate) {
+
+    } else if(effect instanceof Effect.OwnKeys) {
+
+    }
+
+  }
+
+
+  /** Has Changes With
+   * @param target JavaScript Object
+   * return true|false
+   */
+  define("hasChangesOn", function(target) {
+    var es = this.writeeffectsOf(target);
+
+    var changes = false;
+    for(var e in es) {
+      // TODO, unroll needed
+      var result =  es[e].stat;
+      log("check " + es[e] + " = " + result);
+      changes = (result) ? true : changes;
+    }
+    return changes;
+  }, this);
+
+  /** Has Changes
+   * return true|false
+   */
+  /*getter("hasChanges", function() {
+    var changes = false;
+    for(var i in writetargets) {
+    changes = (this.hasChangesOn(writetargets[i])) ? true : changes;
+    }
+    return changes;
+
+    }, this);*/ // TODO
+
+  /** Changes Of
+   * @param target JavaScript Object
+   * return [Differences]
+   */
+  /*define("changesOf", function(target) {
+    var sbxA = this;
+    var es = this.effectsOf(target);
+
+    var changes = [];
+    for(var e in es) {
+    var result =  es[e].stat;
+    log("check " + es[e] + " = " + result);
+    if(result) changes.push(new Effect.Change(sbxA, es[e]));
+    }
+    return changes;
+    }, this);*/ // TODO
+
+  /** Changes 
+   * return [Changes]
+   */
+  /*getter("changes", function() {
+    var sbxA = this;
+    var es = writeeffects;
+
+    var changes = [];
+    for(var e in es) {
+    var result =  es[e].stat;
+    log("check " + es[e] + " = " + result);
+    if(result) changes.push(new Effect.Change(sbxA, es[e]));
+    }
+    return changes;
+    }, this);*/ // TODO
+
+
+
+
   //  _____                          _ _   
   // / ____|                        (_) |  
   //| |     ___  _ __ ___  _ __ ___  _| |_ 
@@ -1596,6 +1672,45 @@ function Sandbox(global, params, prestate) {
   //| |___| (_) | | | | | | | | | | | | |_ 
   // \_____\___/|_| |_| |_|_| |_| |_|_|\__|
 
+  // TODO, unwrap required
+
+  function commit(effct, shadow, origin) {
+    if(effect instanceof Effect.SetPrototypeOf) {
+      Object.setPrototypeOf(origin, Object.getPrototypeOf(shadow));
+
+    } else if(effect instanceof Effect.PreventExtensions) {
+      Object.preventExtensions(origin)
+
+    } else if(effect instanceof Effect.DefineProperty) {
+      Object.defineProperty(origin, effect.name,  Object.getOwnPropertyDescriptor(shadow, effect.name));
+
+    } else if(effect instanceof Effect.Set) {
+      origin[effect.name]=shadow[effect.name];
+
+    } else if(effect instanceof Effect.DeleteProperty) {
+      delete origin[effect.name];
+
+    }
+  }
+
+  /** Commit Of Target
+   * @return JavaScript Array [Effect]
+   */
+  define("commitOf", function(target) {
+    var effects = writeeffects.get(target);
+    for(var effect in effects) {
+      commit(effect, state.get(cache.get(target)), target);
+    }
+  }, this);
+
+  /** Commit All Targets
+   * @return JavaScript Array [Effect]
+   */
+  define("commit", function() {
+    for(var target of writetargets) {
+      this.commitOf(target);
+    }
+  }, this);
 
   // _____       _ _ _                _    
   //|  __ \     | | | |              | |   
@@ -1604,6 +1719,60 @@ function Sandbox(global, params, prestate) {
   //| | \ \ (_) | | | |_) | (_| | (__|   < 
   //|_|  \_\___/|_|_|_.__/ \__,_|\___|_|\_\
 
+  // TODO, unwrap required
+
+  function rollback(effct, shadow, origin) {
+
+    // better to clone origin again 
+    // and to delete the switch
+
+    if(effect instanceof Effect.SetPrototypeOf) {
+      throw new Error("Rollback not implemented.");
+      //Object.setPrototypeOf(shdaow, Object.getPrototypeOf(origin));
+
+    } else if(effect instanceof Effect.PreventExtensions) {
+      throw new Error("Rollback not implemented.");
+      //Object.preventExtensions(origin);
+
+    } else if(effect instanceof Effect.DefineProperty) {
+      throw new Error("Rollback not implemented.");
+      //Object.defineProperty(origin, effect.name,  Object.getOwnPropertyDescriptor(shadow, effect.name));
+
+    } else if(effect instanceof Effect.Set) {
+      throw new Error("Rollback not implemented.");
+      //origin[effect.name]=shadow[effect.name];
+
+    } else if(effect instanceof Effect.DeleteProperty) {
+      throw new Error("Rollback not implemented.");
+      //delete origin[effect.name];
+
+    }
+  }
+
+  // TODO, 
+
+  /** 
+   * Rollback Of Target
+   * @param target JavaScript Object
+   */
+  define("rollbackOf", function(target) {
+    // TODO, not all to do
+    // elemnent can be frozen or properties may be deleted
+    // e.g. this can be the difference to revert,
+    // revert removes the shadow
+    // whereas rollback handles the effects
+    // thus I need a special rollback function
+    if(switches.has(target)) switches.get(target).clear();
+  }, this);
+
+  /** 
+   * Rollback All Targets
+  */
+  define("rollback", function() {
+    for(var target of writetargets) {
+      this.rollbackOf(target);
+    }
+  }, this);
 
   // _____                     _   
   //|  __ \                   | |  
@@ -1612,70 +1781,23 @@ function Sandbox(global, params, prestate) {
   //| | \ \  __/\ V /  __/ |  | |_ 
   //|_|  \_\___| \_/ \___|_|   \__|
 
-
-
-  /** Rollback Of
-   * @param target JavaScript Object
-   */
-  /*define("rollbackOf", function(target) {
-    var es = this.writeeffectsOf(target);
-
-    for(var e in es) {
-    es[e].rollback();
-    }
-    }, this);*/ // TODO
-
-  /** Rollback
-  */
-  /*define("rollback", function(target) {
-    var es = writeeffects;
-
-    for(var e in es) {
-    es[e].rollback();
-    }
-    }, this);*/ // TODO
-
-
+  // TODO, deprecated
 
   /** Revert Of
    * @param target JavaScript Object
    */
-  /*define("revertOf", function(target) {
-    var sw = switches.get(target);
-  // TODO, clear
-  sw.clear();
-  }, this);*/ // TODO
+//  define("revertOf", function(target) {
+//    var sw = switches.get(target);
+//    sw.clear();
+//  }, this);
 
   /** Rrevert
   */
-  /*define("revert", function() {
-    for(var i in targets) {
-    this.revertOf(targets[i]);
-    }
-    }, this);*/ // TODO
-
-
-
-  /** Commit All Effects
-   * @return JavaScript Array [Effect]
-   */
-  /*define("commit", function() {
-    for(i in writeeffects) {
-    var effect = writeeffects[i];
-    if(effect instanceof Effect.Effect) effect.commit();
-    }
-    }, this);*/ // TODO
-
-  /** Commit All Effects Of
-   * @return JavaScript Array [Effect]
-   */
-  /* define("commitOf", function(target) {
-     var effects = writeset.get(target);
-     for(var i in effects) {
-     var effect = effects[i];
-     if(effect instanceof Effect.Effect) effect.commit();
-     }
-     }, this);*/ // TODO
+//  define("revert", function() {
+//    for(var i in targets) {
+//      this.revertOf(targets[i]);
+//    }
+//  }, this);
 
   //  _____ _        _   _     _   _      
   // / ____| |      | | (_)   | | (_)     

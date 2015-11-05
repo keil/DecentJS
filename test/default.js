@@ -1,4 +1,40 @@
 
+var object = {};
+object.a = 4711;
+
+print(object.a);
+print(Object.getOwnPropertyDescriptor(object, "a"));
+delete object.a;
+print(object.a);
+print(Object.getOwnPropertyDescriptor(object, "a"));
+
+print("LLL");
+
+
+quit();
+
+function Handler(shadow) {
+  this.XisExtensible = function(target) {
+    //print(Object.isExtensible(target));
+    //print(Object.isExtensible(shadow));
+    return Object.isExtensible(target);
+  };
+  this.preventExtensions = function(target) {
+    print("prevent extensions");
+    return Object.preventExtensions(target);
+  }
+}
+
+var shadow = {};
+var target = {};
+var proxy = new Proxy(target, new Handler(shadow));
+
+print(Object.isExtensible(proxy));
+print(Object.preventExtensions(proxy));
+
+
+quit();
+
 
 var mySet2 = new Set([1,2,3,4]);
 print(mySet2.size); // 4

@@ -1,22 +1,26 @@
-*** TreatJS Sandbox 0.5.2 (PoC)
+*** DeentJS 1.0.0 (PoC)
 
-- clenaup
-- new ES6 traps
+- [Change] Deprecated revert 
+- [Bugfix] Pass-throught of native functions
+- [Change] Revert/Rollback/Commit handling
+- [Change] Effect specification
+- [Change] Code clenaup and runtime optimization
+- [New] ES6 traps
 
-*** TreatJS Sandbox 0.5.1 (PoC)
+*** TreatJS Sandbox 0.5.0 (PoC)
 
-- New: Sandbox revert
+- [New] Sandbox revert
 
 *** TreatJS Sandbox 0.4.2 (PoC)
 
-- New semantics of stat and diff
+- [New] Semantics of stat and diff
 
 *** TreatJS Sandbox 0.4.1 (PoC)
 
-- New: fine-graned effect selection
-- New Call-effects in seperation to Read/Write-effects
+- [New] Fine-graned effect selection
+- [New] Call-effects in seperation to Read/Write-effects
 
 *** TreatJS Sandbox 0.4.0 (PoC)
 
-- Deprecated: nativePassThrought
-- New: Function pass-throught
+- [Delete] nativePassThrought
+- [New] Function pass-throught
