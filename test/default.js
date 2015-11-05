@@ -1,4 +1,10 @@
 
+Date.XXX = 4711;
+print(Date.XXX);
+print(Date);
+
+quit();
+
 var object = {};
 object.a = 4711;
 

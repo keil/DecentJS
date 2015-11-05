@@ -1467,9 +1467,9 @@ function Sandbox(global, params, prestate) {
       return Object.isExtensible(origin) !== Object.isExtensible(shadow);
 
     } else if(effect instanceof Effect.DefineProperty) {
-      (Object.getOwnPropertyDescriptor(shadow, effect.name) !== Object.getOwnPropertyDescriptor(origin, effect.name)
+      (Object.getOwnPropertyDescriptor(shadow, effect.name) !== Object.getOwnPropertyDescriptor(origin, effect.name));
       
-      (target[name]!==this.origin)
+      (target[name]!==this.origin);
       Object.defineProperty(origin, effect.name,  Object.getOwnPropertyDescriptor(shadow, effect.name));
 
     } else if(effect instanceof Effect.Set) {
