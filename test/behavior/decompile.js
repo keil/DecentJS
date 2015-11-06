@@ -152,8 +152,6 @@ var ref = "X";
   });
 })], "decompile # 8.2.1", false)).run();
 
-
-
 uuid = "[Global]";
 ref = "X";
 
@@ -182,7 +180,7 @@ var ref = "X";
   var g = f;
   var uuid = "[Local]";
   var outcome = "";
-  //  outcome+=g();
+  outcome+=g();
   outcome+=g.apply(this);
   return outcome;
 }, {isProxy:isProxy,uuid:"[SBX Global]"}, {uuid:"[This]"}, [(function() {
@@ -202,7 +200,7 @@ var ref = "X";
   var x = "[LOCAL]";
   outcome+=" /"+(x);
   outcome+=" /"+(this.x);
-  //  outcome+=" /"+f();
+  outcome+=" /"+f();
   outcome+=" /"+f.call(this);
   outcome+=" /"+(x);
   outcome+=" /"+(this.x);
@@ -227,7 +225,7 @@ var ref = "X";
   var x = "[LOCAL]";
   outcome+=" /"+(x);
   outcome+=" /"+(this.x);
-  //  outcome+=" /"+f();
+  //outcome+=" /"+f();
   outcome+=" /"+f.call(this);
   outcome+=" /"+(x);
   outcome+=" /"+(this.x);
@@ -236,11 +234,11 @@ var ref = "X";
   var x = "[FUNCTION] ";
   return function() {
     var outcome = " IN(";
-    //    outcome+=" /"+(x);
+    outcome+=" /"+(x);
     outcome+=" /"+(this.x);
     x="[4711]";
     this.x="[4712]";
-    //    outcome+=" /"+(x);
+    outcome+=" /"+(x);
     outcome+=" /"+(this.x);
     return outcome+") ";
   };

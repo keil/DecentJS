@@ -19,10 +19,10 @@
 //|_.__/\___|_||_\__,_|\_/|_\___/_|  
 
 // prototype
-load("test/behavior/prototype.js");
+// load("test/behavior/prototype.js"); // TODO
 
 // decompile
-//load("test/behavior/decompile.js");
+load("test/behavior/decompile.js"); // TODO, two comments lines
 
 // eval
-//load("test/behavior/eval.js");
+load("test/behavior/eval.js"); // TODO, no eval 

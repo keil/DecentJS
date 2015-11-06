@@ -24,12 +24,10 @@
   delete object.c.y;
   object.c.z = "~";
 
-  // NOTE: trap is not implemented
-
-  // var outcome = "" + " a)" + object.a + " b)" + object.b + " c.x)" + object.c.x + " c.y)" + object.c.y + " c.z)" + object.c.z + " x)" + object.x;
-  //  outcome += "?" + Object.isExtensible(object) + " " + Object.isExtensible(object.c);
+  var outcome = "" + " a)" + object.a + " b)" + object.b + " c.x)" + object.c.x + " c.y)" + object.c.y + " c.z)" + object.c.z + " x)" + object.x;
+  outcome += "?" + Object.isExtensible(object) + " " + Object.isExtensible(object.c);
   return outcome;
 
-  var outcome = "" ; //+ object.a + object.b + object.c.x + object.c.y + object.c.z + object.x;
+  var outcome = "" + object.a + object.b + object.c.x + object.c.y + object.c.z + object.x;
   return outcome;
 }, this, {}, [{a:4711, b:4712, c:{x:4713, y:4714}}], "Object.seal")).run();

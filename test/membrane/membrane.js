@@ -14,10 +14,7 @@
  */
 
 
-// Object.isExtensible
-// Note: Proxy Trap does not exist
-load("test/membrane/Object.isExtensible.js");
-quit();
+//quit();
 
 //                 _                       
 // _ __  ___ _ __ | |__  __ _ _ _ _ _  ___ 
@@ -30,12 +27,13 @@ quit();
 // A test for Object.setPrototypeOf.
 
 // A test for Object.isExtensible.
+load("test/membrane/Object.isExtensible.js");
 
 // A test for Object.preventExtensions.
 load("test/membrane/Object.preventExtensions.js");
 
 // A test for Object.getOwnPropertyDescriptor.
-//load("test/membrane/Object.getOwnPropertyDescriptor.js");// TODO
+//load("test/membrane/Object.getOwnPropertyDescriptor.js");// TODO make single example
 
 // A test for Object.defineProperty.
 load("test/membrane/Object.defineProperty.js");
@@ -64,36 +62,6 @@ load("test/membrane/Object.apply.js");
 // A test for the new operator. 
 load("test/membrane/Object.construct.js");
 
-
-
-// TODO
-// test native function
-// and construct e.g. from Date
-
-
-
-
-// Object.hasOwn
-//load("test/membrane/Object.hasOwn.js");
-
-// Object.isExtensible
-// Note: Proxy Trap does not exist
-load("test/membrane/Object.isExtensible.js");
-
-
-
-
-
-// Note: Proxy Trap ist not implemented
-
-// Object.keys
-//load("test/membrane/Object.keys.js"); 
-
-// Object.preventExtensions
-
-
-
-
 // _         _             _         
 //| |__  ___| |_  __ ___ _(_)___ _ _ 
 //| '_ \/ -_) ' \/ _` \ V / / _ \ '_|
@@ -103,24 +71,40 @@ load("test/membrane/Object.isExtensible.js");
 load("test/membrane/Object.iterate.js");
 
 // Object.freeze
-//load("test/membrane/Object.freeze.js"); // TODO
+//load("test/membrane/Object.freeze.js"); // TODO make meta handler test
 
 // Object.isFrozen
-//load("test/membrane/Object.isFrozen.js"); // TODO
+load("test/membrane/Object.isFrozen.js");
 
 // Object.seal
-//load("test/membrane/Object.seal.js"); // TODO
+//load("test/membrane/Object.seal.js"); // TODO make meta handler test
 
 // Object.isSealed
-//load("test/membrane/Object.isSealed.js"); // TODO
+load("test/membrane/Object.isSealed.js");
 
+// Object.keys
+// load("test/membrane/Object.keys.js"); 
 
+// Object.hasOwn
+//load("test/membrane/Object.hasOwn.js"); // TODO
 
-// typeof proxy
+// Getter function
 // TODO
 
-// proxy instanceof constructor
+// Setter function
+// TODO
+
+// typeof operator
+// TODO
+
+// instanceof oberator
 // TODO
 
 // Object.getPrototypeOf
 //load("test/membrane/Object.getPrototypeOf.js");
+
+// Native apply
+// TODO
+
+// Native construct
+// TODO

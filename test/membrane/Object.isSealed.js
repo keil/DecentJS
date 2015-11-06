@@ -16,8 +16,6 @@
 (new Testcase(function(object) {
   Object.seal(object.c);
 
-  // NOTE: Trap is not implemented
-
   var outcome = "" + Object.isFrozen(object) + Object.isFrozen(object.c) + Object.isSealed(object) + Object.isSealed(object.c) + Object.isExtensible(object) + Object.isExtensible(object.c);
   return outcome;
 }, this, {}, [{a:4711, b:4712, c:{x:4713, y:4714}}], "Object.isSealed")).run();

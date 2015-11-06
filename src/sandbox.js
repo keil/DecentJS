@@ -399,7 +399,17 @@ function Sandbox(global, params, prestate) {
     //  throw new Error("No JavaScript Object.");
 
     var clone = Object.create(Object.getPrototypeOf(target));
-   
+  
+    // TODO
+
+    /**
+     * Copies all properties (property names) from the target object
+     * to the shadow object. 
+     *
+     * This step is required because of some proxy internal invariants
+     * witch require that a non-extensible shadow object is not allowed 
+     * to return properties (keys) of the target object.
+     */
     for (var property in target) {
       if (target.hasOwnProperty(property)) {
         clone[property] = undefined; // soft clone
@@ -691,9 +701,9 @@ function Sandbox(global, params, prestate) {
         wrap(Object.getOwnPropertyDescriptor(origin, name));
         */
 
-      var returnx =  (touched(name)) ? 
+      var returnx = (touched(name)) ? 
         Object.getOwnPropertyDescriptor(shadow, name):
-        wrap(Object.getOwnPropertyDescriptor(origin, name));
+        wrap(Object.getOwnPropertyDescriptor(origin, name)) || {};
 
       //print("@@@@@@@@@@@@", "-", isProxy(returnx.value));
 
@@ -786,8 +796,14 @@ function Sandbox(global, params, prestate) {
 
 
       // TODO
-      touch(name); 
+      touch(name);
       return (shadow[name]=value);
+      //return value;
+      //print((shadow[name]));
+      //var returnx = Object.isExtensible(shadow) ? (shadow[name]=value) : value;
+      //print(returnx, (shadow[name]));
+
+      //return returnx;
 
       /*if(affected(name)) {
         var desc = Object.getOwnPropertyDescriptor(scope, name);
@@ -828,7 +844,11 @@ function Sandbox(global, params, prestate) {
       __effect__  && trace(new Effect.DeleteProperty(origin, name));
 
       touch(name);
-      return (delete shadow[name]);
+      print(shadow[name], name in shadow);
+      var returnx =  (delete shadow[name]);
+      print("+++++++++++++++++++", returnx);
+      return returnx;
+
     };
 
     /** 
@@ -839,9 +859,9 @@ function Sandbox(global, params, prestate) {
       __effect__  && trace(new Effect.Enumerate(origin));
 
       var properties = new Set();
-      for(var property in origin) {
-        properties.add(property);
-      }
+      //for(var property in origin) {
+      //  properties.add(property);
+     // }
       for(var property in shadow) {
         properties.add(property);
       }
@@ -875,10 +895,9 @@ function Sandbox(global, params, prestate) {
       //return [];
 
       var properties = new Set();
-      for(var property in (ownProperties = Object.getOwnPropertyNames(origin))) {
+     // for(var property in (ownProperties = Object.getOwnPropertyNames(origin))) {
         //properties.add(ownProperties[property]);
-        print('----------------------', ownProperties[property]);
-      }
+      //}
       for(var property in (ownProperties = Object.getOwnPropertyNames(shadow))) {
         properties.add(ownProperties[property]);
       }
