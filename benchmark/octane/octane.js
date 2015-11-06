@@ -20,8 +20,8 @@ var runfile  = (base_dir + 'run.js');
 
 var benchmarks = [];
 
-benchmarks.push(base_dir + 'richards.js');
-//benchmarks.push(base_dir + 'deltablue.js');
+//benchmarks.push(base_dir + 'richards.js');
+benchmarks.push(base_dir + 'deltablue.js');
 //benchmarks.push(base_dir + 'crypto.js');
 //benchmarks.push(base_dir + 'raytrace.js');
 //benchmarks.push(base_dir + 'earley-boyer.js'); 
@@ -37,6 +37,8 @@ benchmarks.push(base_dir + 'richards.js');
 //benchmarks.push([base_dir + 'typescript-input.js', base_dir + 'typescript-compiler.js', base_dir + 'typescript.js']);
 
 //for(var i in benchmarks) print("$$$" + benchmarks[i]);
+
+var global = dumpGlobal();
 
 this.alert = function(str) {
   print(str);
@@ -66,9 +68,13 @@ function getNewSandbox() {
     /** MetaHandler
      * (default: true)
      */ metahandler:false,
+    /** Debug Mode
+     * (default: false)
+     */ debug:false,
     /** Function pass-through
      * (default: [])
-     */ passthrough:[print, Function.prototype.call, Function.prototype.apply, Date, Error, Math, Math.pow, Array, Math.log],
+     */ passthrough:global,
+    //[print, Function.prototype.call, Function.prototype.apply, Date, Error, Math, Math.pow, Array, Math.log],
     /** Output handler
      * (default: ShellOut)
      */ out:ShellOut()
@@ -114,4 +120,4 @@ function runBenchmark(inSandbox) {
   }
 }
 
-runBenchmark(false);
+runBenchmark(true);

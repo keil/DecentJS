@@ -1,4 +1,8 @@
 
+// Object.getPrototypeOf
+//load("test/membrane/Object.getPrototypeOf.js");
+
+
 Date.XXX = 4711;
 print(Date.XXX);
 print(Date);

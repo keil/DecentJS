@@ -42,3 +42,9 @@ function Statistic() {
     return string;
   }, this);
 }
+
+Statistic.WRAP = "#wrap";
+Statistic.CACHEMISS = "#cache miss";
+Statistic.CACHEHITT = "#cache hit";
+Statistic.TOUCHED = "#touched";
+Statistic.TRACE = "#trace";
