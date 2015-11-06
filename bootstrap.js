@@ -14,6 +14,8 @@
  */
 
 load("lib/padding.js");
+load("lib/global.js");
+
 
 load("src/misc.js");
 load("src/out.js");

@@ -105,9 +105,9 @@ function Sandbox(global, params, prestate) {
 
   /*
    * Function pass-through
-   * (default: {})
+   * (default:undefined)
    */
-  var __passthrough__ = configure("passthrough", []);
+  var __passthrough__ = configure("passthrough", new Set());
 
   /*
    * Output
@@ -131,11 +131,11 @@ function Sandbox(global, params, prestate) {
   //|_|                                             |_|                   
 
   // TODO
-  //var snapshot = new WeakMap();
-
-  //if(prestate instanceof Array) for(var i in prestate) {
-  //  snapshot.push(prestate[i], clone(prestate[i])); // TODO, CLONE object and function obejcts
-  //}
+  // Pre-state Snapshot Mode currently not available.
+  // var snapshot = new WeakMap();
+  // if(prestate instanceof Array) for(var i in prestate) {
+  //   snapshot.push(prestate[i], clone(prestate[i]));
+  // }
 
   // _           
   //| |___  __ _ 
@@ -176,38 +176,29 @@ function Sandbox(global, params, prestate) {
     }
   }
 
-  //     _     _      _   _          
-  //__ _(_)___| |__ _| |_(_)___ _ _  
-  //\ V / / _ \ / _` |  _| / _ \ ' \ 
-  // \_/|_\___/_\__,_|\__|_\___/_||_|
-
-  function violation(msg) {
-    // NOTE: Matthias Keil
-    // throw new Error("Unauthorized Access: "+msg);
-    // not possible because each 
-    // write access calls has before calling set
-    log("Unauthorized Access: "+msg);
-  }
-
   // _    _  _      _   _         ___             _   _          
   //(_)__| \| |__ _| |_(_)_ _____| __|  _ _ _  __| |_(_)___ _ _  
   //| (_-< .` / _` |  _| \ V / -_) _| || | ' \/ _|  _| / _ \ ' \ 
   //|_/__/_|\_\__,_|\__|_|\_/\___|_| \_,_|_||_\__|\__|_\___/_||_|
 
-  var FunctionPrototypeToString = Function.prototype.toString;
-  var passthrough = new Set((__passthrough__ instanceof Array) ? __passthrough__ : []);
+  var toString = Function.prototype.toString;
+  //var passthrough = __passthrough__;  
+  //new Set((__passthrough__ instanceof Array) ? __passthrough__ : []);
 
-  /** isPassThrough(fun)
+  /** passThrough(fun)
    * Checks whether the given function is a pass-through function or not.
    *
    * @param fuc Function Object
    * @return true, if fun is a pass-through function, false otherwise
    */
-  function isPassThrough(fun) {
-    if(!(fun instanceof Function)) return false;
-    else {
-      return passthrough.has(fun);
-    }
+  function passThrough(fun) {
+    print(__passthrough__ instanceof WeakSet);
+    return (fun instanceof Function) && __passthrough__.has(fun);
+
+    //if(!(fun instanceof Function)) return false;
+    //else {
+    //  return passthrough.has(fun);
+    //}
 
     // Note: Matthias Keil
     // deprecated, Function.bind makes all functions to a native function
@@ -289,7 +280,7 @@ function Sandbox(global, params, prestate) {
 
     // TODO, reactivate old native pass throught 
     // Function pass throught
-    if((target instanceof Function) && isPassThrough(target)) {
+    if((target instanceof Function) && passThrough(target)) {
       __verbose__ && log("target pass-throught");
       var native = true;
     } else {
@@ -2011,7 +2002,7 @@ Object.defineProperty(Sandbox, "DEFAULT", {
      */ debug:false,
     /** Function pass-through
      * (default: [])
-     */ passthrough:[],
+     */ passthrough:new Set(),
     /** Output handler
      * (default: ShellOut)
      */ out:ShellOut()
@@ -2046,7 +2037,7 @@ Object.defineProperty(Sandbox, "TRANSPARENT", {
      */ debug:false,
     /** Function pass-through
      * (default: [])
-     */ passthrough:[],
+     */ passthrough:new Set(),
     /** Output handler
      * (default: ShellOut)
      */ out:ShellOut()
@@ -2081,7 +2072,7 @@ Object.defineProperty(Sandbox, "DEBUG", {
      */ debug:true,
     /** Function pass-through
      * (default: [])
-     */ passthrough:[print],
+     */ passthrough:new Set([print]),
     /** Output handler
      * (default: ShellOut)
      */ out:ShellOut()
