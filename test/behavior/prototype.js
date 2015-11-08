@@ -15,11 +15,11 @@
 
 (new Testcase(function({B:B, A:A, x:x, y:y}) {
   var outcome = "" ;
-  
+
   B.prototype = new A();
   function C() {};
   C.prototype = new A();
-  
+
   var a = new A();
   var b = new B();
   var c = new C();
@@ -51,7 +51,7 @@
 
 (new Testcase(function({B:B, A:A, x:x, y:y}) {
   var outcome = "" ;
-  
+
   var a = new A();
 
   outcome += Object.getPrototypeOf(x);
@@ -80,7 +80,7 @@
 
 (new Testcase(function({B:B, A:A, x:x, y:y}) {
   var outcome = "" ;
-  
+
   var b = new B();
 
   outcome += (b instanceof A);
@@ -106,7 +106,7 @@
 
 (new Testcase(function({B:B, A:A, x:x, y:y}) {
   var outcome = "" ;
-  
+
   var a = new A();
 
   var b = new B();
@@ -118,7 +118,7 @@
   outcome += (b.a);
   outcome += (b.b);
   outcome += (B.prototype.a);
-  
+
   outcome += (b instanceof A);
   outcome += (b instanceof B);
 

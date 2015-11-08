@@ -23,17 +23,17 @@
 
   function dump(pd) {
     if(!pd) return undefined;
-    else return /*" value:" + pd.value +*/ " writeable:" + pd.writeable + " enumerable:" + pd.enumerable + " configurable:" + pd.configurable + " get:"+pd.get + " set:"+pd.set;
-    //return " value:" + pd.value + " writeable:" + pd.writeable + " enumerable:" + pd.enumerable + " configurable:" + pd.configurable + " get:"+pd.get + " set:"+pd.set;
+    ///else return /*" value:" + pd.value +*/ " writeable:" + pd.writeable + " enumerable:" + pd.enumerable + " configurable:" + pd.configurable + " get:"+pd.get + " set:"+pd.set;
+    return " value:" + pd.value + " writeable:" + pd.writeable + " enumerable:" + pd.enumerable + " configurable:" + pd.configurable + " get:"+pd.get + " set:"+pd.set;
   }
 
   var outcome = "  -  " +
-//  dump(Object.getOwnPropertyDescriptor(object, "a")) + 
-//  dump(Object.getOwnPropertyDescriptor(object, "b")) +
+  dump(Object.getOwnPropertyDescriptor(object, "a")) + 
+  dump(Object.getOwnPropertyDescriptor(object, "b")) +
   dump(Object.getOwnPropertyDescriptor(object, "c")) +
-//  dump(Object.getOwnPropertyDescriptor(object.c, "x")) +
-//  dump(Object.getOwnPropertyDescriptor(object.c, "y")) +
-//  dump(Object.getOwnPropertyDescriptor(object.c, "x")) +
+  dump(Object.getOwnPropertyDescriptor(object.c, "x")) +
+  dump(Object.getOwnPropertyDescriptor(object.c, "y")) +
+  dump(Object.getOwnPropertyDescriptor(object.c, "x")) +
 //  dump(Object.getOwnPropertyDescriptor(object, "x"))
     "";
 
@@ -52,5 +52,3 @@ quit();
   return outcome;
 
 }, this, {}, [{a:4711, b:4712, c:{x:4713, y:4714}}], "Object.getOwnPropertyDescriptor # 2")).run();
-
-quit();
