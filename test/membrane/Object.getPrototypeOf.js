@@ -20,7 +20,7 @@
 
   var outcome = "";
   outcome += Object.getPrototypeOf(f);
-  outcome += Object.getPrototypeOf(o);
+  outcome += f === Object.getPrototypeOf(o); 
   return outcome;
 }, this, {}, [{
   f:function() { 
@@ -32,7 +32,6 @@ g:function() {
 h:function() {
   return {x:4713, y:4714};
 }}], "Object.getPrototypeOf")).run();
-
 
 (new Testcase(function(object) {
 

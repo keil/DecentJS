@@ -19,7 +19,7 @@
 //|_.__/\___|_||_\__,_|\_/|_\___/_|  
 
 // prototype
-// load("test/behavior/prototype.js"); // TODO
+load("test/behavior/prototype.js");
 
 // decompile
 load("test/behavior/decompile.js"); // TODO, two comments lines

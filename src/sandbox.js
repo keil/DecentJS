@@ -277,7 +277,7 @@ function Sandbox(global, params, prestate) {
 
       // Function pass throught
       var native =  passThrough(target);
-      __verbose__ && log("target pass-throught");
+      __verbose__ && logc("target pass-throught", native);
 
       var shadow = cloneFunction(target, native);
     } else {  
@@ -350,7 +350,19 @@ function Sandbox(global, params, prestate) {
     __verbose__ && log("Clone Function.");
 
     var clone = native ? (function(){}) : decompile(target, wrap(global));
-    clone.prototype = wrap(target.prototype); 
+    //clone.prototype = wrap(target.prototype);  // TODO
+    
+    /**
+     * Note: Matthias Keil
+     * clone new
+     *
+     */
+
+    // do I get access when to the unprotected prototyper when ćreating an object from that 
+    
+    
+    clone.prototype = target.prototype; 
+    
     return clone;
   }
 
@@ -414,8 +426,9 @@ function Sandbox(global, params, prestate) {
       __verbose__ && logc("getPrototypeOf");
       __effect__  && trace(new Effect.GetPrototypeOf(origin));
 
-      // TODO, make test case
-      return Object.getPrototypeOf(shadow);
+      // TODO, trap is not implemented
+      throw new Error('Trap not implemented.');
+      return wrap(Object.getPrototypeOf(shadow));
     }
 
     /**
@@ -425,7 +438,8 @@ function Sandbox(global, params, prestate) {
       __verbose__ && logc("setPrototypeOf");
       __effect__  && trace(new Effect.SetPrototypeOf(origin));
 
-      // TODO make test 
+      // TODO trap is not implemented
+      throw new Error('Trap not implemented.');
       return Object.setPrototypeOf(shadow, prototype);
     }
 
@@ -593,12 +607,16 @@ function Sandbox(global, params, prestate) {
       __effect__  && trace(new Effect.Construct(origin));
 
       // TODO, test
-      //return new scope(wrap(argsArray));
+      //return new shadow(wrap(argumentsList));
+      //quit();
+      //
 
-      var thisArg = Object.create(shadow.prototype);
+      var thisArg = wrap(Object.create(shadow.prototype));
       var result =  native ? origin.apply(thisArg, argumentsList) : shadow.apply(thisArg, argumentsList);
       // return thisArg | val
       return (result instanceof Object) ? result : thisArg;
+      //return wrap((result instanceof Object) ? result : thisArg);
+
     };
   };
 

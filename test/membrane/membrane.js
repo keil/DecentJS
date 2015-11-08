@@ -23,8 +23,11 @@
 
 
 // A test for Object.getPrototypeOf.
+// TODO, Trap not supportet.
+load("test/membrane/Object.getPrototypeOf.js");
 
 // A test for Object.setPrototypeOf.
+// TODO, Trap not supportet.
 
 // A test for Object.isExtensible.
 load("test/membrane/Object.isExtensible.js");
@@ -88,23 +91,3 @@ load("test/membrane/Object.isSealed.js");
 // Object.hasOwn
 //load("test/membrane/Object.hasOwn.js"); // TODO
 
-// Getter function
-// TODO
-
-// Setter function
-// TODO
-
-// typeof operator
-// TODO
-
-// instanceof oberator
-// TODO
-
-// Object.getPrototypeOf
-//load("test/membrane/Object.getPrototypeOf.js");
-
-// Native apply
-// TODO
-
-// Native construct
-// TODO

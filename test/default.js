@@ -1,4 +1,78 @@
 
+var metahandler = { get : function(target, name) {
+  print("@", name);
+  return target[name];
+}};
+
+var handler = {};
+
+function A() {};
+function B() {};
+B.prototype = new A();
+
+var b = new B();
+
+var p = new Proxy(b, new Proxy(handler, metahandler));
+
+print(Object.getPrototypeOf(p).toString());
+
+quit();
+
+/*
+var metahandler = { get : function(target, name) {
+  print("@", name);
+  return target[name];
+}};
+
+var handler = {};
+
+
+function A() {};
+function B() {};
+B.prototype = new A();
+//B.prototype = {};
+
+var P = new Proxy(A, new Proxy(handler, metahandler));
+var Q = new Proxy(B, new Proxy(handler, metahandler));
+
+var p = new P();
+print(p instanceof P, p instanceof A, p instanceof B);
+
+//var q = new Q();
+//print(q instanceof P, q instanceof Q, q instanceof A, q instanceof B);
+
+function AA() {};
+AA.prototype = new Proxy(A.prototype, {});
+function BB() {};
+B.prototype = new Proxy(new A(), {});
+
+var PP = new Proxy(AA, new Proxy(handler, metahandler));
+var QQ = new Proxy(BB, new Proxy(handler, metahandler));
+
+var pp = new PP();
+print(pp instanceof PP, pp instanceof AA, pp instanceof BB);
+print(pp instanceof P, pp instanceof A, pp instanceof B);
+
+
+//var qq = new QQ();
+//print(qq instanceof PP, qq instanceof QQ, qq instanceof AA, qq instanceof BB);
+
+
+//print(Object.getPrototypeOf(p));
+*/
+
+
+
+
+
+
+//quit();
+load("test/membrane/Object.getPrototypeOf.js");
+
+quit();
+
+
+
 // Object.getPrototypeOf
 //load("test/membrane/Object.getPrototypeOf.js");
 
