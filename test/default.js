@@ -16,6 +16,7 @@ var p = new Proxy(b, new Proxy(handler, metahandler));
 
 print(Object.getPrototypeOf(p).toString());
 
+
 quit();
 
 /*
