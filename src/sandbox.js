@@ -512,8 +512,8 @@ function Sandbox(global, params, prestate) {
      * A trap for getting property values.
      */
     this.get = function(shadow, name, receiver) {
-      __verbose__ && logc("get", name);
-      __effect__  && trace(new Effect.Get(origin, name));
+      __verbose__ && logc("get", (typeof name === 'symbol') ? name.toString() :  name); // TODO
+      __effect__  && trace(new Effect.Get(origin, (typeof name === 'symbol') ? name.toString() : name));
 
       // Node: Matthias Keil
       // Bug in previous versions. Access to undefined causes a 
@@ -521,8 +521,15 @@ function Sandbox(global, params, prestate) {
       // TODO, test if this also happens in the new engine
       if(origin===global && name==='undefined') return undefined;
 
+      //print('===================', name.toString());
+     // print((Symbol('aaa')).toString());
+    //  print((Symbol('aaa')===Symbol('aaa')));
+      //throw new Error(name);
+  //    print('-------------------', typeof name);
+
       // TODO, implement getter functions
       return touched(name) ? shadow[name] : wrap(origin[name]);
+//        return returnx; // TODO
     };
 
     /** 
@@ -789,7 +796,7 @@ function Sandbox(global, params, prestate) {
    * @param effect Effect
    */
   function trace(effect) {
-    __verbose__   && logc("trace", effect.toString());
+    // __verbose__   && logc("trace", effect.toString()); // TODO
     __statistic__ && increment(Statistic.TRACE); 
 
     if(!(effect instanceof Effect.Effect))

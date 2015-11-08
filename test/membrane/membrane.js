@@ -86,7 +86,7 @@ load("test/membrane/Object.isFrozen.js");
 load("test/membrane/Object.isSealed.js");
 
 // Object.keys
-// load("test/membrane/Object.keys.js"); 
+ load("test/membrane/Object.keys.js"); 
 
 // Object.hasOwn
 //load("test/membrane/Object.hasOwn.js"); // TODO
