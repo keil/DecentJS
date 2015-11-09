@@ -80,7 +80,7 @@ load("test/membrane/Object.iterate.js");
 load("test/membrane/Object.isFrozen.js");
 
 // Object.seal
-//load("test/membrane/Object.seal.js"); // TODO make meta handler test
+load("test/membrane/Object.seal.js"); // TODO make meta handler test
 
 // Object.isSealed
 load("test/membrane/Object.isSealed.js");
