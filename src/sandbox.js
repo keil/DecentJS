@@ -332,7 +332,7 @@ function Sandbox(global, params, prestate) {
     /*for (var property in target) {
       if (target.hasOwnProperty(property)) {
         clone[property] = undefined;
-      }  
+      }  // TODO
     }*/
 
     return clone;
@@ -468,6 +468,20 @@ function Sandbox(global, params, prestate) {
       __verbose__ && logc("preventExtensions");
       __effect__  && trace(new Effect.PreventExtensions(origin));
 
+      /**
+       * Copies all properties (property names) from the target object
+       * to the shadow object. 
+       *
+       * This step is required because of some proxy internal invariants
+       * witch require that a non-extensible shadow object is not allowed 
+       * to return properties (keys) of the target object.
+       */
+      for (var property in origin) {
+        if (!touched(property) && origin.hasOwnProperty(property)) {
+          shadow[property] = shadow[property];
+        }
+      }
+
       return Object.preventExtensions(shadow);
     };
 
@@ -571,8 +585,7 @@ function Sandbox(global, params, prestate) {
       __effect__  && trace(new Effect.Enumerate(origin));
 
       var properties = new Set();
-      for(var property in origin) {
-        print(property);
+      if(Object.isExtensible(shadow)) for(var property in origin) {
         if(!touched(property) || (property in shadow)) properties.add(property); 
         // TODO, only allowed to add new properties iff proeprty is not touched locally
         // but, we need to make a distinction between touched in case of modified and deleted property names
@@ -602,7 +615,7 @@ function Sandbox(global, params, prestate) {
       __effect__  && trace(new Effect.OwnKeys(origin));
 
       var properties = new Set();
-      for(var property of Object.getOwnPropertyNames(origin)) {
+      if(Object.isExtensible(shadow)) for(var property of Object.getOwnPropertyNames(origin)) {
         if(!touched(property) || (property in shadow)) properties.add(property);
       }
       for(var property of Object.getOwnPropertyNames(shadow)) {
