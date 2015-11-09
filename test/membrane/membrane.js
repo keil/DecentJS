@@ -89,4 +89,4 @@ load("test/membrane/Object.isSealed.js");
  load("test/membrane/Object.keys.js"); 
 
 // Object.hasOwn
-//load("test/membrane/Object.hasOwn.js"); // TODO
+load("test/membrane/Object.hasOwn.js"); // TODO

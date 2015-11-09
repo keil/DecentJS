@@ -570,11 +570,10 @@ function Sandbox(global, params, prestate) {
       __verbose__ && logc("enumerate");
       __effect__  && trace(new Effect.Enumerate(origin));
 
-      // TODO, make test
-      // test with deleted and new properties
       var properties = new Set();
       for(var property in origin) {
-        if(!touched(property)) properties.add(property); 
+        print(property);
+        if(!touched(property) || (property in shadow)) properties.add(property); 
         // TODO, only allowed to add new properties iff proeprty is not touched locally
         // but, we need to make a distinction between touched in case of modified and deleted property names
         // e.g. use a dummy that contains all property names
@@ -602,16 +601,12 @@ function Sandbox(global, params, prestate) {
       __verbose__ && logc("ownKeys");
       __effect__  && trace(new Effect.OwnKeys(origin));
 
-      //return Object.getOwnPropertyNames(shadow);
-
-      // TODO, make test
-      // test with deleted and new properties
       var properties = new Set();
-      for(var property in (ownProperties = Object.getOwnPropertyNames(origin))) {
-      properties.add(ownProperties[property]);
+      for(var property of Object.getOwnPropertyNames(origin)) {
+        if(!touched(property) || (property in shadow)) properties.add(property);
       }
-      for(var property in (ownProperties = Object.getOwnPropertyNames(shadow))) {
-        properties.add(ownProperties[property]);
+      for(var property of Object.getOwnPropertyNames(shadow)) {
+        properties.add(property);
       }
       return Array.from(properties); 
     };

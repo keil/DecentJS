@@ -1,3 +1,29 @@
+/*
+(function() {
+
+  var object = {a:4711, x:4712, y:4713};
+
+  for(var p in object) print("1)", p);
+  print(Object.getOwnPropertyNames(object));
+
+  object.b = 1;
+  object.z = 2;
+
+  for(var p in object) print("2)", p);
+  print(Object.getOwnPropertyNames(object));
+
+  delete object.y;
+
+  for(var p in object) print("3)", p);
+  print(Object.getOwnPropertyNames(object));
+
+})(); */
+
+
+// TEST own keys and enumerate
+
+
+
 
 quit();
 

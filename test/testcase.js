@@ -13,36 +13,6 @@
  * http://www.informatik.uni-freiburg.de/~keilr/
  */
 
-/*
-function dumpPassThrough(obj, list = new Set(), cache = new WeakMap()) {
-//  if(cache.has(obj)) return list;
-//  else cache.set(obj, obj);
-
-  for(var p of Object.getOwnPropertyNames(obj)) {
-    if(obj[p] instanceof Function) list.add(obj[p]);
-    if(p == "prototype") dumpPassThrough(obj[p], list, cache);
-    //if(obj[p] instanceof Object) dumpPassThrough(obj[p], list, cache);
-  }
-  return list;
-}
-
-var passthrough = new Set();
-dumpPassThrough(this, passthrough);
-dumpPassThrough(Object, passthrough);
-dumpPassThrough(Function, passthrough);
-dumpPassThrough(Math, passthrough);
-dumpPassThrough(Date, passthrough);
-dumpPassThrough(Error, passthrough);
-
-
-
-print("***", passthrough.size);
-//for(var f of passthrough) print("===", f);
-print("***");
-
-//throw  new Error();
-//quit();
-*/
 var passthrough = dumpGlobal();
 print("size", passthrough.size);
 
@@ -57,31 +27,6 @@ function Testcase(fun, globalArg, thisArg, argsArray, name, quitOnExit) {
     statistic: true,
     debug:true,
     passthrough:passthrough,
-    /*passthrough:new Set([
-      print, 
-      valueOf,
-      Function, 
-      Function.prototype.call, 
-      Function.prototype.apply,
-      Function.prototype.toString, 
-      Object, 
-      Object.hasOwnProperty,
-      Object.prototype.keys,
-      Object.keys,
-      Object.prototype.getPrototypeOf,
-      Object.prototype.toString,
-      Object.defineProperty,
-      Object.getOwnPropertyDescriptor,
-      Object.getOwnPropertyNames,
-      Object.getPrototypeOf,
-      Object.setPrototypeOf,
-      Object.seal,
-      Object.isSealed,
-      Object.freeze,
-      Object.isFrozen,
-      Object.preventExtensions,
-      Object.isExtensible
-    ]),*/
     out: out
   }
 
@@ -99,7 +44,7 @@ function Testcase(fun, globalArg, thisArg, argsArray, name, quitOnExit) {
     } catch(e) {
       var outcomeB = e.toString() + "\n" + e.stack;
     }
-    
+
     var result = (outcomeA===outcomeB);
 
     var id = (sbx!==undefined) ? "@" + sbx.id : "";
