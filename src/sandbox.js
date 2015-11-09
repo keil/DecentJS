@@ -480,7 +480,7 @@ function Sandbox(global, params, prestate) {
 
       return (touched(name)) ? 
         Object.getOwnPropertyDescriptor(shadow, name) :
-        wrap(Object.getOwnPropertyDescriptor(origin, name)) || {};
+        wrap(Object.getOwnPropertyDescriptor(origin, name));
     };
 
     /** 

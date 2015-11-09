@@ -36,7 +36,7 @@ load("test/membrane/Object.isExtensible.js");
 load("test/membrane/Object.preventExtensions.js");
 
 // A test for Object.getOwnPropertyDescriptor.
-//load("test/membrane/Object.getOwnPropertyDescriptor.js");// TODO make single example
+load("test/membrane/Object.getOwnPropertyDescriptor.js");
 
 // A test for Object.defineProperty.
 load("test/membrane/Object.defineProperty.js");

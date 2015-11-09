@@ -1,3 +1,6 @@
+
+quit();
+
 (function() {
 
   function Handler(origin) {
