@@ -329,11 +329,11 @@ function Sandbox(global, params, prestate) {
      * witch require that a non-extensible shadow object is not allowed 
      * to return properties (keys) of the target object.
      */
-    for (var property in target) {
+    /*for (var property in target) {
       if (target.hasOwnProperty(property)) {
         clone[property] = undefined;
       }  
-    }
+    }*/
 
     return clone;
   }
