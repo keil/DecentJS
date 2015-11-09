@@ -49,7 +49,7 @@
  *   Instance for the output. (default: new Out())
  *
  */
-function Sandbox(global, params, prestate) {
+function Sandbox(global = {}, params = [], prestate) {
   if(!(this instanceof Sandbox)) return new Sandbox(global, params);
 
   if(!(global instanceof Object))
@@ -254,7 +254,7 @@ function Sandbox(global, params, prestate) {
       return target;
     }
 
-    // Avoids re-wrapping of sandbox proxies
+    // Avoid re-wrapping of sandbox proxies
     if(proxies.has(target)) return target;
 
     // If target already wrapped, return cached proxy
@@ -267,11 +267,7 @@ function Sandbox(global, params, prestate) {
       __statistic__ && increment(Statistic.CACHEMISS);
     }
 
-    // decompiles function or clones object
-    // to preserve typeof/ instanceof
-    // and to make an iterable image for loops
-    
-    
+    // Makes a shadow object
     if(target instanceof Function) {
       __verbose__ && log("target instanceOf Function");
 
@@ -285,23 +281,19 @@ function Sandbox(global, params, prestate) {
       var shadow = cloneObject(target);
     }
 
-    /*function make(handler) {
-    // meta handler ?
-    if(!__metahandler__) return handler;
-
+    // Defines Meta-handler 
     var metahandler = {
-    get: function(target, name) {
-    log("Call Trap: "+name);
-    // TODO
-    if(name in handler) return target[name];
-    else throw new ReferenceError("Trap "+name+" not implemented.");
-    }
-    };
-    return new Proxy(handler, metahandler)
-    }*/
+      get: function(target, name) {
+        __verbose__ && logc("Call Trap: ", name);
 
+        // Throws an exception if a required trap is not present
+        if(name in handler) return target[name];
+        else throw new ReferenceError(`Trap ${name} not implemented.`);
+      }
+    };
+        
     var handler = new Membrane(target, native);
-    var proxy = new Proxy(shadow, handler);
+    var proxy = new Proxy(shadow, __metahandler__ ? new Proxy(handler, metahandler) : handler);
 
     targets.set(target, proxy);
     proxies.set(proxy, handler);
@@ -319,22 +311,7 @@ function Sandbox(global, params, prestate) {
   function cloneObject(target) {
     __verbose__ && log("Clone Object.");
 
-    var clone = Object.create(Object.getPrototypeOf(target));
-
-    /**
-     * Copies all properties (property names) from the target object
-     * to the shadow object. 
-     *
-     * This step is required because of some proxy internal invariants
-     * witch require that a non-extensible shadow object is not allowed 
-     * to return properties (keys) of the target object.
-     */
-    /*for (var property in target) {
-      if (target.hasOwnProperty(property)) {
-        clone[property] = undefined;
-      }  // TODO
-    }*/
-
+    var clone = Object.create(Object.getPrototypeOf(target)); 
     return clone;
   }
 
@@ -350,17 +327,6 @@ function Sandbox(global, params, prestate) {
     __verbose__ && log("Clone Function.");
 
     var clone = native ? (function(){}) : decompile(target, wrap(global));
-    //clone.prototype = wrap(target.prototype);  // TODO
-    
-    /**
-     * Note: Matthias Keil
-     * clone new
-     *
-     */
-
-    // do I get access when to the unprotected prototyper when ćreating an object from that 
-    
-    
     clone.prototype = target.prototype; 
     
     return clone;
@@ -481,7 +447,7 @@ function Sandbox(global, params, prestate) {
           shadow[property] = shadow[property];
         }
       }
-
+      
       return Object.preventExtensions(shadow);
     };
 
@@ -537,6 +503,9 @@ function Sandbox(global, params, prestate) {
       __verbose__ && logc("get", (typeof name === 'string') ? name : name.toString());
       __effect__  && trace(new Effect.Get(origin, (typeof name === 'string') ? name : name.toString()));
 
+      //if(name === Symbol.toPrimitive) return origin[name];
+      //if(name === "valueOf") return origin[name];
+
       // Node: Matthias Keil
       // Bug in previous versions. Access to undefined causes a 
       // property access on the global object.
@@ -558,12 +527,29 @@ function Sandbox(global, params, prestate) {
      * A trap for setting property values.
      */
     this.set = function(shadow, name, value, receiver) {
+      
       __verbose__ && logc("set", name);
       __effect__  && trace(new Effect.Set(origin, name));
 
+        touch(name);
+        return (shadow[name]=value);
+//         print("return" + returnx);
+//        return returnx;
+
+
       // TODO, implement setter functions
-      touch(name);
-      return (shadow[name]=value);
+      if (Object.isExtensible(shadow)) {
+//      if(value!=="L") {
+        touch(name);
+        returnx = (shadow[name]=value);
+         print("return" + returnx);
+        return returnx;
+      } else {
+        throw new TypeError(`"${name}" is read-only`);
+        touched(name);
+        print("return false");
+        return false;
+      }
     };
 
     /**
@@ -587,19 +573,6 @@ function Sandbox(global, params, prestate) {
       var properties = new Set();
       if(Object.isExtensible(shadow)) for(var property in origin) {
         if(!touched(property) || (property in shadow)) properties.add(property); 
-        // TODO, only allowed to add new properties iff proeprty is not touched locally
-        // but, we need to make a distinction between touched in case of modified and deleted property names
-        // e.g. use a dummy that contains all property names
-        // but shadow and origin are given directly to the handler
-        // them, every update on the property list is also (this as add and delete) are forwarded to the target)
-        // then, when iterating, we consider all properties
-        // 
-        //
-        // until the target is frozen, then we are only allowed to return existing proeprties
-        //
-        //
-        // or, when freezing an object, cloning all property names and 
-        // at execution time
       }
       for(var property in shadow) {
         properties.add(property);
@@ -641,18 +614,10 @@ function Sandbox(global, params, prestate) {
     this.construct = function(shadow, argumentsList) {
       __verbose__ && logc("construct");
       __effect__  && trace(new Effect.Construct(origin));
-
-      // TODO, test
-      //return new shadow(wrap(argumentsList));
-      //quit();
-      //
-
+ 
       var thisArg = wrap(Object.create(shadow.prototype));
-      var result =  native ? origin.apply(thisArg, argumentsList) : shadow.apply(thisArg, argumentsList);
-      // return thisArg | val
+      var result =  native ? wrap(origin.apply(thisArg, argumentsList)) : shadow.apply(thisArg, argumentsList);
       return (result instanceof Object) ? result : thisArg;
-      //return wrap((result instanceof Object) ? result : thisArg);
-
     };
   };
 
@@ -707,6 +672,9 @@ function Sandbox(global, params, prestate) {
   function evaluate(fun, thisArg, argumentsList) {
     __verbose__ && logc("evaluate", fun);
 
+    return fun.apply(wrap(thisArg), wrap(argumentsList));
+//print(decompile(fun, wrap(global)));
+//quit();
     // sandboxed function
     var sbxed = decompile(fun, wrap(global));
     // apply constructor function
@@ -1674,7 +1642,7 @@ Object.defineProperty(Sandbox, "DEBUG", {
      */ debug:true,
     /** Function pass-through
      * (default: [])
-     */ passthrough:new Set([print]),
+     */ passthrough:dumpGlobal(), //;new Set([print]),
     /** Output handler
      * (default: ShellOut)
      */ out:ShellOut()
