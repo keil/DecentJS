@@ -24,6 +24,11 @@
 
 
 
+// Object.freeze
+//load("test/membrane/Object.freeze.js"); // TODO make meta handler test
+
+// Object.seal
+//load("test/membrane/Object.seal.js"); // TODO make meta handler test
 
 quit();
 
