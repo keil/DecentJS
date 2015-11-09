@@ -245,9 +245,7 @@ var ref = "X";
 })], "decompile # 9.2")).run();
 
 (new Testcase(function(F) {
-  var f = F();
   var f = F.apply(this);
-
   var outcome = "";
   var x = "[LOCAL]";
   outcome+=" /"+(x);

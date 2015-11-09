@@ -426,9 +426,13 @@ function Sandbox(global, params, prestate) {
       __verbose__ && logc("getPrototypeOf");
       __effect__  && trace(new Effect.GetPrototypeOf(origin));
 
-      // TODO, trap is not implemented
-      throw new Error('Trap not implemented.');
-      return wrap(Object.getPrototypeOf(shadow));
+      /**
+       * Note: Matthias Keil
+       * The current proxy implementation did not support
+       * Object.getPrototypeOf.
+       */
+      // return wrap(Object.getPrototypeOf(shadow));
+      throw new Error('Trap not supported.');
     }
 
     /**
@@ -438,9 +442,13 @@ function Sandbox(global, params, prestate) {
       __verbose__ && logc("setPrototypeOf");
       __effect__  && trace(new Effect.SetPrototypeOf(origin));
 
-      // TODO trap is not implemented
-      throw new Error('Trap not implemented.');
-      return Object.setPrototypeOf(shadow, prototype);
+      /**
+       * Note: Matthias Keil
+       * The current proxy implementation did not support
+       * Object.setPrototypeOf.
+       */
+      // return Object.setPrototypeOf(shadow, prototype);
+      throw new Error('Trap not supported.');
     }
 
     /**
@@ -467,8 +475,8 @@ function Sandbox(global, params, prestate) {
      * A trap for Object.getOwnPropertyDescriptor.
      */
     this.getOwnPropertyDescriptor = function(shadow, name) {
-      __verbose__ && logc("getOwnPropertyDescriptor", name);
-      __effect__  && trace(new Effect.GetOwnPropertyDescriptor(origin, name));
+      __verbose__ && logc("getOwnPropertyDescriptor", (typeof name === 'string') ? name : name.toString());
+      __effect__  && trace(new Effect.GetOwnPropertyDescriptor(origin, (typeof name === 'string') ? name : name.toString()));
 
       return (touched(name)) ? 
         Object.getOwnPropertyDescriptor(shadow, name) :
@@ -479,8 +487,8 @@ function Sandbox(global, params, prestate) {
      * A trap for Object.defineProperty.
      */
     this.defineProperty = function(shadow, name, desc) {
-      __verbose__ && logc("defineProperty", name);
-      __effect__ &&  trace(new Effect.DefineProperty(origin, name));
+      __verbose__ && logc("defineProperty", (typeof name === 'string') ? name : name.toString());
+      __effect__ &&  trace(new Effect.DefineProperty(origin, (typeof name === 'string') ? name : name.toString()));
 
       // Note: Matthias Keil
       // Object.defineProperty is not equivalent to the behavior 
@@ -501,8 +509,8 @@ function Sandbox(global, params, prestate) {
      * A trap for the in operator.
      */
     this.has = function(shadow, name) {
-      __verbose__ && logc("has", name);
-      __effect__  && trace(new Effect.Has(origin, name));
+      __verbose__ && logc("has", (typeof name === 'string') ? name : name.toString());
+      __effect__  && trace(new Effect.Has(origin, (typeof name === 'string') ? name : name.toString()));
 
       if(origin===global) return true;
       else return (touched(name)) ? (name in shadow) : (name in origin);
@@ -512,8 +520,8 @@ function Sandbox(global, params, prestate) {
      * A trap for getting property values.
      */
     this.get = function(shadow, name, receiver) {
-      __verbose__ && logc("get", (typeof name === 'symbol') ? name.toString() :  name); // TODO
-      __effect__  && trace(new Effect.Get(origin, (typeof name === 'symbol') ? name.toString() : name));
+      __verbose__ && logc("get", (typeof name === 'string') ? name : name.toString());
+      __effect__  && trace(new Effect.Get(origin, (typeof name === 'string') ? name : name.toString()));
 
       // Node: Matthias Keil
       // Bug in previous versions. Access to undefined causes a 
@@ -548,8 +556,8 @@ function Sandbox(global, params, prestate) {
      * A trap for the delete operator.
      */
     this.deleteProperty = function(shadow, name) {
-      __verbose__ && logc("deleteProperty", name);
-      __effect__  && trace(new Effect.DeleteProperty(origin, name));
+      __verbose__ && logc("deleteProperty", (typeof name === 'string') ? name : name.toString());
+      __effect__  && trace(new Effect.DeleteProperty(origin, (typeof name === 'string') ? name : name.toString()));
 
       touch(name);
       return (delete shadow[name]);
@@ -566,7 +574,20 @@ function Sandbox(global, params, prestate) {
       // test with deleted and new properties
       var properties = new Set();
       for(var property in origin) {
-        properties.add(property);
+        if(!touched(property)) properties.add(property); 
+        // TODO, only allowed to add new properties iff proeprty is not touched locally
+        // but, we need to make a distinction between touched in case of modified and deleted property names
+        // e.g. use a dummy that contains all property names
+        // but shadow and origin are given directly to the handler
+        // them, every update on the property list is also (this as add and delete) are forwarded to the target)
+        // then, when iterating, we consider all properties
+        // 
+        //
+        // until the target is frozen, then we are only allowed to return existing proeprties
+        //
+        //
+        // or, when freezing an object, cloning all property names and 
+        // at execution time
       }
       for(var property in shadow) {
         properties.add(property);

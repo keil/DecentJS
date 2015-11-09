@@ -90,4 +90,3 @@ load("test/membrane/Object.isSealed.js");
 
 // Object.hasOwn
 //load("test/membrane/Object.hasOwn.js"); // TODO
-
