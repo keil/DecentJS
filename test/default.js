@@ -1,3 +1,101 @@
+// test prevent extenstions
+(function(object) {
+  "use strict";
+
+  Object.preventExtensions(object);
+
+  var outcome = "";
+  outcome += Object.isExtensible(object);
+  outcome += Object.isFrozen(object);
+  outcome += Object.isSealed(object);
+
+  // update
+  try{ 
+    outcome += object.a = 'xxx';
+  } catch (err) {
+    print(err);
+    outcome += 'TypeError';
+  }
+  try{
+    outcome += object.c.x = 'xxx';
+  } catch (err) {
+    print(err);
+    outcome += 'TypeError';
+  }
+
+  // extend
+  try{
+    outcome += object.x = 'xxx';
+  } catch (err) {
+    print(err);
+    outcome += 'TypeError';
+  }
+
+  // delete
+  try{
+    outcome += delete object.b;
+  } catch (err) {
+    print(err);
+    outcome += 'TypeError';
+  }
+
+  // (re)define property
+  try{
+    outcome += Object.defineProperty(object, 'a', { value: 'xxx' });
+  } catch (err) {
+    print(err);
+    outcome += 'TypeError';
+  }
+  try{
+    outcome += Object.defineProperty(object, 'y1', { value: 'y1' });
+  } catch (err) {
+    print(err);
+    outcome += 'TypeError';
+  }
+
+  try{
+    outcome += Object.defineProperty(object, 'a', { get: function() { return 'xxx'; } });
+  } catch (err) {
+    print(err);
+    outcome += 'TypeError';
+  }
+  try{
+    outcome += Object.defineProperty(object, 'y2', { get: function() { return 'y2'; } });
+  } catch (err) {
+    print(err);
+    outcome += 'TypeError';
+  }
+
+  for(var p in object) {
+    outcome += p + ":" + object[p];
+  }
+
+  print( outcome);
+
+})({a:4711, b:4712, c:{x:4713, y:4714}});
+
+
+
+quit();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 (function(){
   "use strict";
 
@@ -21,13 +119,13 @@
    var object = {x:4711};
 
    // TODO: Test define property
-//   Object.freeze(object);
-   Object.seal(object);
+   Object.freeze(object);
+//   Object.seal(object);
 
    print("---", object.x);
    print("---", object.y);
    print("===", object.x = 4712);
-   delete object.x;
+//   delete object.x;
 //   print("===", object.y = 4713);
    print("---", object.x);
    print("---", object.y);
@@ -38,8 +136,8 @@
   
   //Object.freeze(object2.c);
   Object.seal(object2.c);
-//  object2.c.x = "~";
-//  object2.c.z = "~";
+  object2.c.x = "~";
+  object2.c.z = "~";
   print("%%%%%%%%%%%%%%%%%", object2.c.z);
   
 /*
