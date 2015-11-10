@@ -1,7 +1,7 @@
 
 load("test/membrane/Object.preventExtensions.js");
-//load("test/membrane/Object.freeze.js");
-//load("test/membrane/Object.seal.js");
+load("test/membrane/Object.freeze.js");
+load("test/membrane/Object.seal.js");
 
 
 
@@ -12,7 +12,7 @@ quit();
   "use strict";
 
   //Object.preventExtensions(object);
-  //Object.seal(object);
+  Object.seal(object);
   //Object.freeze(object);
 
   var outcome = "";
@@ -81,7 +81,7 @@ quit();
     outcome += p + ":" + object[p];
   }
 
-  print( outcome);
+  print(outcome);
 
 })({a:4711, b:4712, c:{x:4713, y:4714}});
 

@@ -470,6 +470,43 @@ function Sandbox(global = {}, params = [], prestate) {
       __verbose__ && logc("defineProperty", (typeof name === 'string') ? name : name.toString());
       __effect__ &&  trace(new Effect.DefineProperty(origin, (typeof name === 'string') ? name : name.toString()));
 
+      var current = touch(name) ? 
+        Object.getOwnPropertyDescriptor(shadow, name) : 
+        wrap(Object.getOwnPropertyDescriptor(origin, name));
+      
+      if(current === undefined) {
+        // non-existing property
+        if(Object.isExtensible(shadow)) {
+          // extensible object
+          touch(name);
+          return Object.defineProperty(shadow, name, current);
+        } else {
+          // non-extensible object
+          throw new TypeError(`${shadow} is not extensible`);
+        }
+      } else {
+        // existing property
+         if(current.configurable) {
+           // configurable property
+            for(var key in desc) {
+               current[key] = desc[key];
+            }
+            // corresponds the ECMA specification
+            if(desc.get || desc.set) {
+              delete current.value; delete current.writable
+            }
+            touch(name);
+            return Object.defineProperty(shadow, name, current);
+        } else {
+          // non-configurable property
+          throw new TypeError(`can't redefine non-configurable property "${name}"`);
+        }
+      }
+
+
+//  property "b" is non-configurable and can't be deleted
+
+
       // Note: Matthias Keil
       // Object.defineProperty is not equivalent to the behavior 
       // described in the ECMA Standard
@@ -552,7 +589,7 @@ function Sandbox(global = {}, params = [], prestate) {
            return (shadow[name]=value);
         } else {
           // non-writeable property
-          throw new TypeError(`${shadow} is not extensible`);
+          throw new TypeError(`"${name}" is read-only`);
         }
       }
 
@@ -623,8 +660,28 @@ function Sandbox(global = {}, params = [], prestate) {
       __verbose__ && logc("deleteProperty", (typeof name === 'string') ? name : name.toString());
       __effect__  && trace(new Effect.DeleteProperty(origin, (typeof name === 'string') ? name : name.toString()));
 
-      touch(name);
-      return (delete shadow[name]);
+
+      var desc = touch(name) ? 
+        Object.getOwnPropertyDescriptor(shadow, name) : 
+        wrap(Object.getOwnPropertyDescriptor(origin, name));
+
+      if(desc === undefined) {
+        // non-existing property
+        touch(name);
+        return (delete shadow[name]);
+      } else {
+        // existing property
+        if(desc.configurable) {
+          touch(name);
+          return (delete shadow[name]);
+        } else {
+          // non-configurable property
+          throw new TypeError(`property "${name}" is non-configurable and can't be deleted`);
+        }
+      }
+
+      //touch(name);
+      //return (delete shadow[name]);
     };
 
     /** 

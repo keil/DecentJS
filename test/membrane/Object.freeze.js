@@ -28,13 +28,13 @@
     outcome += object.a = 'xxx';
   } catch (err) {
     print(err);
-    outcome += 'TypeError';
+    outcome += '1TypeError';
   }
   try{
     outcome += object.c.x = 'xxx';
   } catch (err) {
     print(err);
-    outcome += 'TypeError';
+    outcome += '2TypeError';
   }
 
   // extend
@@ -42,7 +42,7 @@
     outcome += object.x = 'xxx';
   } catch (err) {
     print(err);
-    outcome += 'TypeError';
+    outcome += '3TypeError';
   }
 
   // delete
@@ -50,7 +50,7 @@
     outcome += delete object.b;
   } catch (err) {
     print(err);
-    outcome += 'TypeError';
+    outcome += '4TypeError';
   }
 
   // (re)define property
@@ -58,26 +58,26 @@
     outcome += Object.defineProperty(object, 'a', { value: 'xxx' });
   } catch (err) {
     print(err);
-    outcome += 'TypeError';
+    outcome += '5TypeError';
   }
   try{
     outcome += Object.defineProperty(object, 'y1', { value: 'y1' });
   } catch (err) {
     print(err);
-    outcome += 'TypeError';
+    outcome += '6TypeError';
   }
 
   try{
     outcome += Object.defineProperty(object, 'a', { get: function() { return 'xxx'; } });
   } catch (err) {
     print(err);
-    outcome += 'TypeError';
+    outcome += '7TypeError';
   }
   try{
     outcome += Object.defineProperty(object, 'y2', { get: function() { return 'y2'; } });
   } catch (err) {
     print(err);
-    outcome += 'TypeError';
+    outcome += '8TypeError';
   }
 
   for(var p in object) {
@@ -87,8 +87,6 @@
   return outcome;
 
 }, this, {}, [{a:4711, b:4712, c:{x:4713, y:4714}}], "Object.freeze # 1")).run();
-
-quit(); // TODO
 
 (new Testcase(function(object) {
   Object.freeze(object.c);
