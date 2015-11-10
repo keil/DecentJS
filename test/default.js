@@ -1,6 +1,6 @@
 
-load("test/membrane/Object.preventExtensions.js");
-load("test/membrane/Object.freeze.js");
+//load("test/membrane/Object.preventExtensions.js");
+//load("test/membrane/Object.freeze.js");
 load("test/membrane/Object.seal.js");
 
 

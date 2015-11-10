@@ -86,7 +86,9 @@
 
   return outcome;
 
-}, this, {}, [{a:4711, b:4712, c:{x:4713, y:4714}}], "Object.seal # 1")).run();s
+}, this, {}, [{a:4711, b:4712, c:{x:4713, y:4714}}], "Object.seal # 1")).run();
+
+quit();
 
 (new Testcase(function(object) {
   Object.seal(object.c);

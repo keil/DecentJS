@@ -444,7 +444,9 @@ function Sandbox(global = {}, params = [], prestate) {
        */
       for (var property in origin) {
         if (!touched(property) && origin.hasOwnProperty(property)) {
-          shadow[property] = shadow[property];
+          touch(property); // TODO
+          Object.defineProperty(shadow, property, wrap(Object.getOwnPropertyDescriptor(origin, property)));
+          //shadow[property] = shadow[property];
         }
       }
       
@@ -470,16 +472,20 @@ function Sandbox(global = {}, params = [], prestate) {
       __verbose__ && logc("defineProperty", (typeof name === 'string') ? name : name.toString());
       __effect__ &&  trace(new Effect.DefineProperty(origin, (typeof name === 'string') ? name : name.toString()));
 
-      var current = touch(name) ? 
+      var current = touched(name) ? 
         Object.getOwnPropertyDescriptor(shadow, name) : 
         wrap(Object.getOwnPropertyDescriptor(origin, name));
-      
+    
+    //  current = Object.getOwnPropertyDescriptor(shadow, name);
+
+      print("########################", name, touched(name), current.value, current.configurable);
+
       if(current === undefined) {
         // non-existing property
         if(Object.isExtensible(shadow)) {
           // extensible object
           touch(name);
-          return Object.defineProperty(shadow, name, current);
+          return Object.defineProperty(shadow, name, desc);
         } else {
           // non-extensible object
           throw new TypeError(`${shadow} is not extensible`);
@@ -493,14 +499,31 @@ function Sandbox(global = {}, params = [], prestate) {
             }
             // corresponds the ECMA specification
             if(desc.get || desc.set) {
-              delete current.value; delete current.writable
+                delete current.value;
+                delete current.writable;
             }
             touch(name);
             return Object.defineProperty(shadow, name, current);
-        } else {
-          // non-configurable property
-          throw new TypeError(`can't redefine non-configurable property "${name}"`);
-        }
+         } else {
+           print("AAAAAAAAAAAAA");
+           // non-configurable property
+           if(current.value) {
+             print("XXXXXXXXXXXx", current.value, desc.value);
+             current.value = desc.value;
+             print("XXXXXXXXXXXx", current.value, desc.value);
+           } else if(current.get || current.set) {
+             print("ZZZZZZZZZZZZZZZ");
+             current.get = desc.get;
+             current.set = desc.set;
+           } else {
+             throw new TypeError(`can't redefine non-configurable property "${name}"`);
+           }
+           print("XXXXXXXXXXXX", current.value, current.configurable);
+           touch(name);
+           //return
+           try{ print(Object.defineProperty(shadow, name, current)); } catch(err) {print("!!!!!!!!!!!!!!!!!!!1", err)}
+           return true;
+         }
       }
 
 
@@ -567,7 +590,7 @@ function Sandbox(global = {}, params = [], prestate) {
       __verbose__ && logc("set", name);
       __effect__  && trace(new Effect.Set(origin, name));
 
-      var desc = touch(name) ? 
+      var desc = touched(name) ? 
         Object.getOwnPropertyDescriptor(shadow, name) : 
         wrap(Object.getOwnPropertyDescriptor(origin, name));
       
@@ -661,7 +684,7 @@ function Sandbox(global = {}, params = [], prestate) {
       __effect__  && trace(new Effect.DeleteProperty(origin, (typeof name === 'string') ? name : name.toString()));
 
 
-      var desc = touch(name) ? 
+      var desc = touched(name) ? 
         Object.getOwnPropertyDescriptor(shadow, name) : 
         wrap(Object.getOwnPropertyDescriptor(origin, name));
 

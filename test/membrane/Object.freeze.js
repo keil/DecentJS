@@ -93,15 +93,17 @@
 
   var outcome = Object.isFrozen(object.c);
 
-  //object.a = "~";
-  //delete object.b;
-  //object.x = "~";
+  try{
+    object.a = "~";
+    delete object.b;
+    object.x = "~";
 
-//  object.c.x = "~";
-//  delete object.c.y;
-  //object.c.y = "L";
-  object.c.z = "~";
+    object.c.x = "~";
+    delete object.c.y;
+    object.c.y = "L";
+    object.c.z = "~";
+  } catch(err) {}
 
- // var outcome = "" + object.a + object.b + object.c.x + object.c.y + object.c.z + object.x;
+  var outcome = "" + object.a + object.b + object.c.x + object.c.y + object.c.z + object.x;
   return outcome;
 }, this, {}, [{a:4711, b:4712, c:{x:4713, y:4714}}], "Object.freeze # 2")).run();
