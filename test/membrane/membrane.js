@@ -13,9 +13,6 @@
  * http://www.informatik.uni-freiburg.de/~keilr/
  */
 
-
-//quit();
-
 //                 _                       
 // _ __  ___ _ __ | |__  __ _ _ _ _ _  ___ 
 //| '  \/ -_) '  \| '_ \/ _` | '_| ' \/ -_)
@@ -74,13 +71,13 @@ load("test/membrane/Object.construct.js");
 load("test/membrane/Object.iterate.js");
 
 // Object.freeze
-//load("test/membrane/Object.freeze.js"); // TODO make meta handler test
+load("test/membrane/Object.freeze.js");
 
 // Object.isFrozen
 load("test/membrane/Object.isFrozen.js");
 
 // Object.seal
-//load("test/membrane/Object.seal.js"); // TODO make meta handler test
+load("test/membrane/Object.seal.js"); 
 
 // Object.isSealed
 load("test/membrane/Object.isSealed.js");
@@ -89,4 +86,4 @@ load("test/membrane/Object.isSealed.js");
  load("test/membrane/Object.keys.js"); 
 
 // Object.hasOwn
-load("test/membrane/Object.hasOwn.js"); // TODO
+load("test/membrane/Object.hasOwn.js");

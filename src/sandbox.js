@@ -476,10 +476,6 @@ function Sandbox(global = {}, params = [], prestate) {
         Object.getOwnPropertyDescriptor(shadow, name) : 
         wrap(Object.getOwnPropertyDescriptor(origin, name));
     
-    //  current = Object.getOwnPropertyDescriptor(shadow, name);
-
-      print("########################", name, touched(name), current.value, current.configurable);
-
       if(current === undefined) {
         // non-existing property
         if(Object.isExtensible(shadow)) {
@@ -505,44 +501,19 @@ function Sandbox(global = {}, params = [], prestate) {
             touch(name);
             return Object.defineProperty(shadow, name, current);
          } else {
-           print("AAAAAAAAAAAAA");
            // non-configurable property
            if(current.value) {
-             print("XXXXXXXXXXXx", current.value, desc.value);
-             current.value = desc.value;
-             print("XXXXXXXXXXXx", current.value, desc.value);
+             current.value = desc.value || current.value;
            } else if(current.get || current.set) {
-             print("ZZZZZZZZZZZZZZZ");
-             current.get = desc.get;
-             current.set = desc.set;
+             current.get = desc.get || current.get;
+             current.set = desc.set || current.set;
            } else {
              throw new TypeError(`can't redefine non-configurable property "${name}"`);
            }
-           print("XXXXXXXXXXXX", current.value, current.configurable);
            touch(name);
-           //return
-           try{ print(Object.defineProperty(shadow, name, current)); } catch(err) {print("!!!!!!!!!!!!!!!!!!!1", err)}
-           return true;
+           return Object.defineProperty(shadow, name, current);
          }
       }
-
-
-//  property "b" is non-configurable and can't be deleted
-
-
-      // Note: Matthias Keil
-      // Object.defineProperty is not equivalent to the behavior 
-      // described in the ECMA Standard
-      var current = (touched(name)) ? 
-          Object.getOwnPropertyDescriptor(shadow, name):
-          wrap(Object.getOwnPropertyDescriptor(origin, name)) || {};
-
-      for(var key in desc) {
-        current[key] = desc[key];
-      }
-
-      touch(name);
-      return Object.defineProperty(shadow, name, current);
     };
 
     /** 

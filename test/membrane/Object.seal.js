@@ -88,18 +88,22 @@
 
 }, this, {}, [{a:4711, b:4712, c:{x:4713, y:4714}}], "Object.seal # 1")).run();
 
-quit();
-
 (new Testcase(function(object) {
+  "use strict";
+
   Object.seal(object.c);
 
-  object.a = "~";
-  delete object.b;
-  object.x = "~";
+  try{
 
-  object.c.x = "~";
-  delete object.c.y;
-  object.c.z = "~";
+    object.a = "~";
+    delete object.b;
+    object.x = "~";
+
+    object.c.x = "~";
+    delete object.c.y;
+    object.c.z = "~";
+  } catch(err) {}
+
 
   var outcome = "" + " a)" + object.a + " b)" + object.b + " c.x)" + object.c.x + " c.y)" + object.c.y + " c.z)" + object.c.z + " x)" + object.x;
   outcome += "?" + Object.isExtensible(object) + " " + Object.isExtensible(object.c);
