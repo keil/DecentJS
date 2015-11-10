@@ -1,5 +1,5 @@
 (function(){
-//  "use strict";
+  "use strict";
 
    var metahandler = { get : function(target, name) {
    print("@", name);
@@ -20,10 +20,14 @@
    // var object = sbx.wrap({x:4711});
    var object = {x:4711};
 
-   Object.freeze(object);
+   // TODO: Test define property
+//   Object.freeze(object);
+   Object.seal(object);
+
    print("---", object.x);
    print("---", object.y);
-//   print("===", object.x = 4712);
+   print("===", object.x = 4712);
+   delete object.x;
 //   print("===", object.y = 4713);
    print("---", object.x);
    print("---", object.y);
@@ -32,11 +36,13 @@
   var sbx = new Sandbox(this, Sandbox.DEBUG);
   var object2 = sbx.wrap({a:4711, b:4712, c:{x:4713, y:4714}});
   
-//  Object.freeze(object2.c);
+  //Object.freeze(object2.c);
+  Object.seal(object2.c);
+//  object2.c.x = "~";
 //  object2.c.z = "~";
-//  print("%%%%%%%%%%%%%%%%%", object2.c.z);
+  print("%%%%%%%%%%%%%%%%%", object2.c.z);
   
-
+/*
   sbx.apply(function(object, Object) {
     "use strict";
 
@@ -52,7 +58,7 @@
     //object.c.y = "L";
     object.c.z = "~";
   }, this, [{a:4711, b:4712, c:{x:4713, y:4714}}, Object]);
-
+*/
 
 
 })();

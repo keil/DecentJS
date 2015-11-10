@@ -527,12 +527,74 @@ function Sandbox(global = {}, params = [], prestate) {
      * A trap for setting property values.
      */
     this.set = function(shadow, name, value, receiver) {
-      
       __verbose__ && logc("set", name);
       __effect__  && trace(new Effect.Set(origin, name));
 
+      var desc = touch(name) ? 
+        Object.getOwnPropertyDescriptor(shadow, name) : 
+        wrap(Object.getOwnPropertyDescriptor(origin, name));
+      
+      if(desc === undefined) {
+        // non-existing property
+        if(Object.isExtensible(shadow)) {
+          // extensible object
+          touch(name);
+          return (shadow[name]=value);
+        } else {
+          // non-extensible object
+          throw new TypeError(`${shadow} is not extensible`);
+        }
+      } else {
+        // existing property
+         if(desc.writable) {
+           // writeable property
+           touch(name);
+           return (shadow[name]=value);
+        } else {
+          // non-writeable property
+          throw new TypeError(`${shadow} is not extensible`);
+        }
+      }
+
+      // TODO, seal
+      // TODO, setter
+
+
+      /*
+      if(!(desc = Object.getOwnPropertyDescriptor(shadow, name)) && (!Object.isExtensible(shadow))) throw new TypeError(`${shadow} is not extensible`); 
+      if(desc.writable===false) throw new TypeError(`"${name}" is read-only`);
+       
+
+
+
+      if (!Object.isExtensible(shadow)) {
+        var desc = Object.getOwnPropertyDescriptor(shadow, name) || {};
+
+
+
+
+        // TODO
+        print('value', name, desc.writable, desc.configurable);
+
+
+
+        // checks for frozen properties
+        if(desc.writable===false) throw new TypeError(`"${name}" is read-only`);
+
+      //  if writeable true, 
+
+
+        else if(desc.configurable===false) throw new TypeError(`"${name}" is XXX`);      
+        else throw new TypeError(`${shadow} is not extensible`);
+      }
+
+
+    
         touch(name);
         return (shadow[name]=value);
+
+//        touch(name);
+//        return (shadow[name]=value);
 //         print("return" + returnx);
 //        return returnx;
 
@@ -550,6 +612,8 @@ function Sandbox(global = {}, params = [], prestate) {
         print("return false");
         return false;
       }
+*/
+
     };
 
     /**
@@ -649,7 +713,7 @@ function Sandbox(global = {}, params = [], prestate) {
     if(!(env instanceof Object))
       throw new TypeError("env");
 
-    // Decompile ?
+    // Decompile ? // TODO, move this fralg to the function call
     if(!(__decompile__))
       return fun;
 
@@ -672,9 +736,6 @@ function Sandbox(global = {}, params = [], prestate) {
   function evaluate(fun, thisArg, argumentsList) {
     __verbose__ && logc("evaluate", fun);
 
-    return fun.apply(wrap(thisArg), wrap(argumentsList));
-//print(decompile(fun, wrap(global)));
-//quit();
     // sandboxed function
     var sbxed = decompile(fun, wrap(global));
     // apply constructor function
@@ -793,7 +854,7 @@ function Sandbox(global = {}, params = [], prestate) {
    * @param effect Effect
    */
   function trace(effect) {
-    // __verbose__   && logc("trace", effect.toString()); // TODO
+    __verbose__   && logc("trace", effect.toString());
     __statistic__ && increment(Statistic.TRACE); 
 
     if(!(effect instanceof Effect.Effect))
