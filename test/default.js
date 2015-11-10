@@ -1,8 +1,19 @@
+
+load("test/membrane/Object.preventExtensions.js");
+//load("test/membrane/Object.freeze.js");
+//load("test/membrane/Object.seal.js");
+
+
+
+quit();
+
 // test prevent extenstions
 (function(object) {
   "use strict";
 
-  Object.preventExtensions(object);
+  //Object.preventExtensions(object);
+  //Object.seal(object);
+  //Object.freeze(object);
 
   var outcome = "";
   outcome += Object.isExtensible(object);
