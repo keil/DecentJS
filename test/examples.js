@@ -245,7 +245,7 @@ var sbx = new Sandbox(this, params);
 //\__|_||_\__,_|_||_\__, \___/__/
 //                  |___/        
 
-(function() {
+/*(function() {
 
   print("HasChanges(root): " + (sbx.hasChangesOn(root)));
 
@@ -253,15 +253,16 @@ var sbx = new Sandbox(this, params);
   print(";;; Changes of root");
   difso.foreach(function(i, e) {print(e)});
   print("\n");
-root.value = -1;
-//  print("HasChanges: " + (sbx.hasChanges));
 
-//  var difs = sbx.changes;
-//  print(";;; All Changes");
-//  difs.foreach(function(i, e) {print(e)});
-//  print("\n");
+  root.value = -1;
+  print("HasChanges: " + (sbx.hasChanges));
 
-});
+  var difs = sbx.changes;
+  print(";;; All Changes");
+  difs.foreach(function(i, e) {print(e)});
+  print("\n");
+
+});*/ // Notes: changes are deprecated
 
 
 //                    _ _   
@@ -272,16 +273,20 @@ root.value = -1;
 (function() {
 
   var wects = sbx.writeeffects;
+
   print(";;; Read Effects");
   wects.foreach(function(i, e) {print(e)});
   print("\n");
 
+  print(";;; outside sandbox");
   print("tree: " + root);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
-  wects[0].commit();
+  //sbx.commitOf(root);
+  //sbx.commit();
 
+  print(";;; outside sandbox");
   print("tree: " + root);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
@@ -302,36 +307,36 @@ root.value = -1;
   effects.foreach(function(i, e) {print(e)});
   print("\n");
 
-  print("tree: " + sbx.call(Node.prototype.toString, root));
-  print("sumOf: " + sbx.call(sumOf, this, root));
-  print("deptOf: " + sbx.call(depthOf, this, root));
+  print(";;; outside sandbox");
+  print("tree: " + root);
+  print("sumOf: " + sumOf(root));
+  print("deptOf: " + depthOf(root));
 
-  sbx.writeeffectsOf(root).foreach(function(i, e) {
-    print("Rollback: " + e + "/" + e.origin);
-    e.rollback()
-  });
-
+  print(";;; inside sandbox");
   print("tree: " + sbx.call(Node.prototype.toString, root));
   print("sumOf: " + sbx.call(sumOf, this, root));
   print("deptOf: " + sbx.call(depthOf, this, root));
 
   sbx.rollbackOf(root);
 
+  print(";;; inside sandbox");
   print("tree: " + sbx.call(Node.prototype.toString, root));
   print("sumOf: " + sbx.call(sumOf, this, root));
   print("deptOf: " + sbx.call(depthOf, this, root));
 
   sbx.rollback();
 
+  print(";;; inside sandbox");
   print("tree: " + sbx.call(Node.prototype.toString, root));
   print("sumOf: " + sbx.call(sumOf, this, root));
   print("deptOf: " + sbx.call(depthOf, this, root));
 
+  print(";;; outside sandbox");
   print("tree: " + root);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
-});
+})();
 
 //                     _   
 // _ _ _____ _____ _ _| |_ 

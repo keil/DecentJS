@@ -246,6 +246,8 @@ function Sandbox(global = {}, params = [], prestate) {
    */
   var shadows = new WeakMap();
 
+  // TODO, rename
+
   /** 
    * wrap(target)
    * Wraps a target object.
@@ -1144,32 +1146,102 @@ function Sandbox(global = {}, params = [], prestate) {
       return differences;
     }, this);
 
+    //  _____ _                                 
+    // / ____| |                                
+    //| |    | |__   __ _ _ __   __ _  ___  ___ 
+    //| |    | '_ \ / _` | '_ \ / _` |/ _ \/ __|
+    //| |____| | | | (_| | | | | (_| |  __/\__ \
+    // \_____|_| |_|\__,_|_| |_|\__, |\___||___/
+    //                           __/ |          
+    //                          |___/           
 
+    // TODO, deprecated
+    // it may work when reimplementing the snapshot mode
+    function hasChanges(effect, shadow, origin) {
 
+      if(effect instanceof Effect.GetPrototypeOf) {
+        return Object.getPrototypeOf(shadow) !== Object.getPrototypeOf(origin);
 
+      } else if(effect instanceof Effect.IsExtensible) {
+        return Object.isExtensible(shadow) !== Object.isExtensible(origin)
 
+      } else if(effect instanceof Effect.GetOwnPropertyDescriptor) {
+        return comparePropertyDescriptor(Object.getOwnPropertyDescriptor(shadow, effect.name), Object.getOwnPropertyDescriptor(origin, effect.name));
 
+      } else if(effect instanceof Effect.Has) {
+        return (effect.name in shadow) === (effect.name in origin);
 
+      } else if(effect instanceof Effect.Get) {
 
+      } else if(effect instanceof Effect.Enumerate) {
 
+      } else if(effect instanceof Effect.OwnKeys) {
 
+      }
 
+    }
 
+    /** Has Changes With
+     * @param target JavaScript Object
+     * return true|false
+     */
+    /*define("hasChangesOn", function(target) {
+      var es = this.writeeffectsOf(target);
 
+      var changes = false;
+      for(var e in es) {
+        // TODO, unroll needed
+        var result =  es[e].stat;
+        log("check " + es[e] + " = " + result);
+        changes = (result) ? true : changes;
+      }
+      return changes;
+    }, this);*/
 
+    /** Has Changes
+     * return true|false
+     */
+    /*getter("hasChanges", function() {
+      var changes = false;
+      for(var i in writetargets) {
+      changes = (this.hasChangesOn(writetargets[i])) ? true : changes;
+      }
+      return changes;
 
+      }, this);*/ // TODO
 
+    /** Changes Of
+     * @param target JavaScript Object
+     * return [Differences]
+     */
+    /*define("changesOf", function(target) {
+      var sbxA = this;
+      var es = this.effectsOf(target);
 
+      var changes = [];
+      for(var e in es) {
+      var result =  es[e].stat;
+      log("check " + es[e] + " = " + result);
+      if(result) changes.push(new Effect.Change(sbxA, es[e]));
+      }
+      return changes;
+      }, this);*/ // TODO
 
+    /** Changes 
+     * return [Changes]
+     */
+    /*getter("changes", function() {
+      var sbxA = this;
+      var es = writeeffects;
 
-
-
-
-
-
-
-
-
+      var changes = [];
+      for(var e in es) {
+      var result =  es[e].stat;
+      log("check " + es[e] + " = " + result);
+      if(result) changes.push(new Effect.Change(sbxA, es[e]));
+      }
+      return changes;
+      }, this);*/ // TODO
 
 
 
@@ -1398,111 +1470,6 @@ function Sandbox(global = {}, params = [], prestate) {
       }, this);*/ // TODO
 
 
-    //  _____ _                                 
-    // / ____| |                                
-    //| |    | |__   __ _ _ __   __ _  ___  ___ 
-    //| |    | '_ \ / _` | '_ \ / _` |/ _ \/ __|
-    //| |____| | | | (_| | | | | (_| |  __/\__ \
-    // \_____|_| |_|\__,_|_| |_|\__, |\___||___/
-    //                           __/ |          
-    //                          |___/           
-
-    // TODo, changes will not work as before, because we do not see the 
-    // value returned at effect time.
-
-  
-    // how to knwo if the value inssnt writte inside if teh sandbox?
-    // changes and differences should only consider the last effect on
-
-    function hasChanges(effect, shadow, origin) {
-
-      if(effect instanceof Effect.GetPrototypeOf) {
-        return Object.getPrototypeOf(shadow) !== Object.getPrototypeOf(origin);
-
-      } else if(effect instanceof Effect.IsExtensible) {
-        return Object.isExtensible(shadow) !== Object.isExtensible(origin)
-
-      } else if(effect instanceof Effect.GetOwnPropertyDescriptor) {
-        return comparePropertyDescriptor(Object.getOwnPropertyDescriptor(shadow, effect.name), Object.getOwnPropertyDescriptor(origin, effect.name));
-
-      } else if(effect instanceof Effect.Has) {
-        return (effect.name in shadow) === (effect.name in origin);
-
-      } else if(effect instanceof Effect.Get) {
-
-      } else if(effect instanceof Effect.Enumerate) {
-
-      } else if(effect instanceof Effect.OwnKeys) {
-
-      }
-
-    }
-
-
-    /** Has Changes With
-     * @param target JavaScript Object
-     * return true|false
-     */
-    define("hasChangesOn", function(target) {
-      var es = this.writeeffectsOf(target);
-
-      var changes = false;
-      for(var e in es) {
-        // TODO, unroll needed
-        var result =  es[e].stat;
-        log("check " + es[e] + " = " + result);
-        changes = (result) ? true : changes;
-      }
-      return changes;
-    }, this);
-
-    /** Has Changes
-     * return true|false
-     */
-    /*getter("hasChanges", function() {
-      var changes = false;
-      for(var i in writetargets) {
-      changes = (this.hasChangesOn(writetargets[i])) ? true : changes;
-      }
-      return changes;
-
-      }, this);*/ // TODO
-
-    /** Changes Of
-     * @param target JavaScript Object
-     * return [Differences]
-     */
-    /*define("changesOf", function(target) {
-      var sbxA = this;
-      var es = this.effectsOf(target);
-
-      var changes = [];
-      for(var e in es) {
-      var result =  es[e].stat;
-      log("check " + es[e] + " = " + result);
-      if(result) changes.push(new Effect.Change(sbxA, es[e]));
-      }
-      return changes;
-      }, this);*/ // TODO
-
-    /** Changes 
-     * return [Changes]
-     */
-    /*getter("changes", function() {
-      var sbxA = this;
-      var es = writeeffects;
-
-      var changes = [];
-      for(var e in es) {
-      var result =  es[e].stat;
-      log("check " + es[e] + " = " + result);
-      if(result) changes.push(new Effect.Change(sbxA, es[e]));
-      }
-      return changes;
-      }, this);*/ // TODO
-
-
-
 
     //  _____                          _ _   
     // / ____|                        (_) |  
@@ -1511,14 +1478,15 @@ function Sandbox(global = {}, params = [], prestate) {
     //| |___| (_) | | | | | | | | | | | | |_ 
     // \_____\___/|_| |_| |_|_| |_| |_|_|\__|
 
-    // TODO, unwrap required
+    
+    // TODO, unwrap
 
-    function commit(effct, shadow, origin) {
+    function commit(effect, shadow, origin) {
       if(effect instanceof Effect.SetPrototypeOf) {
         Object.setPrototypeOf(origin, Object.getPrototypeOf(shadow));
 
       } else if(effect instanceof Effect.PreventExtensions) {
-        Object.preventExtensions(origin)
+        Object.preventExtensions(origin);
 
       } else if(effect instanceof Effect.DefineProperty) {
         Object.defineProperty(origin, effect.name,  Object.getOwnPropertyDescriptor(shadow, effect.name));
@@ -1529,16 +1497,16 @@ function Sandbox(global = {}, params = [], prestate) {
       } else if(effect instanceof Effect.DeleteProperty) {
         delete origin[effect.name];
 
-      }
+      } else throw new TypeError("Invalid Effect" + effect);
     }
 
     /** Commit Of Target
      * @return JavaScript Array [Effect]
      */
     define("commitOf", function(target) {
-      var effects = writeeffects.get(target);
-      for(var effect in effects) {
-        commit(effect, state.get(cache.get(target)), target);
+      var effects = this.writeeffectsOf(target);
+      for(var effect of effects) {
+        commit(effect, shadows.get(target), target);
       }
     }, this);
 
@@ -1557,51 +1525,25 @@ function Sandbox(global = {}, params = [], prestate) {
     //|  _  // _ \| | | '_ \ / _` |/ __| |/ /
     //| | \ \ (_) | | | |_) | (_| | (__|   < 
     //|_|  \_\___/|_|_|_.__/ \__,_|\___|_|\_\
-
-    // TODO, unwrap required
-
-    function rollback(effct, shadow, origin) {
-
-      // better to clone origin again 
-      // and to delete the switch
-
-      if(effect instanceof Effect.SetPrototypeOf) {
-        throw new Error("Rollback not implemented.");
-        //Object.setPrototypeOf(shdaow, Object.getPrototypeOf(origin));
-
-      } else if(effect instanceof Effect.PreventExtensions) {
-        throw new Error("Rollback not implemented.");
-        //Object.preventExtensions(origin);
-
-      } else if(effect instanceof Effect.DefineProperty) {
-        throw new Error("Rollback not implemented.");
-        //Object.defineProperty(origin, effect.name,  Object.getOwnPropertyDescriptor(shadow, effect.name));
-
-      } else if(effect instanceof Effect.Set) {
-        throw new Error("Rollback not implemented.");
-        //origin[effect.name]=shadow[effect.name];
-
-      } else if(effect instanceof Effect.DeleteProperty) {
-        throw new Error("Rollback not implemented.");
-        //delete origin[effect.name];
-
-      }
-    }
-
+ 
     // TODO, 
-
-    /** 
-     * Rollback Of Target
-     * @param target JavaScript Object
-     */
-    define("rollbackOf", function(target) {
+    // 
+      // frozen can nor be rolled back
+      //
       // TODO, not all to do
       // elemnent can be frozen or properties may be deleted
       // e.g. this can be the difference to revert,
       // revert removes the shadow
       // whereas rollback handles the effects
       // thus I need a special rollback function
-      if(switches.has(target)) switches.get(target).clear();
+
+
+    /** 
+     * Rollback Of Target
+     * @param target JavaScript Object
+     */
+    define("rollbackOf", function(target) {
+      if(targets.has(target) && proxies.has(targets.get(target))) proxies.get(targets.get(target)).touchedPropertyNames.clear();
     }, this);
 
     /** 
