@@ -1549,7 +1549,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
   // \_/\___|_| /__/_\___/_||_|
 
   Object.defineProperty(Sandbox, "version", {
-    value: "DecentJS 1.0.1 (PoC)"
+    value: "DecentJS 1.0.2 (PoC)"
   });
 
   Object.defineProperty(Sandbox.prototype, "version", {
