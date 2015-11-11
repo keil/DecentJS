@@ -1,6 +1,10 @@
 *** DeentJS 1.0.1 (PoC)
 
-- [Bugfix]  Prototype
+- [Bugfix] Prototype
+- [New] Allow Strict Mode Eval
+- [Bugfix] Property Access
+- [Bugfix] Object.seal/Object.freeze
+- [Change] Code Cleanup 
 
 *** DeentJS 1.0.0 (PoC)
 
