@@ -20,6 +20,7 @@ Node.prototype.toString = function () {
 ///__/\_,_|_|_|_\___/|_|  
 
 function sumOf (node) {
+   print("node", node);
   return (node) ? node.value + sumOf(node.left) + sumOf(node.right) : 0;
 }
 
@@ -30,7 +31,9 @@ function sumOf (node) {
 //         |_|                     
 
 function depthOf (node) {
-  return Math.max(((node.left)?depthOf(node.left)+1:0), ((node.right)?depthOf(node.right)+1:0));
+  print("node", node);
+  return node ? Math.max(depthOf(node.left), depthOf(node.right))+1 : -1;
+  //return Math.max(((node.left)?depthOf(node.left)+1:0), ((node.right)?depthOf(node.right)+1:0));
 }
 
 //              _   
@@ -60,6 +63,7 @@ function setValue (node) {
 
 (function() {
 
+  print(";;; initial state");
   print("tree: " + root);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
@@ -74,6 +78,7 @@ function setValue (node) {
 
   setValue(root);
 
+  print(";;; normal");
   print("tree: " + root);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
@@ -109,7 +114,10 @@ var params = {
    */ metahandler:true,
   /** Function pass-through
    * (default: [])
-   */ passthrough:[Math, Math.max, valueOf, Object.prototype.toString, Object.prototype.hasOwnProperty],
+   */ passthrough:dumpGlobal(),
+  /** Allow Strict Mode Eval
+   * (default: false)
+   */ eval:true,
   /** Output handler
    * (default: ShellOut)
    */ out:ShellOut()
@@ -121,15 +129,19 @@ var sbx = new Sandbox(this, params);
 
   sbx.call(setValue, this, root);
 
+  print(";;; outside sandbox");
   print("tree: " + root);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
+  print(";;; inside sandbbox");
   print("tree: " + sbx.call(root.toString, root));
   print("sumOf: " + sbx.call(sumOf, this, root));
   print("deptOf: " + sbx.call(depthOf, this, root));
 
 })();
+
+quit();
 
 //      __  __        _      
 // ___ / _|/ _|___ __| |_ ___
@@ -205,7 +217,7 @@ var sbx = new Sandbox(this, params);
   ects.foreach(function(i, e) {print(e)});
   print("\n");
 
-})();
+});
 
 //    _                          
 // __| |_  __ _ _ _  __ _ ___ ___
@@ -229,7 +241,7 @@ var sbx = new Sandbox(this, params);
   difs.foreach(function(i, e) {print(e)});
   print("\n");
 
-})();
+});
 
 //    _ _  __  __                            
 // __| (_)/ _|/ _|___ _ _ ___ _ _  __ ___ ___
@@ -255,7 +267,7 @@ var sbx = new Sandbox(this, params);
   difs.foreach(function(i, e) {print(e)});
   print("\n");
 
-})();
+});
 
 //                    _ _   
 // __ ___ _ __  _ __ (_) |_ 
@@ -279,7 +291,7 @@ var sbx = new Sandbox(this, params);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
-})();
+});
 
 //         _ _ _             _   
 // _ _ ___| | | |__  __ _ __| |__
@@ -324,7 +336,7 @@ var sbx = new Sandbox(this, params);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
-})();
+});
 
 //                     _   
 // _ _ _____ _____ _ _| |_ 
@@ -361,7 +373,7 @@ var sbx = new Sandbox(this, params);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
-})();
+});
 
 //              __ _ _       _   
 // __ ___ _ _  / _| (_)__ __| |_ 
@@ -404,13 +416,14 @@ var sbx2 = new Sandbox(this, params);
   coftso.foreach(function(i, e) {print(e)});
   print("\n");
 
-})();
+});
 
 // _                                           _   
 //| |_ _ _ __ _ _ _  ____ __  __ _ _ _ ___ _ _| |_ 
 //|  _| '_/ _` | ' \(_-< '_ \/ _` | '_/ -_) ' \  _|
 // \__|_| \__,_|_||_/__/ .__/\__,_|_| \___|_||_\__|
 //                     |_|                         
+
 
 var params2 = {
   /** Verbose Mode
@@ -436,7 +449,10 @@ var params2 = {
    */ metahandler:true,
   /** Function pass-through
    * (default: [])
-   */ passthrough:[Math, Math.max, valueOf, Object.prototype.toString, Object.prototype.hasOwnProperty],
+   */ passthrough:dumpGlobal(), 
+  /** Allow Strict Mode Eval
+   * (default: false)
+   */ eval:true,
   /** Output handler
    * (default: ShellOut)
    */ out:ShellOut()
@@ -466,7 +482,7 @@ var tsbx = new Sandbox(this, params2);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
-})();
+});
 
 //               _        _       
 // __ _ _ ___ __| |_ __ _| |_ ___ 
@@ -478,7 +494,7 @@ var sbx3 = new Sandbox(this, params);
 
 (function() {
   // TODO
-})();
+});
 
 // _ _ _____ _____ _ _ ___ ___ 
 //| '_/ -_) V / -_) '_(_-</ -_)
@@ -518,4 +534,4 @@ var sbx4 = new Sandbox(this, params);
   print("sumOf: " + sumOf(sbxroot));
   print("deptOf: " + depthOf(sbxroot));
 
-})();
+});

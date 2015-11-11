@@ -469,7 +469,7 @@ function Sandbox(global = {}, params = [], prestate) {
     /** 
      * A trap for Object.getOwnPropertyDescriptor.
      */
-    this.xxgetOwnPropertyDescriptor = function(shadow, name) {
+    this.getOwnPropertyDescriptor = function(shadow, name) {
       __verbose__ && logc("getOwnPropertyDescriptor", (typeof name === 'string') ? name : name.toString());
       __effect__  && trace(new Effect.GetOwnPropertyDescriptor(origin, (typeof name === 'string') ? name : name.toString()));
 
@@ -732,18 +732,6 @@ function Sandbox(global = {}, params = [], prestate) {
       __verbose__ && logc("apply");
       __effect__  && trace(new Effect.Apply(origin));
 
-
-      print("@@@@@@@@@", native);
-      /*if(origin===eval) {
-        shadow.apply(thisArg, argumentsList);
-        }*/
-      /*
-         if(origin===eval) {
-         print("make strict mode eval") ;
-         return eval("'use strict'; "+argumentsList[0]);
-
-         }*/
-
       thisArg = thisArg ? thisArg : wrap(global);
       return native ? origin.apply(thisArg, argumentsList) : shadow.apply(thisArg, argumentsList);
     };
@@ -884,6 +872,7 @@ function Sandbox(global = {}, params = [], prestate) {
       var argumentsList = [];
       for(var i=2; i<arguments.length;i++) argumentsList[i]=arguments[i];
 
+//      print("XXXXXXX",argumentsList);
       return evaluate(fun, thisArg, argumentsList);
     }, this);
 
@@ -1668,7 +1657,7 @@ function Sandbox(global = {}, params = [], prestate) {
   // \_/\___|_| /__/_\___/_||_|
 
   Object.defineProperty(Sandbox, "version", {
-    value: "DecentJS 1.0.0 (PoC)"
+    value: "DecentJS 1.0.1 (PoC)"
   });
 
   Object.defineProperty(Sandbox.prototype, "version", {

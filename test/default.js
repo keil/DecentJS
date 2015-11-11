@@ -1,4 +1,7 @@
 
+
+load("test/examples.js");
+
 quit();
 
 // test prevent extenstions
