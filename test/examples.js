@@ -223,21 +223,21 @@ var sbx = new Sandbox(this, params);
 
 (function() {
 
-  print("InDifference(root): " + (sbx.hasDifferenceWith(root)));
+  print("HasDifferenceWith(root): " + (sbx.hasDifferenceWith(root)));
 
   var difso = sbx.differencesOf(root);
   print(";;; Differences of root");
   difso.foreach(function(i, e) {print(e)});
   print("\n");
 
-  print("InDifference: " + (sbx.hasDifference));
+  print("HasDifference: " + (sbx.hasDifference));
 
   var difs = sbx.differences;
   print(";;; All Differences");
   difs.foreach(function(i, e) {print(e)});
   print("\n");
 
-})();
+});
 
 //    _                          
 // __| |_  __ _ _ _  __ _ ___ ___
@@ -390,21 +390,26 @@ var sbx2 = new Sandbox(this, params);
     node.right = subtree;
   }
 
-  sbx.call(setValue, this, root);
   sbx2.call(appendRight, this, root);
 
+  print(";;; inside sandbox 1");
   print("tree: " + sbx.call(Node.prototype.toString, root));
   print("sumOf: " + sbx.call(sumOf, this, root));
   print("deptOf: " + sbx.call(depthOf, this, root));
 
+  print(";;; inside sandbox 2");
   print("tree: " + sbx2.call(Node.prototype.toString, root));
   print("sumOf: " + sbx2.call(sumOf, this, root));
   print("deptOf: " + sbx2.call(depthOf, this, root));  
 
+  print("InClonflictWith(root): " + (sbx.inConflictWith(sbx2, root)));
+  print("InClonflictWith(root): " + (sbx2.inConflictWith(sbx, root)));
+
   print("InClonflict: " + (sbx.inConflict(sbx2)));
   print("InClonflict: " + (sbx2.inConflict(sbx)));
 
-  var cofts = sbx.conflicts(sbx2);
+  //    sbx.call(setValue, this, root);
+/*  var cofts = sbx.conflicts(sbx2);
   print(";;; All Conflicts");
   cofts.foreach(function(i, e) {print(e)});
   print("\n");
@@ -415,9 +420,9 @@ var sbx2 = new Sandbox(this, params);
   var coftso = sbx.conflictsOf(sbx2, root);
   print(";;; Conflicts of root");
   coftso.foreach(function(i, e) {print(e)});
-  print("\n");
+  print("\n"); */
 
-});
+})();
 
 // _                                           _   
 //| |_ _ _ __ _ _ _  ____ __  __ _ _ _ ___ _ _| |_ 

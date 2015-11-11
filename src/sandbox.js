@@ -243,7 +243,7 @@ function Sandbox(global = {}, params = [], prestate) {
   var proxies = new WeakMap();
 
   /** Maps target values to shadow objects
-   */
+  */
   var shadows = new WeakMap();
 
   // TODO, rename
@@ -584,14 +584,14 @@ function Sandbox(global = {}, params = [], prestate) {
       var desc = touched(name) ? 
         Object.getOwnPropertyDescriptor(shadow, name) : 
         wrap(Object.getOwnPropertyDescriptor(origin, name));
-    
+
       //return 1;
       //return origin[name]==value;
-  /*    touch(name);
-      (shadow[name]=value);
-      return true;
-    */  
-     
+      /*    touch(name);
+            (shadow[name]=value);
+            return true;
+            */  
+
       if(desc === undefined) {
         // non-existing property
         if(Object.isExtensible(shadow)) {
@@ -1063,7 +1063,7 @@ function Sandbox(global = {}, params = [], prestate) {
       }
       return true;
     }
-    
+
     function hasDifferences(effect, shadow, origin) {
 
       if(effect instanceof Effect.SetPrototypeOf) {
@@ -1190,12 +1190,12 @@ function Sandbox(global = {}, params = [], prestate) {
 
       var changes = false;
       for(var e in es) {
-        // TODO, unroll needed
-        var result =  es[e].stat;
-        log("check " + es[e] + " = " + result);
-        changes = (result) ? true : changes;
-      }
-      return changes;
+    // TODO, unroll needed
+    var result =  es[e].stat;
+    log("check " + es[e] + " = " + result);
+    changes = (result) ? true : changes;
+    }
+    return changes;
     }, this);*/
 
     /** Has Changes
@@ -1388,6 +1388,54 @@ function Sandbox(global = {}, params = [], prestate) {
         return false;
     }
 
+   /** Conflict Of
+     * @param sbx Sandbox
+     * @param target JavaScript Object
+     * return true|false
+     */
+    define("inConflictWith", function(sbx, target) {
+      if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
+
+      var es = this.effectsOf(target);
+      var fs = sbx.effectsOf(target);
+
+      for(var e of es) {
+        for(var f of fs) {
+          if(inConflict(e, f)) return true;
+          else continue;
+        }
+      }
+      return false;
+      }, this);
+
+    /** Conflict Of
+     * @param sbx Sandbox
+     * @param target JavaScript Object
+     * return true|false
+     */
+    define("inConflict", function(sbx) {
+      if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
+
+      var es = this.effects;
+      var fs = sbx.effects
+
+      for(var e of es) {
+        for(var f of fs) {
+          if(inConflict(e, f)) return true;
+          else continue;
+        }
+      }
+      return false;
+
+
+
+      var conflict = false; 
+      for(var i in targets) {
+      conflict = (this.inConflictWith(sbx, targets[i])) ? true : conflict;
+      }
+      return conflict;
+
+      }, this);
 
 
 
@@ -1430,45 +1478,7 @@ function Sandbox(global = {}, params = [], prestate) {
       return conflicts;
       }, this);*/ // TODO
 
-    /** Conflict Of
-     * @param sbx Sandbox
-     * @param target JavaScript Object
-     * return true|false
-     */
-    /*define("inConflictWith", function(sbx, target) {
-      if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
-
-      var es = this.effectsOf(target);
-      var fs = sbx.effectsOf(target);
-
-      var conflict = false;
-      for(var e in es) {
-      for(var f in fs) {
-      var result = (inConflict(es[e], fs[f]));
-      log("compare " + es[e] + " - " + fs[f] + " = " + result);
-      conflict = (result) ? true : conflict;
-      }
-      }
-      return conflict;
-      }, this);*/ // TODO
-
-
-    /** Conflict Of
-     * @param sbx Sandbox
-     * @param target JavaScript Object
-     * return true|false
-     */
-    /*define("inConflict", function(sbx) {
-      if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
-
-      var conflict = false; 
-      for(var i in targets) {
-      conflict = (this.inConflictWith(sbx, targets[i])) ? true : conflict;
-      }
-      return conflict;
-
-      }, this);*/ // TODO
-
+ 
 
 
     //  _____                          _ _   
@@ -1478,7 +1488,7 @@ function Sandbox(global = {}, params = [], prestate) {
     //| |___| (_) | | | | | | | | | | | | |_ 
     // \_____\___/|_| |_| |_|_| |_| |_|_|\__|
 
-    
+
     // TODO, unwrap
 
     function commit(effect, shadow, origin) {
@@ -1525,18 +1535,6 @@ function Sandbox(global = {}, params = [], prestate) {
     //|  _  // _ \| | | '_ \ / _` |/ __| |/ /
     //| | \ \ (_) | | | |_) | (_| | (__|   < 
     //|_|  \_\___/|_|_|_.__/ \__,_|\___|_|\_\
- 
-    // TODO, 
-    // 
-      // frozen can nor be rolled back
-      //
-      // TODO, not all to do
-      // elemnent can be frozen or properties may be deleted
-      // e.g. this can be the difference to revert,
-      // revert removes the shadow
-      // whereas rollback handles the effects
-      // thus I need a special rollback function
-
 
     /** 
      * Rollback Of Target
@@ -1573,7 +1571,6 @@ function Sandbox(global = {}, params = [], prestate) {
       shadows.delete(target);
 
     }, this);
-
 
     /** Rrevert
     */

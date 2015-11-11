@@ -2,6 +2,10 @@
 
 - [Bugfix] Strict Mode Set-Handler Return
 - [Bugfix] New Effect logging
+- [Change] Differences
+- [Change] Commit
+- [Change] Rollback
+- [Change] Revert
 
 *** DeentJS 1.0.1 (PoC)
 
