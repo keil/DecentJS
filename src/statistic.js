@@ -48,3 +48,4 @@ Statistic.CACHEMISS = "#cache miss";
 Statistic.CACHEHITT = "#cache hit";
 Statistic.TOUCHED = "#touched";
 Statistic.TRACE = "#trace";
+Statistic.DECOMPILE = "#decompile";

@@ -27,42 +27,4 @@ load("src/sandbox.js");
 load('test/testcase.js');
 load('test/metahandler.js');
 
-// ==================================================
-
-// default sandbox parameters
-var sbxArgs = {
-  /** Verbose Mode
-   * (default: false)
-   */ verbose:true,
-  /** Enable Statistic
-   * (default: false)
-   */ statistic:true,
-  /** Decompile
-   * (default: true)
-   */ decompile:true,
-  /** Membrane
-   * (default: true)
-   */ membrane:true,
-  /** Effect
-   * (default: true)
-   */ effect:true,
-  /** Transparent Mode
-   * (default: false)
-   */ transparent:false,
-  /** MetaHandler
-   * (default: true)
-   */ metahandler:true,
-  /** Function pass-through
-   * (default: [])
-   */ passthrough:[print, Function.prototype.call, Function.prototype.apply],
-  /** Allow Strict Mode Eval
-   * (default: false)
-   */ eval:false,
-  /** Output handler
-   * (default: ShellOut)
-   */ out:ShellOut()
-}
-
-// ==================================================
-
 quit();

@@ -376,7 +376,10 @@ var Effect = (function() {
   // \___|_||_\__,_|_||_\__, \___/__/
   //                    |___/        
 
-  // TODO, deprecated
+  /**
+   * Note: Matthias Keil
+   * Changes are deprecated since DecentJS 1.0.0 PoC
+   */
   function Change(sbx, effect) {
     if(!(this instanceof Change)) return new Change(sbx, effect);
 
@@ -406,6 +409,10 @@ var Effect = (function() {
   //  | || '_/ _` | ' \(_-</ _` / _|  _| / _ \ ' \ 
   //  |_||_| \__,_|_||_/__/\__,_\__|\__|_\___/_||_|
 
+  /**
+   * Note: Matthias Keil
+   * Transactions are still in draft mode.
+   */
   function Transaction(effects) {
     if(!(this instanceof Transaction)) return new Transaction(effects);
 
@@ -414,15 +421,6 @@ var Effect = (function() {
         value: effects
       }  
     });
-
-    // TODO
-    // Implement differences/ changes/ conflicts ?
-    // Or delete
-
-    // TODO
-    // add features
-    // set of write effects
-    //this.effects=effects;
   }
   Transaction.prototype = {};
   Transaction.prototype.toString = function() {

@@ -104,13 +104,3 @@ Package.export = function(name, value, target) {
     value: value, enumerable: true
   });
 }
-
-//__      __        _    ___      _   
-//\ \    / /__ __ _| |__/ __| ___| |_ 
-// \ \/\/ / -_) _` | / /\__ \/ -_)  _|
-//  \_/\_/\___\__,_|_\_\|___/\___|\__|
-
-var WeakSet = WeakMap;
-WeakSet.prototype.add = function(arg) {
-  return WeakMap.prototype.set.call(this, arg, arg);
-}

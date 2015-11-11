@@ -30,9 +30,6 @@
  * - decompile
  *   Decompiles functions. (default: true)
  *
- * - membrane
- *   Implements a sandbox membrane. (default: true)
- *
  * - effect
  *   Enables effect logging. (default: true)
  *
@@ -72,12 +69,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * (default: true)
    */
   var __decompile__ = configure("decompile", true);
-
-  /*
-   * Membrane
-   * (default: true)
-   */
-  var __membrane__ = configure("membrane", true); // TODO, deprecated
 
   /*
    * Effect
@@ -142,18 +133,14 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param msg String message
    */ 
   function log(msg) {
-    if(__verbose__) {
-      __out__.membrane(msg, id);
-    }
+    __verbose__ && __out__.membrane(msg, id);
   }
 
   /** logc(msg)
    * @param msg String message
    */ 
   function logc(cmd, arg) {
-    if(__verbose__) {
-      __out__.membrane("$."+padding_right(cmd+" ", ".", 30)+((arg!==undefined) ? " "+arg : ""), id);
-    }
+    __verbose__ && __out__.membrane("$."+padding_right(cmd+" ", ".", 30)+((arg!==undefined) ? " "+arg : ""), id);
   }
 
   //    _        _   _    _   _    
@@ -164,19 +151,13 @@ function Sandbox(global = {}, params = [], prestate = []) {
   var statistic = new Statistic();
 
   function increment(op) {
-    if(__statistic__) {
-      statistic.increment(op);
-    }
+    __statistic__ && statistic.increment(op);
   }
 
   // _    _  _      _   _         ___             _   _          
   //(_)__| \| |__ _| |_(_)_ _____| __|  _ _ _  __| |_(_)___ _ _  
   //| (_-< .` / _` |  _| \ V / -_) _| || | ' \/ _|  _| / _ \ ' \ 
   //|_/__/_|\_\__,_|\__|_|\_/\___|_| \_,_|_||_\__|\__|_\___/_||_|
-
-  var toString = Function.prototype.toString;
-  //var passthrough = __passthrough__;  
-  //new Set((__passthrough__ instanceof Array) ? __passthrough__ : []);
 
   /** passThrough(fun)
    * Checks whether the given function is a pass-through function or not.
@@ -186,16 +167,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   function passThrough(fun) {
     return (fun instanceof Function) && __passthrough__.has(fun);
-
-    //if(!(fun instanceof Function)) return false;
-    //else {
-    //  return passthrough.has(fun);
-    //}
-
-    // Note: Matthias Keil
-    // deprecated, Function.bind makes all functions to a native function
-    // this, this check will not work as expected
-    // return (FunctionPrototypeToString.apply(fun).indexOf('[native code]') > -1);
   }
 
   // _    ___          _ 
@@ -205,17 +176,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
   var GlobalEval = eval;
 
-  /** isEval(fun)
-   * Checks whether the given function is the global eval function or not.
-   *
-   * @param fuc Function Object
-   * @return true, if fun is eval, false otherwise
-   */
-  function isEval(fun) {
-    if(!(fun instanceof Function)) return false;
-    else return (fun===GlobalEval);
-  }
-
   //__ __ ___ _ __ _ _ __ 
   //\ V  V / '_/ _` | '_ \
   // \_/\_/|_| \__,_| .__/
@@ -223,11 +183,11 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
   /** Maps target values to sandbox proxies
   */
-  var targets = new WeakMap();
+  var proxies = new WeakMap();
 
   /** Maps sandbox proxies to handler objects
   */
-  var proxies = new WeakMap();
+  var handlers = new WeakMap();
 
   /** Maps target values to shadow objects
   */
@@ -252,13 +212,13 @@ function Sandbox(global = {}, params = [], prestate = []) {
     }
 
     // Avoid re-wrapping of sandbox proxies
-    if(proxies.has(target)) return target;
+    if(handlers.has(target)) return target;
 
     // If target already wrapped, return cached proxy
-    if(targets.has(target)) {
+    if(proxies.has(target)) {
       __verbose__   && log("Cache hit.");
       __statistic__ && increment(Statistic.CACHEHITT);
-      return targets.get(target);
+      return proxies.get(target);
     } else {
       __verbose__   && log("Cache miss.");
       __statistic__ && increment(Statistic.CACHEMISS);
@@ -304,8 +264,8 @@ function Sandbox(global = {}, params = [], prestate = []) {
     var handler = new Membrane(target, native);
     var proxy = new Proxy(shadow, __metahandler__ ? new Proxy(handler, metahandler) : handler);
 
-    targets.set(target, proxy);
-    proxies.set(proxy, handler);
+    proxies.set(target, proxy);
+    handlers.set(proxy, handler);
     shadows.set(target, shadow);
 
     return proxy;
@@ -356,7 +316,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
     for (var property of Object.getOwnPropertyNames(object)) {
       Object.defineProperty(clone, property, Object.getOwnPropertyDescriptor(object, property));
     }
-    targets.set(object, wrap(clone));
+    proxies.set(object, wrap(clone));
   }
 
   // __  __           _                      
@@ -793,7 +753,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
      */
     function decompile(fun, env) {
       __verbose__   && logc("decompile", fun.name ? fun.name : fun.toString());
-      __statistic__ && increment("decompile");
+      __statistic__ && increment(Statistic.DECOMPILE );
 
       if(!(fun instanceof Function))
         throw new TypeError("fun");
@@ -1454,7 +1414,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
      * @param target JavaScript Object
      */
     define("rollbackOf", function(target) {
-      if(targets.has(target) && proxies.has(targets.get(target))) proxies.get(targets.get(target)).touchedPropertyNames.clear();
+      if(proxies.has(target) && handlers.has(proxies.get(target))) handlers.get(proxies.get(target)).touchedPropertyNames.clear();
     }, this);
 
     /** 
@@ -1477,10 +1437,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
      * @param target JavaScript Object
      */
     define("revertOf", function(target) {
-      var proxy = targets.get(target);
+      var proxy = proxies.get(target);
 
-      targets.delete(target);
-      proxies.delete(proxy);
+      proxies.delete(target);
+      handlers.delete(proxy);
       shadows.delete(target);
 
     }, this);
@@ -1549,7 +1509,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
   // \_/\___|_| /__/_\___/_||_|
 
   Object.defineProperty(Sandbox, "version", {
-    value: "DecentJS 1.0.2 (PoC)"
+    value: "DecentJS 1.0.3 (PoC)"
   });
 
   Object.defineProperty(Sandbox.prototype, "version", {
@@ -1573,9 +1533,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
       /** Decompile
        * (default: true)
        */ decompile:true,
-      /** Membrane
-       * (default: true)
-       */ membrane:true,
       /** Effect
        * (default: true)
        */ effect:true,
@@ -1611,9 +1568,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
       /** Decompile
        * (default: true)
        */ decompile:true,
-      /** Membrane
-       * (default: true)
-       */ membrane:true,
       /** Effect
        * (default: true)
        */ effect:true,
@@ -1649,9 +1603,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
       /** Decompile
        * (default: true)
        */ decompile:true,
-      /** Membrane
-       * (default: true)
-       */ membrane:true,
       /** Effect
        * (default: true)
        */ effect:true,

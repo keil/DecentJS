@@ -137,6 +137,8 @@ var sbx = new Sandbox(this, params);
   print("sumOf: " + sbx.call(sumOf, this, root));
   print("deptOf: " + sbx.call(depthOf, this, root));
 
+  print(sbx.statistic);
+
 })();
 
 //      __  __        _      
