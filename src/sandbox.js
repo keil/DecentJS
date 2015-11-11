@@ -515,8 +515,8 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __effect__  && trace(new Effect.Get(origin, (typeof name === 'string') ? name : name.toString()));
 
       // TODO
-      //if(name === Symbol.toPrimitive) return origin[name];
-      //if(name === "valueOf") return origin[name];
+      if(name === Symbol.toPrimitive) return origin[name];
+      if(name === "valueOf") return origin[name];
 
       // Node: Matthias Keil
       // Bug in previous versions. Access to undefined causes a 
