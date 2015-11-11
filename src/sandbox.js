@@ -49,8 +49,8 @@
  *   Instance for the output. (default: new Out())
  *
  */
-function Sandbox(global = {}, params = [], prestate) {
-  if(!(this instanceof Sandbox)) return new Sandbox(global, params);
+function Sandbox(global = {}, params = [], prestate = []) {
+  if(!(this instanceof Sandbox)) return new Sandbox(global, params, prestate);
 
   if(!(global instanceof Object))
     throw new TypeError("No Global Object.");
@@ -129,19 +129,6 @@ function Sandbox(global = {}, params = [], prestate) {
   function configure(param, value) {
     return (param in (params===undefined ? {} : params)) ? params[param] : value;
   };
-
-  //                 _        _                              _        _   
-  // _ __ _ _ ___ __| |_ __ _| |_ ___   ____ _  __ _ _ __ __| |_  ___| |_ 
-  //| '_ \ '_/ -_|_-<  _/ _` |  _/ -_) (_-< ' \/ _` | '_ (_-< ' \/ _ \  _|
-  //| .__/_| \___/__/\__\__,_|\__\___| /__/_||_\__,_| .__/__/_||_\___/\__|
-  //|_|                                             |_|                   
-
-  // TODO
-  // Pre-state Snapshot Mode currently not available.
-  // var snapshot = new WeakMap();
-  // if(prestate instanceof Array) for(var i in prestate) {
-  //   snapshot.push(prestate[i], clone(prestate[i]));
-  // }
 
   // _           
   //| |___  __ _ 
@@ -309,6 +296,11 @@ function Sandbox(global = {}, params = [], prestate) {
       }
     };
 
+    // Transparent Mode
+    // Provides only effect logging
+    // TODO
+    shadow = __transparent__ ? target : shadow;
+
     var handler = new Membrane(target, native);
     var proxy = new Proxy(shadow, __metahandler__ ? new Proxy(handler, metahandler) : handler);
 
@@ -329,7 +321,7 @@ function Sandbox(global = {}, params = [], prestate) {
   function cloneObject(target) {
     __verbose__ && log("Clone Object.");
 
-    var clone = Object.create(Object.getPrototypeOf(target)); 
+    var clone = Object.create(Object.getPrototypeOf(target));
     return clone;
   }
 
@@ -350,6 +342,21 @@ function Sandbox(global = {}, params = [], prestate) {
     clone.prototype = target.prototype; 
 
     return clone;
+  }
+
+  //                 _        _                              _        _   
+  // _ __ _ _ ___ __| |_ __ _| |_ ___   ____ _  __ _ _ __ __| |_  ___| |_ 
+  //| '_ \ '_/ -_|_-<  _/ _` |  _/ -_) (_-< ' \/ _` | '_ (_-< ' \/ _ \  _|
+  //| .__/_| \___/__/\__\__,_|\__\___| /__/_||_\__,_| .__/__/_||_\___/\__|
+  //|_|                                             |_|                   
+
+  // make this recursive
+  for(var object of prestate) {
+    var clone = Object.create(Object.getPrototypeOf(object));
+    for (var property of Object.getOwnPropertyNames(object)) {
+      Object.defineProperty(clone, property, Object.getOwnPropertyDescriptor(object, property));
+    }
+    targets.set(object, wrap(clone));
   }
 
   // __  __           _                      
@@ -1309,7 +1316,7 @@ function Sandbox(global = {}, params = [], prestate) {
       }
     }
 
-   /** Conflict Of
+    /** Conflict Of
      * @param sbx Sandbox
      * @param target JavaScript Object
      * return true|false
@@ -1324,7 +1331,7 @@ function Sandbox(global = {}, params = [], prestate) {
         }
       }
       return false;
-      }, this);
+    }, this);
 
     /** Conflict Of
      * @param sbx Sandbox
@@ -1384,7 +1391,7 @@ function Sandbox(global = {}, params = [], prestate) {
       return conflicts;
     }, this);
 
- 
+
 
 
     //  _____                          _ _   

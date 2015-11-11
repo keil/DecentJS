@@ -6,6 +6,11 @@
 - [Change] Commit
 - [Change] Rollback
 - [Change] Revert
+- [Change] Conflict
+- [New] More efficient conflict detection
+- [Change] Transparent Mode
+- [Change] Pre-State Snapshot
+
 
 *** DeentJS 1.0.1 (PoC)
 

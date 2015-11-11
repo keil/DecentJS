@@ -262,7 +262,7 @@ var sbx = new Sandbox(this, params);
   difs.foreach(function(i, e) {print(e)});
   print("\n");
 
-});*/ // Notes: changes are deprecated
+  });*/ // Notes: changes are deprecated
 
 
 //                    _ _   
@@ -404,7 +404,7 @@ var sbx2 = new Sandbox(this, params);
 
   print("InClonflict: " + (sbx.inConflict(sbx2)));
   print("InClonflict: " + (sbx2.inConflict(sbx)));
-  
+
   print(";;; inside sandbox 1");
   print("tree: " + sbx.call(Node.prototype.toString, root));
   print("sumOf: " + sbx.call(sumOf, this, root));
@@ -495,22 +495,26 @@ var tsbx = new Sandbox(this, params2);
 
 (function() {
 
+  print(";;; outside sandbox");
   print("tree: " + root);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
   tsbx.call(setValue, this, root);
 
+  print(";;; outside sandbox");
   print("tree: " + root);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
+  print(";;; inside sandbox");
   print("tree: " + sbx.call(Node.prototype.toString, root));
   print("sumOf: " + sbx.call(sumOf, this, root));
   print("deptOf: " + sbx.call(depthOf, this, root));
 
   tsbx.rollback();
 
+  print(";;; outside sandbox");
   print("tree: " + root);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
@@ -523,10 +527,59 @@ var tsbx = new Sandbox(this, params2);
 //| .__/_| \___/__/\__\__,_|\__\___|
 //|_|                               
 
-var sbx3 = new Sandbox(this, params);
-
 (function() {
-  // TODO
+  var sbx3 = new Sandbox(this, params, [root]);
+
+  print(";;; outside sandbox");
+  print("tree: " + root);
+  print("sumOf: " + sumOf(root));
+  print("deptOf: " + depthOf(root));
+
+  print(";;; inside sandbox");
+  print("tree: " + sbx3.call(Node.prototype.toString, root));
+  print("sumOf: " + sbx3.call(sumOf, this, root));
+  print("deptOf: " + sbx3.call(depthOf, this, root));
+
+  sbx3.call(setValue, this, root);
+
+  print(";;; outside sandbox");
+  print("tree: " + root);
+  print("sumOf: " + sumOf(root));
+  print("deptOf: " + depthOf(root));
+
+  print(";;; inside sandbox");
+  print("tree: " + sbx3.call(Node.prototype.toString, root));
+  print("sumOf: " + sbx3.call(sumOf, this, root));
+  print("deptOf: " + sbx3.call(depthOf, this, root));
+
+  root.value = -1;
+  root.left.value = -1;
+  root.right.value = -1;
+  root.left.left.value = -1;
+  root.left.right.value = -1;
+
+  print(";;; outside sandbox");
+  print("tree: " + root);
+  print("sumOf: " + sumOf(root));
+  print("deptOf: " + depthOf(root));
+
+  print(";;; inside sandbox");
+  print("tree: " + sbx3.call(Node.prototype.toString, root));
+  print("sumOf: " + sbx3.call(sumOf, this, root));
+  print("deptOf: " + sbx3.call(depthOf, this, root));
+
+  sbx3.rollback();
+
+  print(";;; outside sandbox");
+  print("tree: " + root);
+  print("sumOf: " + sumOf(root));
+  print("deptOf: " + depthOf(root));
+
+  print(";;; inside sandbox");
+  print("tree: " + sbx3.call(Node.prototype.toString, root));
+  print("sumOf: " + sbx3.call(sumOf, this, root));
+  print("deptOf: " + sbx3.call(depthOf, this, root));
+
 });
 
 // _ _ _____ _____ _ _ ___ ___ 
@@ -537,34 +590,55 @@ var sbx4 = new Sandbox(this, params);
 
 (function() {
 
-  var sbxroot = sbx3.wrap(root);
+  var sbxroot = sbx4.wrap(root);
 
+  print(";;; outside sandbox/ root");
   print("tree: " + root);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
+  print(";;; outside sandbox/ sbxroot");
   print("tree: " + sbxroot);
   print("sumOf: " + sumOf(sbxroot));
   print("deptOf: " + depthOf(sbxroot));
+
+  print(";;; inside sandbox");
+  print("tree: " + sbx4.call(Node.prototype.toString, root));
+  print("sumOf: " + sbx4.call(sumOf, this, root));
+  print("deptOf: " + sbx4.call(depthOf, this, root));
 
   setValue(sbxroot);
 
+  print(";;; outside sandbox / root");
   print("tree: " + root);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
+  print(";;; outside sandbox / sbxroot");
   print("tree: " + sbxroot);
   print("sumOf: " + sumOf(sbxroot));
   print("deptOf: " + depthOf(sbxroot));
 
-  sbx3.rollback();
+  print(";;; inside sandbox");
+  print("tree: " + sbx4.call(Node.prototype.toString, root));
+  print("sumOf: " + sbx4.call(sumOf, this, root));
+  print("deptOf: " + sbx4.call(depthOf, this, root));
 
+  sbx4.rollback();
+
+  print(";;; outside sandbox / root");
   print("tree: " + root);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
+  print(";;; outside sandbox / sbxroot");
   print("tree: " + sbxroot);
   print("sumOf: " + sumOf(sbxroot));
   print("deptOf: " + depthOf(sbxroot));
+
+  print(";;; inside sandbox");
+  print("tree: " + sbx4.call(Node.prototype.toString, root));
+  print("sumOf: " + sbx4.call(sumOf, this, root));
+  print("deptOf: " + sbx4.call(depthOf, this, root));
 
 });
