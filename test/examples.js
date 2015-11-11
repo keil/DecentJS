@@ -336,7 +336,7 @@ var sbx = new Sandbox(this, params);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
-})();
+});
 
 //                     _   
 // _ _ _____ _____ _ _| |_ 
@@ -345,30 +345,31 @@ var sbx = new Sandbox(this, params);
 
 (function() {
 
-  print("-----------------------------");
-
-  sbx.call(setValue, this, root);
-
+  print(";;; outside sandbox");
   print("tree: " + root);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
+  print(";;; inside sandbox");
   print("tree: " + sbx.call(Node.prototype.toString, root));
   print("sumOf: " + sbx.call(sumOf, this, root));
   print("deptOf: " + sbx.call(depthOf, this, root));
 
   sbx.revertOf(root);
 
+  print(";;; inside sandbox");
   print("tree: " + sbx.call(Node.prototype.toString, root));
   print("sumOf: " + sbx.call(sumOf, this, root));
   print("deptOf: " + sbx.call(depthOf, this, root));
 
   sbx.revert();
 
+  print(";;; inside sandbox");
   print("tree: " + sbx.call(Node.prototype.toString, root));
   print("sumOf: " + sbx.call(sumOf, this, root));
   print("deptOf: " + sbx.call(depthOf, this, root));
 
+  print(";;; outside sandbox");
   print("tree: " + root);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));

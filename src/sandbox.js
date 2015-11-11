@@ -1562,23 +1562,26 @@ function Sandbox(global = {}, params = [], prestate) {
     //| | \ \  __/\ V /  __/ |  | |_ 
     //|_|  \_\___| \_/ \___|_|   \__|
 
-    // TODO, deprecated
-
     /** Revert Of
      * @param target JavaScript Object
      */
-    //  define("revertOf", function(target) {
-    //    var sw = switches.get(target);
-    //    sw.clear();
-    //  }, this);
+    define("revertOf", function(target) {
+      var proxy = targets.get(target);
+
+      targets.delete(target);
+      proxies.delete(proxy);
+      shadows.delete(target);
+
+    }, this);
+
 
     /** Rrevert
     */
-    //  define("revert", function() {
-    //    for(var i in targets) {
-    //      this.revertOf(targets[i]);
-    //    }
-    //  }, this);
+    define("revert", function() {
+      for(var target of writetargets) {
+        this.revertOf(target);
+      }
+    }, this);
 
     //  _____ _        _   _     _   _      
     // / ____| |      | | (_)   | | (_)     
