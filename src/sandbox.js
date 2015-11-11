@@ -577,13 +577,20 @@ function Sandbox(global = {}, params = [], prestate) {
       var desc = touched(name) ? 
         Object.getOwnPropertyDescriptor(shadow, name) : 
         wrap(Object.getOwnPropertyDescriptor(origin, name));
-
+    
+      //return 1;
+      //return origin[name]==value;
+  /*    touch(name);
+      (shadow[name]=value);
+      return true;
+    */  
+     
       if(desc === undefined) {
         // non-existing property
         if(Object.isExtensible(shadow)) {
           // extensible object
           touch(name);
-          return (shadow[name]=value);
+          (shadow[name]=value);
         } else {
           // non-extensible object
           throw new TypeError(`${shadow} is not extensible`);
@@ -593,12 +600,14 @@ function Sandbox(global = {}, params = [], prestate) {
         if(desc.writable) {
           // writeable property
           touch(name);
-          return (shadow[name]=value);
+          (shadow[name]=value);
         } else {
           // non-writeable property
           throw new TypeError(`"${name}" is read-only`);
         }
       }
+
+      return true;
 
       // TODO, seal
       // TODO, setter
@@ -870,9 +879,8 @@ function Sandbox(global = {}, params = [], prestate) {
       if(!(fun instanceof Function)) throw new TypeError("No function object.");
 
       var argumentsList = [];
-      for(var i=2; i<arguments.length;i++) argumentsList[i]=arguments[i];
+      for(var i=2; i<arguments.length;i++) argumentsList.push(arguments[i]);
 
-//      print("XXXXXXX",argumentsList);
       return evaluate(fun, thisArg, argumentsList);
     }, this);
 
@@ -1365,7 +1373,6 @@ function Sandbox(global = {}, params = [], prestate) {
     function comparePropertyDescriptor(desc1, desc2) {
       var keys = ["configurable", "enumerable", "value", "writable", "get", "set"];
       for (var key in keys) {
-        print("compare key", key); // TODO
         if(desc1[key]===desc2[key]) 
           continue;
         else

@@ -20,7 +20,6 @@ Node.prototype.toString = function () {
 ///__/\_,_|_|_|_\___/|_|  
 
 function sumOf (node) {
-   print("node", node);
   return (node) ? node.value + sumOf(node.left) + sumOf(node.right) : 0;
 }
 
@@ -31,7 +30,6 @@ function sumOf (node) {
 //         |_|                     
 
 function depthOf (node) {
-  print("node", node);
   return node ? Math.max(depthOf(node.left), depthOf(node.right))+1 : -1;
   //return Math.max(((node.left)?depthOf(node.left)+1:0), ((node.right)?depthOf(node.right)+1:0));
 }
@@ -141,8 +139,6 @@ var sbx = new Sandbox(this, params);
 
 })();
 
-quit();
-
 //      __  __        _      
 // ___ / _|/ _|___ __| |_ ___
 /// -_)  _|  _/ -_) _|  _(_-<
@@ -171,25 +167,25 @@ quit();
   ects.foreach(function(i, e) {print(e)});
   print("\n");
 
-  var rectso = sbx.readeffectsOf(root);
-  print(";;; Read Effects of root");
-  rectso.foreach(function(i, e) {print(e)});
-  print("\n");
+//  var rectso = sbx.readeffectsOf(root);
+//  print(";;; Read Effects of root");
+//  rectso.foreach(function(i, e) {print(e)});
+//  print("\n");
 
-  var wectso = sbx.writeeffectsOf(root);
-  print(";;; Write Effects of root");
-  wectso.foreach(function(i, e) {print(e)});
-  print("\n");
+//  var wectso = sbx.writeeffectsOf(root);
+//  print(";;; Write Effects of root");
+//  wectso.foreach(function(i, e) {print(e)});
+//  print("\n");
 
-  var cectso = sbx.calleffectsOf(root);
-  print(";;; Call Effects of root");
-  cectso.foreach(function(i, e) {print(e)});
-  print("\n");
+//  var cectso = sbx.calleffectsOf(root);
+//  print(";;; Call Effects of root");
+//  cectso.foreach(function(i, e) {print(e)});
+//  print("\n");
 
-  var ects = sbx.effectsOf(root);
-  print(";;; All Effects of root");
-  ects.foreach(function(i, e) {print(e)});
-  print("\n");
+//  var ects = sbx.effectsOf(root);
+//  print(";;; All Effects of root");
+//  ects.foreach(function(i, e) {print(e)});
+//  print("\n");
 
   // Note:
   // - sbx.readeffects
@@ -197,27 +193,27 @@ quit();
   // - sbx.effets
   // returns a list og all effects
 
-  var ects = sbx.readeffects;
-  print(";;; All Effects of root");
-  ects.foreach(function(i, e) {print(e)});
-  print("\n");
+//  var ects = sbx.readeffects;
+//  print(";;; All Effects of root");
+//  ects.foreach(function(i, e) {print(e)});
+//  print("\n");
 
-  var ects = sbx.writeeffects;
-  print(";;; All Effects of root");
-  ects.foreach(function(i, e) {print(e)});
-  print("\n");
+//  var ects = sbx.writeeffects;
+//  print(";;; All Effects of root");
+//  ects.foreach(function(i, e) {print(e)});
+//  print("\n");
 
-  var ects = sbx.calleffects;
-  print(";;; All Effects of root");
-  ects.foreach(function(i, e) {print(e)});
-  print("\n");
+//  var ects = sbx.calleffects;
+//  print(";;; All Effects of root");
+//  ects.foreach(function(i, e) {print(e)});
+//  print("\n");
 
-  var ects = sbx.effects;
-  print(";;; All Effects of root");
-  ects.foreach(function(i, e) {print(e)});
-  print("\n");
+//  var ects = sbx.effects;
+//  print(";;; All Effects of root");
+//  ects.foreach(function(i, e) {print(e)});
+//  print("\n");
 
-});
+})();
 
 //    _                          
 // __| |_  __ _ _ _  __ _ ___ ___
