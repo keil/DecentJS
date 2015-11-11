@@ -1,6 +1,6 @@
 
 
-load("test/examples.js");
+load("demo/storyline.js");
 
 quit();
 

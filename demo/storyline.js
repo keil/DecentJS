@@ -215,7 +215,7 @@ var sbx = new Sandbox(this, params);
   ects.foreach(function(i, e) {print(e)});
   print("\n");
 
-})();
+});
 
 //    _ _  __  __                            
 // __| (_)/ _|/ _|___ _ _ ___ _ _  __ ___ ___
@@ -239,7 +239,33 @@ var sbx = new Sandbox(this, params);
   difs.foreach(function(i, e) {print(e)});
   print("\n");
 
-})();
+});
+
+//    _                          
+// __| |_  __ _ _ _  __ _ ___ ___
+/// _| ' \/ _` | ' \/ _` / -_|_-<
+//\__|_||_\__,_|_||_\__, \___/__/
+//                  |___/        
+
+/*(function() {
+
+  print("HasChanges(root): " + (sbx.hasChangesOn(root)));
+
+  var difso = sbx.changesOf(root);
+  print(";;; Changes of root");
+  difso.foreach(function(i, e) {print(e)});
+  print("\n");
+
+  root.value = -1;
+  print("HasChanges: " + (sbx.hasChanges));
+
+  var difs = sbx.changes;
+  print(";;; All Changes");
+  difs.foreach(function(i, e) {print(e)});
+  print("\n");
+
+  });*/ // Notes: changes are deprecated
+
 
 //                    _ _   
 // __ ___ _ __  _ __ (_) |_ 
@@ -267,7 +293,7 @@ var sbx = new Sandbox(this, params);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
-})();
+});
 
 //         _ _ _             _   
 // _ _ ___| | | |__  __ _ __| |__
@@ -312,7 +338,7 @@ var sbx = new Sandbox(this, params);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
-})();
+});
 
 //                     _   
 // _ _ _____ _____ _ _| |_ 
@@ -350,7 +376,7 @@ var sbx = new Sandbox(this, params);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
-})();
+});
 
 //              __ _ _       _   
 // __ ___ _ _  / _| (_)__ __| |_ 
@@ -425,7 +451,7 @@ var sbx2 = new Sandbox(this, params);
   coftso.foreach(function(i, e) {print(e)});
   print("\n"); 
 
-})();
+});
 
 // _                                           _   
 //| |_ _ _ __ _ _ _  ____ __  __ _ _ _ ___ _ _| |_ 
@@ -495,7 +521,7 @@ var tsbx = new Sandbox(this, params2);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
-})();
+});
 
 //               _        _       
 // __ _ _ ___ __| |_ __ _| |_ ___ 
@@ -556,7 +582,7 @@ var tsbx = new Sandbox(this, params2);
   print("sumOf: " + sbx3.call(sumOf, this, root));
   print("deptOf: " + sbx3.call(depthOf, this, root));
 
-})();
+});
 
 // _ _ _____ _____ _ _ ___ ___ 
 //| '_/ -_) V / -_) '_(_-</ -_)
@@ -617,4 +643,4 @@ var sbx4 = new Sandbox(this, params);
   print("sumOf: " + sbx4.call(sumOf, this, root));
   print("deptOf: " + sbx4.call(depthOf, this, root));
 
-})();
+});

@@ -193,8 +193,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
   */
   var shadows = new WeakMap();
 
-  // TODO, rename
-
   /** 
    * wrap(target)
    * Wraps a target object.
@@ -238,7 +236,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
       // Function pass throught
       var native =  passThrough(target);
       __verbose__ && logc("target pass-throught", native);
-
       var shadow = cloneFunction(target, native);
     } else {  
       __verbose__ && log("target instanceOf Object");
@@ -257,9 +254,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
     };
 
     // Transparent Mode
-    // Provides only effect logging
-    // TODO
-    shadow = __transparent__ ? target : shadow;
+    if(__transparent__) {
+      shadow = target;
+    }
 
     var handler = new Membrane(target, native);
     var proxy = new Proxy(shadow, __metahandler__ ? new Proxy(handler, metahandler) : handler);
