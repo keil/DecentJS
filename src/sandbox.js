@@ -469,7 +469,7 @@ function Sandbox(global = {}, params = [], prestate) {
     /** 
      * A trap for Object.getOwnPropertyDescriptor.
      */
-    this.getOwnPropertyDescriptor = function(shadow, name) {
+    this.xxgetOwnPropertyDescriptor = function(shadow, name) {
       __verbose__ && logc("getOwnPropertyDescriptor", (typeof name === 'string') ? name : name.toString());
       __effect__  && trace(new Effect.GetOwnPropertyDescriptor(origin, (typeof name === 'string') ? name : name.toString()));
 
