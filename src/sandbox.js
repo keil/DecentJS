@@ -985,7 +985,7 @@ function Sandbox(global = {}, params = [], prestate) {
      * @return JavaScript Array [Effect]
      */
     define("effectsOf", function(target) {  
-      var effectsOfTarget = readeffectsOf(target).concat(writeeffectsOf(target)).concat(calleffectsOf(target));
+      var effectsOfTarget = this.readeffectsOf(target).concat(this.writeeffectsOf(target)).concat(this.calleffectsOf(target));
       effectsOfTarget.sort();
       return effectsOfTarget;
     }, this);
@@ -997,8 +997,9 @@ function Sandbox(global = {}, params = [], prestate) {
       var readEffects = [];
 
       for(var target of readtargets) {
-        readEffects = readEffects.concat(readeffectsOf(target));
-      } 
+        readEffects = readEffects.concat(this.readeffectsOf(target));
+      }
+      readEffects.sort();
       return readEffects;
     }, this);
 
@@ -1009,8 +1010,9 @@ function Sandbox(global = {}, params = [], prestate) {
       var writeEffects = [];
 
       for(var target of writetargets) {
-        writeEffects = writeEffects.concat(writeeffectsOf(target));
-      } 
+        writeEffects = writeEffects.concat(this.writeeffectsOf(target));
+      }
+      writeEffects.sort();
       return writeEffects;
 
     }, this);
@@ -1022,16 +1024,17 @@ function Sandbox(global = {}, params = [], prestate) {
       var callEffects = [];
 
       for(var target of calltargets) {
-        callEffects = callEffects.concat(calleffectsOf(target));
-      } 
-      return writeEffects;
+        callEffects = callEffects.concat(this.calleffectsOf(target));
+      }
+      callEffects.sort()
+      return callEffects;
     }, this);
 
     /** Get All Effects
      * @return JavaScript Array [Effect]
      */
     getter("effects", function() {
-      var effects = readeffects.concat(writeeffects).concat(calleffectsOf);
+      var effects = this.readeffects.concat(this.writeeffects).concat(this.calleffects);
       effects.sort();
       return effects;
     }, this);

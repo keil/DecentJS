@@ -167,25 +167,25 @@ var sbx = new Sandbox(this, params);
   ects.foreach(function(i, e) {print(e)});
   print("\n");
 
-//  var rectso = sbx.readeffectsOf(root);
-//  print(";;; Read Effects of root");
-//  rectso.foreach(function(i, e) {print(e)});
-//  print("\n");
+  var rectso = sbx.readeffectsOf(root);
+  print(";;; Read Effects of root");
+  rectso.foreach(function(i, e) {print(e)});
+  print("\n");
 
-//  var wectso = sbx.writeeffectsOf(root);
-//  print(";;; Write Effects of root");
-//  wectso.foreach(function(i, e) {print(e)});
-//  print("\n");
+  var wectso = sbx.writeeffectsOf(root);
+  print(";;; Write Effects of root");
+  wectso.foreach(function(i, e) {print(e)});
+  print("\n");
 
-//  var cectso = sbx.calleffectsOf(root);
-//  print(";;; Call Effects of root");
-//  cectso.foreach(function(i, e) {print(e)});
-//  print("\n");
+  var cectso = sbx.calleffectsOf(root);
+  print(";;; Call Effects of root");
+  cectso.foreach(function(i, e) {print(e)});
+  print("\n");
 
-//  var ects = sbx.effectsOf(root);
-//  print(";;; All Effects of root");
-//  ects.foreach(function(i, e) {print(e)});
-//  print("\n");
+  var ects = sbx.effectsOf(root);
+  print(";;; All Effects of root");
+  ects.foreach(function(i, e) {print(e)});
+  print("\n");
 
   // Note:
   // - sbx.readeffects
@@ -193,25 +193,25 @@ var sbx = new Sandbox(this, params);
   // - sbx.effets
   // returns a list og all effects
 
-//  var ects = sbx.readeffects;
-//  print(";;; All Effects of root");
-//  ects.foreach(function(i, e) {print(e)});
-//  print("\n");
+  var ects = sbx.readeffects;
+  print(";;; All Read Effects ");
+  ects.foreach(function(i, e) {print(e)});
+  print("\n");
 
-//  var ects = sbx.writeeffects;
-//  print(";;; All Effects of root");
-//  ects.foreach(function(i, e) {print(e)});
-//  print("\n");
+  var ects = sbx.writeeffects;
+  print(";;; All Write Effects");
+  ects.foreach(function(i, e) {print(e)});
+  print("\n");
 
-//  var ects = sbx.calleffects;
-//  print(";;; All Effects of root");
-//  ects.foreach(function(i, e) {print(e)});
-//  print("\n");
+  var ects = sbx.calleffects;
+  print(";;; All Call Effects");
+  ects.foreach(function(i, e) {print(e)});
+  print("\n");
 
-//  var ects = sbx.effects;
-//  print(";;; All Effects of root");
-//  ects.foreach(function(i, e) {print(e)});
-//  print("\n");
+  var ects = sbx.effects;
+  print(";;; All Effects");
+  ects.foreach(function(i, e) {print(e)});
+  print("\n");
 
 })();
 
