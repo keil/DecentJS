@@ -14,7 +14,6 @@
  */
 
 var passthrough = dumpGlobal();
-print("size", passthrough.size);
 
 function Testcase(fun, globalArg, thisArg, argsArray, name, quitOnExit) {
 
@@ -27,6 +26,7 @@ function Testcase(fun, globalArg, thisArg, argsArray, name, quitOnExit) {
     statistic: true,
     debug:true,
     passthrough:passthrough,
+    eval:true,
     out: out
   }
 

@@ -22,7 +22,7 @@
 load("test/behavior/prototype.js");
 
 // decompile
-load("test/behavior/decompile.js"); // TODO, two comments lines
+load("test/behavior/decompile.js");
 
 // eval
-load("test/behavior/eval.js"); // TODO, no eval 
+load("test/behavior/eval.js");

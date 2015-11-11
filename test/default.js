@@ -1,10 +1,4 @@
 
-//load("test/membrane/Object.preventExtensions.js");
-//load("test/membrane/Object.freeze.js");
-//load("test/membrane/Object.seal.js");
-
-
-
 quit();
 
 // test prevent extenstions
@@ -110,64 +104,64 @@ quit();
 (function(){
   "use strict";
 
-   var metahandler = { get : function(target, name) {
-   print("@", name);
-   return target[name];
-   }};
+  var metahandler = { get : function(target, name) {
+    print("@", name);
+    return target[name];
+  }};
 
-   var handler = {
+  var handler = {
     set: function(target, name, value) {
       return false;
       //return  (target[name]=value);
     }
-   };
-    
-   var sbx = new Sandbox(this, Sandbox.DEBUG);
-   //sbx.apply(testx, this, [eval.bind(this)]);
+  };
 
-   //var object = new Proxy({x:4711}, new Proxy(handler, metahandler));
-   // var object = sbx.wrap({x:4711});
-   var object = {x:4711};
+  var sbx = new Sandbox(this, Sandbox.DEBUG);
+  //sbx.apply(testx, this, [eval.bind(this)]);
 
-   // TODO: Test define property
-   Object.freeze(object);
-//   Object.seal(object);
+  //var object = new Proxy({x:4711}, new Proxy(handler, metahandler));
+  // var object = sbx.wrap({x:4711});
+  var object = {x:4711};
 
-   print("---", object.x);
-   print("---", object.y);
-   print("===", object.x = 4712);
-//   delete object.x;
-//   print("===", object.y = 4713);
-   print("---", object.x);
-   print("---", object.y);
-   print("---", object.toString());
+  // TODO: Test define property
+  Object.freeze(object);
+  //   Object.seal(object);
+
+  print("---", object.x);
+  print("---", object.y);
+  print("===", object.x = 4712);
+  //   delete object.x;
+  //   print("===", object.y = 4713);
+  print("---", object.x);
+  print("---", object.y);
+  print("---", object.toString());
 
   var sbx = new Sandbox(this, Sandbox.DEBUG);
   var object2 = sbx.wrap({a:4711, b:4712, c:{x:4713, y:4714}});
-  
+
   //Object.freeze(object2.c);
   Object.seal(object2.c);
   object2.c.x = "~";
   object2.c.z = "~";
   print("%%%%%%%%%%%%%%%%%", object2.c.z);
-  
-/*
-  sbx.apply(function(object, Object) {
-    "use strict";
 
-    Object.freeze(object.c);
-    print(Object.isFrozen(object.c));
+  /*
+     sbx.apply(function(object, Object) {
+     "use strict";
 
-    //object.a = "~";
-    //delete object.b;
-    //object.x = "~";
+     Object.freeze(object.c);
+     print(Object.isFrozen(object.c));
 
-//      object.c.x = "~";
-    //  delete object.c.y;
-    //object.c.y = "L";
-    object.c.z = "~";
+  //object.a = "~";
+  //delete object.b;
+  //object.x = "~";
+
+  //      object.c.x = "~";
+  //  delete object.c.y;
+  //object.c.y = "L";
+  object.c.z = "~";
   }, this, [{a:4711, b:4712, c:{x:4713, y:4714}}, Object]);
-*/
+  */
 
 
 })();
@@ -184,25 +178,25 @@ load("test/membrane/Object.freeze.js");
 //quit();
 
 /*
-(function() {
+   (function() {
 
-  var object = {a:4711, x:4712, y:4713};
+   var object = {a:4711, x:4712, y:4713};
 
-  for(var p in object) print("1)", p);
-  print(Object.getOwnPropertyNames(object));
+   for(var p in object) print("1)", p);
+   print(Object.getOwnPropertyNames(object));
 
-  object.b = 1;
-  object.z = 2;
+   object.b = 1;
+   object.z = 2;
 
-  for(var p in object) print("2)", p);
-  print(Object.getOwnPropertyNames(object));
+   for(var p in object) print("2)", p);
+   print(Object.getOwnPropertyNames(object));
 
-  delete object.y;
+   delete object.y;
 
-  for(var p in object) print("3)", p);
-  print(Object.getOwnPropertyNames(object));
+   for(var p in object) print("3)", p);
+   print(Object.getOwnPropertyNames(object));
 
-})(); */
+   })(); */
 
 
 // TEST own keys and enumerate
@@ -220,7 +214,7 @@ quit();
 (function() {
 
   function Handler(origin) {
-   
+
     // _____                 
     //|_   _| _ __ _ _ __ ___
     //  | || '_/ _` | '_ (_-<
@@ -335,7 +329,7 @@ quit();
       // test with deleted and new properties
       var properties = new Set();
       for(var property in (ownProperties = Object.getOwnPropertyNames(origin))) {
-      properties.add(ownProperties[property]);
+        properties.add(ownProperties[property]);
       }
       for(var property in (ownProperties = Object.getOwnPropertyNames(target))) {
         properties.add(ownProperties[property]);
@@ -430,7 +424,7 @@ l
     get : function(target, name) {
       print("@trap", name);
       return target[name];
-  }};
+    }};
 
   var handler = {
     get : function(target, name) {
@@ -445,7 +439,7 @@ l
       }
 
       return target[name];
-  }};
+    }};
 
   print("-");
   print(new Object());
@@ -456,7 +450,7 @@ l
 
   print("-");
   print(new Proxy(new Primitive(), new Proxy(handler, metahandler)));
-  
+
   print("-");
   print((new Proxy(new Primitive(), new Proxy(handler, metahandler))).valueOf());
 
@@ -487,7 +481,7 @@ quit();
 (function() {
   var obj = {
     a:4711,
-    [Symbol.for('a')]:4712
+  [Symbol.for('a')]:4712
   };
 
   print(obj.a);
@@ -498,95 +492,95 @@ quit();
 (function() {
 
 
-// An object without Symbol.toPrimitive property.
-var obj1 = {};
-print(+obj1);     // NaN
-print(`${obj1}`); // "[object Object]"
-print(obj1 + ""); // "[object Object]"
+  // An object without Symbol.toPrimitive property.
+  var obj1 = {};
+  print(+obj1);     // NaN
+  print(`${obj1}`); // "[object Object]"
+  print(obj1 + ""); // "[object Object]"
 
-// An object with Symbol.toPrimitive property.
-var obj2 = {
-  [Symbol.toPrimitive](hint) {
-    print('@@@', hint);
-    if (hint == "number") {
-      return 10;
+  // An object with Symbol.toPrimitive property.
+  var obj2 = {
+    [Symbol.toPrimitive](hint) {
+      print('@@@', hint);
+      if (hint == "number") {
+        return 10;
+      }
+      if (hint == "string") {
+        return "hello";
+      }
+      return true;
     }
-    if (hint == "string") {
-      return "hello";
-    }
-    return true;
-  }
-};
+  };
 
-print(obj2);
-print(typeof obj2);
-print(obj2+1);
-print(1+obj2);
-print(+obj2);
-print(`${obj2}`);
+  print(obj2);
+  print(typeof obj2);
+  print(obj2+1);
+  print(1+obj2);
+  print(+obj2);
+  print(`${obj2}`);
 
 
 
-//print(+obj2);     // 10      -- hint is "number"
-//print(`${obj2}`); // "hello" -- hint is "string"
-//print(obj2 + ""); // "true"  -- hint is "default"
+  //print(+obj2);     // 10      -- hint is "number"
+  //print(`${obj2}`); // "hello" -- hint is "string"
+  //print(obj2 + ""); // "true"  -- hint is "default"
 
 });
 
 
 (function() {
 
-var metahandler = { get : function(target, name) {
-  print("@", name);
-  return target[name];
-}};
+  var metahandler = { get : function(target, name) {
+    print("@", name);
+    return target[name];
+  }};
 
-var handler = {};
+  var handler = {};
 
-// An object without Symbol.toPrimitive property.
-var obj1 = {};
-print(+obj1);     // NaN
-print(`${obj1}`); // "[object Object]"
-print(obj1 + ""); // "[object Object]"
+  // An object without Symbol.toPrimitive property.
+  var obj1 = {};
+  print(+obj1);     // NaN
+  print(`${obj1}`); // "[object Object]"
+  print(obj1 + ""); // "[object Object]"
 
-// An object with Symbol.toPrimitive property.
-var obj2 = {
-  [Symbol.toPrimitive] : new Proxy(function(hint) {
-    print('@@@', hint);
-    if (hint == "number") {
-      return 10;
-    }
-    if (false && hint == "string") {
-      return "hello";
-    }
-    return Math.random()*10;
-    //return true;
-  }, new Proxy(handler, metahandler))
-};
+  // An object with Symbol.toPrimitive property.
+  var obj2 = {
+    [Symbol.toPrimitive] : new Proxy(function(hint) {
+      print('@@@', hint);
+      if (hint == "number") {
+        return 10;
+      }
+      if (false && hint == "string") {
+        return "hello";
+      }
+      return Math.random()*10;
+      //return true;
+    }, new Proxy(handler, metahandler))
+  };
 
-for(var sym of Object.getOwnPropertySymbols(obj2))
-  print('%%', sym.toString());
+  for(var sym of Object.getOwnPropertySymbols(obj2))
+    print('%%', sym.toString());
 
-for(var sym of Object.getOwnPropertyNames(Symbol))
-  print('&&', sym);
+  for(var sym of Object.getOwnPropertyNames(Symbol))
+    print('&&', sym);
 
 
 
-print(obj2);
-print(obj2);
-print(typeof obj2);
-print(obj2===obj2);
-/*print(typeof obj2);*/
-//print(obj2+1);
-//print(1+obj2);
-/*print(+obj2);
-print(`${obj2}`);*/
+  print(obj2);
+  print(obj2);
+  print(typeof obj2);
+  print(obj2===obj2);
+  /*print(typeof obj2);*/
+  //print(obj2+1);
+  //print(1+obj2);
+  /*print(+obj2);
+    print(`${obj2}`);*/
 
-//print(+obj2);     // 10      -- hint is "number"
-//print(`${obj2}`); // "hello" -- hint is "string"
-//print(obj2 + ""); // "true"  -- hint is "default"
+  //print(+obj2);     // 10      -- hint is "number"
+  //print(`${obj2}`); // "hello" -- hint is "string"
+  //print(obj2 + ""); // "true"  -- hint is "default"
 
-print(typeof new Proxy(obj2, {}));
+  print(typeof new Proxy(obj2, {}));
 
 })();
 

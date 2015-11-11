@@ -14,6 +14,8 @@
  */
 
 (new Testcase(function(F) {
+  "use strict";
+
   var f = F();
   var outcome = "";
   var x = "4711";
@@ -25,13 +27,18 @@
 
   return outcome;
 }, this, {x:4711}, [(function() {
-  var x = "4711X ";
+  "use strict";
+
+  var x = "4711X";
   return function() {
+    "use strict";
+
     var outcome = " IN(";
     outcome+=(x);
     outcome+=(this.x);
-    //eval("x=4712");
-    //eval("this.x=4714");
+    outcome += eval("x");
+    eval("x=4712");
+    eval("this.x=4714");
     outcome+=(x);
     outcome+=(this.x);
     return outcome+") ";

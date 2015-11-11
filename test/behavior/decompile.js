@@ -225,6 +225,9 @@ var ref = "X";
   var x = "[LOCAL]";
   outcome+=" /"+(x);
   outcome+=" /"+(this.x);
+  // Corresponding to ECMA specification
+  // this is is strict mode not assigned to
+  // the global object, thus it is undefined
   //outcome+=" /"+f();
   outcome+=" /"+f.call(this);
   outcome+=" /"+(x);
@@ -250,7 +253,10 @@ var ref = "X";
   var x = "[LOCAL]";
   outcome+=" /"+(x);
   outcome+=" /"+(this.x);
-  //outcome+=" /"+f();
+  // Corresponding to ECMA specification
+  // this is is strict mode not assigned to
+  // the global object, thus it is undefined
+  // outcome+=" /"+f();
   outcome+=" /"+f.call(this);
   outcome+=" /"+(x);
   outcome+=" /"+(this.x);

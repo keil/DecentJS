@@ -16,7 +16,6 @@
 load("lib/padding.js");
 load("lib/global.js");
 
-
 load("src/misc.js");
 load("src/out.js");
 load("src/shell.js");
@@ -56,6 +55,9 @@ var sbxArgs = {
   /** Function pass-through
    * (default: [])
    */ passthrough:[print, Function.prototype.call, Function.prototype.apply],
+  /** Allow Strict Mode Eval
+   * (default: false)
+   */ eval:false,
   /** Output handler
    * (default: ShellOut)
    */ out:ShellOut()
