@@ -193,6 +193,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
   */
   var shadows = new WeakMap();
 
+  /** Maps sandbox proxies to target values
+  */
+  var targets = new WeakMap();
+
   /** 
    * wrap(target)
    * Wraps a target object.
@@ -264,6 +268,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
     proxies.set(target, proxy);
     handlers.set(proxy, handler);
     shadows.set(target, shadow);
+    targets.set(shadow, target); // TODO
 
     return proxy;
   }
@@ -514,9 +519,13 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __verbose__ && logc("get", (typeof name === 'string') ? name : name.toString());
       __effect__  && trace(new Effect.Get(origin, (typeof name === 'string') ? name : name.toString()));
 
+      //if(name==="Date") return origin[name];
+
+      if(name === "valueOf") print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@", shadow, targets.get(receiver));
+      
       // TODO
       if(name === Symbol.toPrimitive) return origin[name];
-      if(name === "valueOf") return origin[name];
+      //if(name === "valueOf") return origin[name];
 
       // Node: Matthias Keil
       // Bug in previous versions. Access to undefined causes a 
@@ -570,7 +579,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
     this.deleteProperty = function(shadow, name) {
       __verbose__ && logc("deleteProperty", (typeof name === 'string') ? name : name.toString());
       __effect__  && trace(new Effect.DeleteProperty(origin, (typeof name === 'string') ? name : name.toString()));
-
 
       var desc = touched(name) ? 
         Object.getOwnPropertyDescriptor(shadow, name) : 
@@ -633,8 +641,18 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __verbose__ && logc("apply");
       __effect__  && trace(new Effect.Apply(origin));
 
+
+      // TODO
+      if(native && thisArg && targets.has(thisArg)) {
+        thisArg = targets.get(thisArg);
+      }
+
       thisArg = thisArg ? thisArg : wrap(global);
+
+      // TODO, make singel tests for constructor calls
       return native ? origin.apply(thisArg, argumentsList) : shadow.apply(thisArg, argumentsList);
+      //print("$$$$$$$$$$$$$$$$$$$", shadow.toString(), origin.toString());
+      //return native ? origin.apply(thisArg, argumentsList) : shadow.apply(thisArg, argumentsList);
     };
 
     /** 
@@ -644,8 +662,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __verbose__ && logc("construct");
       __effect__  && trace(new Effect.Construct(origin));
 
-      var thisArg = wrap(Object.create(shadow.prototype));
-      var result =  native ? wrap(origin.apply(thisArg, argumentsList)) : shadow.apply(thisArg, argumentsList);
+      //var thisArg = wrap(Object.create(shadow.prototype));
+      var thisArg = Object.create(shadow.prototype);
+      var result =  native ? origin.apply(thisArg, argumentsList) : shadow.apply(thisArg, argumentsList);
+
       return (result instanceof Object) ? result : thisArg;
     };
     };
