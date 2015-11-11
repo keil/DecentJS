@@ -213,30 +213,6 @@ var sbx = new Sandbox(this, params);
   ects.foreach(function(i, e) {print(e)});
   print("\n");
 
-})();
-
-//    _                          
-// __| |_  __ _ _ _  __ _ ___ ___
-/// _| ' \/ _` | ' \/ _` / -_|_-<
-//\__|_||_\__,_|_||_\__, \___/__/
-//                  |___/        
-
-(function() {
-
-  print("HasChanges(root): " + (sbx.hasChangesOn(root)));
-
-  var difso = sbx.changesOf(root);
-  print(";;; Changes of root");
-  difso.foreach(function(i, e) {print(e)});
-  print("\n");
-
-  print("HasChanges: " + (sbx.hasChanges));
-
-  var difs = sbx.changes;
-  print(";;; All Changes");
-  difs.foreach(function(i, e) {print(e)});
-  print("\n");
-
 });
 
 //    _ _  __  __                            
@@ -254,8 +230,6 @@ var sbx = new Sandbox(this, params);
   difso.foreach(function(i, e) {print(e)});
   print("\n");
 
-  root.value = -1;
-
   print("InDifference: " + (sbx.hasDifference));
 
   var difs = sbx.differences;
@@ -263,7 +237,32 @@ var sbx = new Sandbox(this, params);
   difs.foreach(function(i, e) {print(e)});
   print("\n");
 
+})();
+
+//    _                          
+// __| |_  __ _ _ _  __ _ ___ ___
+/// _| ' \/ _` | ' \/ _` / -_|_-<
+//\__|_||_\__,_|_||_\__, \___/__/
+//                  |___/        
+
+(function() {
+
+  print("HasChanges(root): " + (sbx.hasChangesOn(root)));
+
+  var difso = sbx.changesOf(root);
+  print(";;; Changes of root");
+  difso.foreach(function(i, e) {print(e)});
+  print("\n");
+root.value = -1;
+//  print("HasChanges: " + (sbx.hasChanges));
+
+//  var difs = sbx.changes;
+//  print(";;; All Changes");
+//  difs.foreach(function(i, e) {print(e)});
+//  print("\n");
+
 });
+
 
 //                    _ _   
 // __ ___ _ __  _ __ (_) |_ 

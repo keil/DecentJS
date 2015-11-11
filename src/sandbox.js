@@ -242,6 +242,10 @@ function Sandbox(global = {}, params = [], prestate) {
   */
   var proxies = new WeakMap();
 
+  /** Maps target values to shadow objects
+   */
+  var shadows = new WeakMap();
+
   /** 
    * wrap(target)
    * Wraps a target object.
@@ -308,6 +312,7 @@ function Sandbox(global = {}, params = [], prestate) {
 
     targets.set(target, proxy);
     proxies.set(proxy, handler);
+    shadows.set(target, shadow);
 
     return proxy;
   }
@@ -1039,6 +1044,136 @@ function Sandbox(global = {}, params = [], prestate) {
       return effects;
     }, this);
 
+    // _____  _  __  __                                  
+    //|  __ \(_)/ _|/ _|                                 
+    //| |  | |_| |_| |_ ___ _ __ ___ _ __   ___ ___  ___ 
+    //| |  | | |  _|  _/ _ \ '__/ _ \ '_ \ / __/ _ \/ __|
+    //| |__| | | | | ||  __/ | |  __/ | | | (_|  __/\__ \
+    //|_____/|_|_| |_| \___|_|  \___|_| |_|\___\___||___/
+
+    function comparePropertyDescriptor(desc1, desc2) {
+      if(desc1===desc2) return true;
+
+      var keys = ["configurable", "enumerable", "value", "writable", "get", "set"];
+      for (var key of keys) {
+        if(desc1[key]===desc2[key]) continue;
+        else return false;
+      }
+      return true;
+    }
+    
+    function hasDifferences(effect, shadow, origin) {
+
+      if(effect instanceof Effect.SetPrototypeOf) {
+        return Object.getPrototypeOf(origin) !== Object.getPrototypeOf(shadow);
+
+      } else if(effect instanceof Effect.PreventExtensions) {
+        return Object.isExtensible(origin) !== Object.isExtensible(shadow);
+
+      } else if(effect instanceof Effect.DefineProperty) {
+        return !comparePropertyDescriptor(
+            Object.getOwnPropertyDescriptor(shadow, effect.name),
+            Object.getOwnPropertyDescriptor(origin, effect.name));
+
+      } else if(effect instanceof Effect.Set) {
+        return !comparePropertyDescriptor(
+            Object.getOwnPropertyDescriptor(shadow, effect.name),
+            Object.getOwnPropertyDescriptor(origin, effect.name));
+
+      } else if(effect instanceof Effect.DeleteProperty) {
+        return !comparePropertyDescriptor(
+            Object.getOwnPropertyDescriptor(shadow, effect.name),
+            Object.getOwnPropertyDescriptor(origin, effect.name));
+      } else {
+        throw new TypeError("Invalid Effect");
+      }
+    }
+
+    /** Has Difference With
+     * @param target JavaScript Object
+     * return true|false
+     */
+    define("hasDifferenceWith", function(target) {
+      var writeeffects = this.writeeffectsOf(target);
+
+      for(var effect of writeeffects) {
+        if(hasDifferences(effect, shadows.get(target), target)) return true
+        else continue;
+      }
+      return false;
+    }, this);
+
+    /** Has Difference
+     * return true|false
+     */
+    getter("hasDifference", function() {
+      for(var target of writetargets) {
+        if(this.hasDifferenceWith(target)) return true
+        else continue;
+      }
+      return false;
+    }, this);
+
+    /** Differences Of
+     * @param target JavaScript Object
+     * return [Differences]
+     */
+    define("differencesOf", function(target) {
+      var writeeffects = this.writeeffectsOf(target);
+
+      var differences = [];
+      for(var effect of writeeffects) {
+        if(hasDifferences(effect, shadows.get(target), target)) {
+          differences.push(new Effect.Difference(this, effect));
+        }
+        else continue;
+      }
+      differences.sort();
+      return differences;
+    }, this);
+
+    /** Differences 
+     * return [Differences]
+     */
+    getter("differences", function() {
+      var differences = [];
+      for(var target of writetargets) {
+        differences = differences.concat(this.differencesOf(target));
+      }
+      differences.sort();
+      return differences;
+    }, this);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     //  _____             __ _ _      _       
     // / ____|           / _| (_)    | |      
     //| |     ___  _ __ | |_| |_  ___| |_ ___ 
@@ -1262,104 +1397,6 @@ function Sandbox(global = {}, params = [], prestate) {
 
       }, this);*/ // TODO
 
-    // _____  _  __  __                                  
-    //|  __ \(_)/ _|/ _|                                 
-    //| |  | |_| |_| |_ ___ _ __ ___ _ __   ___ ___  ___ 
-    //| |  | | |  _|  _/ _ \ '__/ _ \ '_ \ / __/ _ \/ __|
-    //| |__| | | | | ||  __/ | |  __/ | | | (_|  __/\__ \
-    //|_____/|_|_| |_| \___|_|  \___|_| |_|\___\___||___/
-
-
-
-    function hasDifferences(effect, shadow, target) {
-
-      if(effect instanceof Effect.SetPrototypeOf) {
-        return Object.getPrototypeOf(origin) !== Object.getPrototypeOf(shadow);
-
-      } else if(effect instanceof Effect.PreventExtensions) {
-        return Object.isExtensible(origin) !== Object.isExtensible(shadow);
-
-      } else if(effect instanceof Effect.DefineProperty) {
-        (Object.getOwnPropertyDescriptor(shadow, effect.name) !== Object.getOwnPropertyDescriptor(origin, effect.name));
-
-        (target[name]!==this.origin);
-        Object.defineProperty(origin, effect.name,  Object.getOwnPropertyDescriptor(shadow, effect.name));
-
-      } else if(effect instanceof Effect.Set) {
-        // TODO, compare proeprty descriptoes
-        return (origin[effect.name] !== shadow[effect.name]);
-
-      } else if(effect instanceof Effect.DeleteProperty) {
-        return (Object.getOwnPropertyDescriptor(shadow, effect.name) !== Object.getOwnPropertyDescriptor(origin, effect.name));
-
-      }
-    }
-
-
-
-    /** Has Difference With
-     * @param target JavaScript Object
-     * return true|false
-     */
-    /*define("hasDifferenceWith", function(target) {
-      var es = this.effectsOf(target);
-
-      var difference = false;
-      for(var e in es) {
-      var result =  es[e].diff;
-      log("check " + es[e] + " = " + result);
-      difference = (result) ? true : difference;
-      }
-      return difference;
-      }, this);*/ // TODO
-
-    /** Has Difference
-     * return true|false
-     */
-    /*getter("hasDifference", function() {
-      var difference = false;
-      for(var i in targets) {
-      difference = (this.hasDifferenceWith(targets[i])) ? true : difference;
-      }
-      return difference;
-
-      }, this);*/ // TODO
-
-    /** Differences Of
-     * @param target JavaScript Object
-     * return [Differences]
-     */
-    /*define("differencesOf", function(target) {
-      var sbxA = this;
-      var es = this.effectsOf(target);
-
-      var differences = [];
-      for(var e in es) {
-      var result =  es[e].diff;
-      log("check " + es[e] + " = " + result);
-      if(result) differences.push(new Effect.Difference(sbxA, es[e]));
-      }
-      return differences;
-      }, this);*/ // TODO
-
-    /** Differences 
-     * return [Differences]
-     */
-    /*getter("differences", function() {
-      var sbxA = this;
-      var es = this.effects;
-
-      var differences = [];
-      for(var e in es) {
-      var result =  es[e].diff;
-      log("check " + es[e] + " = " + result);
-      if(result) differences.push(new Effect.Difference(sbxA, es[e]));
-      }
-      return differences;
-      }, this);*/ // TODO
-
-
-
 
     //  _____ _                                 
     // / ____| |                                
@@ -1373,17 +1410,7 @@ function Sandbox(global = {}, params = [], prestate) {
     // TODo, changes will not work as before, because we do not see the 
     // value returned at effect time.
 
-    function comparePropertyDescriptor(desc1, desc2) {
-      var keys = ["configurable", "enumerable", "value", "writable", "get", "set"];
-      for (var key in keys) {
-        if(desc1[key]===desc2[key]) 
-          continue;
-        else
-          return false;
-      }
-      return true;
-    }
-
+  
     // how to knwo if the value inssnt writte inside if teh sandbox?
     // changes and differences should only consider the last effect on
 

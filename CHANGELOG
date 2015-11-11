@@ -1,6 +1,7 @@
 *** DeentJS 1.0.2 (PoC)
 
 - [Bugfix] Strict Mode Set-Handler Return
+- [Bugfix] New Effect logging
 
 *** DeentJS 1.0.1 (PoC)
 
