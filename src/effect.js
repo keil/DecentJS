@@ -376,6 +376,7 @@ var Effect = (function() {
   // \___|_||_\__,_|_||_\__, \___/__/
   //                    |___/        
 
+  // TODO, deprecated
   function Change(sbx, effect) {
     if(!(this instanceof Change)) return new Change(sbx, effect);
 

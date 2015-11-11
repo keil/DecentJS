@@ -1270,50 +1270,6 @@ function Sandbox(global = {}, params = [], prestate) {
         return false;
       else 
         return true;
-
-      /*
-
-         if(read.target!==write.target)
-         return false;
-
-      // TODO, should make a distinction between names and unnamed effects
-
-      if(read instanceof NamedReadEffect)
-
-
-      switch(true) {
-      case (write instanceof Effect.Set):
-      case (write instanceof Effect.DefineProperty):
-      case (write instanceof Effect.DeleteProperty):
-      // property specific write effects
-      switch(true) { 
-      case (read instanceof Effect.Get):
-      case (read instanceof Effect.GetOwnPropertyDescriptor):
-      case (read instanceof Effect.Has):
-      case (read instanceof Effect.HasOwn):
-      // property specific read effects
-      return (read.name===write.name) && (read.date>write.date);
-      break;
-      case (read instanceof Effect.GetOwnPropertyNames):
-      case (read instanceof Effect.Enumerate):
-      case (read instanceof Effect.Iterate):
-      case (read instanceof Effect.Keys):
-      case (read instanceof Effect.Apply):
-      case (read instanceof Effect.Construct):
-      case (read instanceof Effect.IsExtensible):
-      // property unspecific read effects 
-      return true;
-      break;
-      }
-      break;
-      case (write instanceof Effect.Freeze):
-      case (write instanceof Effect.Seal):
-      case (write instanceof Effect.PreventExtensions):
-      // property unspecific write effects
-      return false;
-      break;
-      }
-      */
     }
 
     /** In Write-Write Conflict
@@ -1332,43 +1288,7 @@ function Sandbox(global = {}, params = [], prestate) {
         return false;
       else 
         return true;
-
-
-      /*
-         if(write.target!==writep.target)
-         return false;
-
-         switch(true) {
-         case (write instanceof Effect.Set):
-         case (write instanceof Effect.DefineProperty):
-         case (write instanceof Effect.DeleteProperty):
-      // property specific write effects
-      switch(true) {
-      case (writep instanceof Effect.Set):
-      case (writep instanceof Effect.DefineProperty):
-      case (writep instanceof Effect.DeleteProperty):
-      // property specific write effects
-      return (write.name===writep.name);
-      break;
-      case (writep instanceof Effect.Freeze):
-      case (writep instanceof Effect.Seal):
-      case (writep instanceof Effect.PreventExtensions):
-      // property unspecific write effects
-      return true;
-      break;
-      }
-      break;
-      case (write instanceof Effect.Freeze):
-      case (write instanceof Effect.Seal):
-      case (write instanceof Effect.PreventExtensions):
-      // property unspecific write effects
-      return false;
-      break;
-      }
-      */
-
     }
-
 
     /** In Conflict
      * @param e Effect
@@ -1378,14 +1298,15 @@ function Sandbox(global = {}, params = [], prestate) {
     function inConflict(e, f) {
       if((e instanceof Effect.Read) && (f instanceof Effect.Read))
         return false;
-      else if((e instanceof Effect.Read) && (f instanceof Effect.Write))
+      else if((e instanceof Effect.Read) && (f instanceof Effect.Write)) {
         return inReadWriteConflict(e, f);
-      else if((e instanceof Effect.Write) && (f instanceof Effect.Read))
+      } else if((e instanceof Effect.Write) && (f instanceof Effect.Read)) {
         return inReadWriteConflict(f, e);
-      else if((e instanceof Effect.Write) && (f instanceof Effect.Write))
+      } else if((e instanceof Effect.Write) && (f instanceof Effect.Write)) {
         return inWriteWriteConflict(e, f);
-      else 
+      } else {
         return false;
+      }
     }
 
    /** Conflict Of
@@ -1396,11 +1317,8 @@ function Sandbox(global = {}, params = [], prestate) {
     define("inConflictWith", function(sbx, target) {
       if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
 
-      var es = this.effectsOf(target);
-      var fs = sbx.effectsOf(target);
-
-      for(var e of es) {
-        for(var f of fs) {
+      for(var e of this.effectsOf(target)) {
+        for(var f of sbx.effectsOf(target)) {
           if(inConflict(e, f)) return true;
           else continue;
         }
@@ -1416,67 +1334,55 @@ function Sandbox(global = {}, params = [], prestate) {
     define("inConflict", function(sbx) {
       if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
 
-      var es = this.effects;
-      var fs = sbx.effects
-
-      for(var e of es) {
-        for(var f of fs) {
-          if(inConflict(e, f)) return true;
-          else continue;
+      for(var target of readtargets.concat(writetargets)) {
+        for(var e of this.effectsOf(target)) {
+          for(var f of sbx.effectsOf(target)) {
+            if(inConflict(e, f)) return true;
+            else continue;
+          }
         }
       }
       return false;
-
-
-
-      var conflict = false; 
-      for(var i in targets) {
-      conflict = (this.inConflictWith(sbx, targets[i])) ? true : conflict;
-      }
-      return conflict;
-
-      }, this);
-
-
+    }, this);
 
     /** Conflicts
      * @param sbx Sandbox
      * @param target JavaScript Object
      * return [Conflict]
      */
-    /*define("conflictsOf", function(sbx, target) {
+    define("conflictsOf", function(sbx, target) {
       if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
 
-      var sbxA = this;
-      var sbxB = sbx;
-
-      var es = this.effectsOf(target);
-      var fs = sbx.effectsOf(target);
-
       var conflicts = [];
-      for(var e in es) {
-      for(var f in fs) {
-      var result = (inConflict(es[e], fs[f]));
-      log("compare " + es[e] + " - " + fs[f] + " = " + result);
-      if(result) conflicts.push(new Effect.Conflict(sbxA, es[e], sbxB, fs[f]));
+      for(var e of this.effectsOf(target)) {
+        for(var f of sbx.effectsOf(target)) {
+          if(inConflict(e, f)) conflicts.push(Effect.Conflict(this, e, sbx, f));
+          else continue;
+        }
       }
-      }
+      conflicts.sort();
       return conflicts;
-      }, this);*/ // TODO
+    }, this);
 
     /** Conflicts
      * @param sbx Sandbox
      * return [Conflict]
      */
-    /*define("conflicts", function(sbx) {
+    define("conflicts", function(sbx) {
       if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
 
       var conflicts = [];
-      for(var i in targets) {
-      conflicts = conflicts.concat(this.conflictsOf(sbx, targets[i]))
+      for(var target of readtargets.concat(writetargets)) {
+        for(var e of this.effectsOf(target)) {
+          for(var f of sbx.effectsOf(target)) {
+            if(inConflict(e, f)) conflicts.push(Effect.Conflict(this, e, sbx, f));
+            else continue;
+          }
+        }
       }
+      conflicts.sort();
       return conflicts;
-      }, this);*/ // TODO
+    }, this);
 
  
 

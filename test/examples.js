@@ -392,6 +392,19 @@ var sbx2 = new Sandbox(this, params);
 
   sbx2.call(appendRight, this, root);
 
+
+  /**
+   * Note: Matthias Keil
+   * No Conflicts, because sbx reads before sbx2 writes
+   * to root.right.
+   */
+
+  print("InClonflictWith(root): " + (sbx.inConflictWith(sbx2, root)));
+  print("InClonflictWith(root): " + (sbx2.inConflictWith(sbx, root)));
+
+  print("InClonflict: " + (sbx.inConflict(sbx2)));
+  print("InClonflict: " + (sbx2.inConflict(sbx)));
+  
   print(";;; inside sandbox 1");
   print("tree: " + sbx.call(Node.prototype.toString, root));
   print("sumOf: " + sbx.call(sumOf, this, root));
@@ -402,27 +415,41 @@ var sbx2 = new Sandbox(this, params);
   print("sumOf: " + sbx2.call(sumOf, this, root));
   print("deptOf: " + sbx2.call(depthOf, this, root));  
 
+  /**
+   * Note: Matthias Keil
+   * In conflict, because sbx reads root.right, which has 
+   * been written by sbx2 before.
+   */
+
   print("InClonflictWith(root): " + (sbx.inConflictWith(sbx2, root)));
   print("InClonflictWith(root): " + (sbx2.inConflictWith(sbx, root)));
 
   print("InClonflict: " + (sbx.inConflict(sbx2)));
   print("InClonflict: " + (sbx2.inConflict(sbx)));
 
-  //    sbx.call(setValue, this, root);
-/*  var cofts = sbx.conflicts(sbx2);
+  var cofts = sbx.conflicts(sbx2);
   print(";;; All Conflicts");
   cofts.foreach(function(i, e) {print(e)});
   print("\n");
 
-  print("InClonflict(o): " + (sbx.inConflictWith(sbx2, root)));
-  print("InClonflict(o): " + (sbx2.inConflictWith(sbx, root)));
+  /**
+   * Note: Matthias Keil
+   * Until now, we have only Read-Write Conflicts.
+   */
+
+  sbx.call(setValue, this, root);
+
+  var cofts = sbx.conflicts(sbx2);
+  print(";;; All Conflicts");
+  cofts.foreach(function(i, e) {print(e)});
+  print("\n");
 
   var coftso = sbx.conflictsOf(sbx2, root);
   print(";;; Conflicts of root");
   coftso.foreach(function(i, e) {print(e)});
-  print("\n"); */
+  print("\n"); 
 
-})();
+});
 
 // _                                           _   
 //| |_ _ _ __ _ _ _  ____ __  __ _ _ _ ___ _ _| |_ 
