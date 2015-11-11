@@ -293,9 +293,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
   function cloneFunction(target, native) {
     __verbose__ && log("Clone Function.");
 
-    if(eval===target) return eval; //
-
-    var clone = native ? (function(){}) : decompile(target, wrap(global));
+    var clone = native ? (function(){}) : __decompile__ ? decompile(target, wrap(global)) : target;
     clone.prototype = target.prototype; 
 
     return clone;
@@ -428,9 +426,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
        */
       for (var property in origin) {
         if (!touched(property) && origin.hasOwnProperty(property)) {
-          touch(property); // TODO
           Object.defineProperty(shadow, property, wrap(Object.getOwnPropertyDescriptor(origin, property)));
-          //shadow[property] = shadow[property];
         }
       }
 
@@ -518,6 +514,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __verbose__ && logc("get", (typeof name === 'string') ? name : name.toString());
       __effect__  && trace(new Effect.Get(origin, (typeof name === 'string') ? name : name.toString()));
 
+      // TODO
       //if(name === Symbol.toPrimitive) return origin[name];
       //if(name === "valueOf") return origin[name];
 
@@ -526,16 +523,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
       // property access on the global object.
       // TODO, test if this also happens in the new engine
       if(origin===global && name==='undefined') return undefined;
-
-      //print('===================', name.toString());
-      // print((Symbol('aaa')).toString());
-      //  print((Symbol('aaa')===Symbol('aaa')));
-      //throw new Error(name);
-      //    print('-------------------', typeof name);
-
+ 
       // TODO, implement getter functions
       return touched(name) ? shadow[name] : wrap(origin[name]);
-      //        return returnx; // TODO
     };
 
     /** 
@@ -548,13 +538,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
       var desc = touched(name) ? 
         Object.getOwnPropertyDescriptor(shadow, name) : 
         wrap(Object.getOwnPropertyDescriptor(origin, name));
-
-      //return 1;
-      //return origin[name]==value;
-      /*    touch(name);
-            (shadow[name]=value);
-            return true;
-            */  
 
       if(desc === undefined) {
         // non-existing property
@@ -577,67 +560,8 @@ function Sandbox(global = {}, params = [], prestate = []) {
           throw new TypeError(`"${name}" is read-only`);
         }
       }
-
       return true;
-
-      // TODO, seal
-      // TODO, setter
-
-
-      /*
-         if(!(desc = Object.getOwnPropertyDescriptor(shadow, name)) && (!Object.isExtensible(shadow))) throw new TypeError(`${shadow} is not extensible`); 
-         if(desc.writable===false) throw new TypeError(`"${name}" is read-only`);
-
-
-
-
-         if (!Object.isExtensible(shadow)) {
-         var desc = Object.getOwnPropertyDescriptor(shadow, name) || {};
-
-
-
-
-      // TODO
-      print('value', name, desc.writable, desc.configurable);
-
-
-
-      // checks for frozen properties
-      if(desc.writable===false) throw new TypeError(`"${name}" is read-only`);
-
-      //  if writeable true, 
-
-
-      else if(desc.configurable===false) throw new TypeError(`"${name}" is XXX`);      
-      else throw new TypeError(`${shadow} is not extensible`);
-      }
-
-
-
-      touch(name);
-      return (shadow[name]=value);
-
-      //        touch(name);
-      //        return (shadow[name]=value);
-      //         print("return" + returnx);
-      //        return returnx;
-
-
       // TODO, implement setter functions
-      if (Object.isExtensible(shadow)) {
-      //      if(value!=="L") {
-      touch(name);
-      returnx = (shadow[name]=value);
-      print("return" + returnx);
-      return returnx;
-      } else {
-      throw new TypeError(`"${name}" is read-only`);
-      touched(name);
-      print("return false");
-      return false;
-      }
-      */
-
     };
 
     /**
@@ -666,9 +590,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
           throw new TypeError(`property "${name}" is non-configurable and can't be deleted`);
         }
       }
-
-      //touch(name);
-      //return (delete shadow[name]);
     };
 
     /** 
@@ -756,11 +677,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
         throw new TypeError("fun");
       if(!(env instanceof Object))
         throw new TypeError("env");
-
-      // Decompile ? // TODO, move this fralg to the function call
-      if(!(__decompile__))
-        return fun;
-
+      
       try {
         var body = "(function() {'use strict'; return " + ("(" + fun.toString() + ")") + "})();";
         var sbxed = eval("(function() { with(env) { return " + body + " }})();");
@@ -781,7 +698,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __verbose__ && logc("evaluate", fun);
 
       // sandboxed function
-      var sbxed = decompile(fun, wrap(global));
+      var sbxed = __decompile__ ? decompile(fun, wrap(global)) : fun;
       // apply constructor function
       var result = sbxed.apply(wrap(thisArg), wrap(argumentsList));
       // return val
@@ -798,7 +715,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __verbose__ && logc("construct", fun);
 
       // sandboxed function
-      var sbxed = decompile(fun, wrap(global));
+      var sbxed = __decompile__ ? decompile(fun, wrap(global)) : fun;
       // new this reference
       var thisArg = wrap(Object.create(fun.prototype));
       // apply function
@@ -818,7 +735,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __verbose__ && logc("bind", fun);
 
       // sandboxed function
-      var sbxed = decompile(fun, wrap(global));
+      var sbxed = __decompile__ ? decompile(fun, wrap(global)) : fun;
       // bind thisArg
       var bound = sbxed.bind(wrap(thisArg));
       // bind arguments
@@ -1207,9 +1124,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
       return changes;
       }, this);*/ // TODO
 
-
-
-
     //  _____             __ _ _      _       
     // / ____|           / _| (_)    | |      
     //| |     ___  _ __ | |_| |_  ___| |_ ___ 
@@ -1348,18 +1262,12 @@ function Sandbox(global = {}, params = [], prestate = []) {
       return conflicts;
     }, this);
 
-
-
-
     //  _____                          _ _   
     // / ____|                        (_) |  
     //| |     ___  _ __ ___  _ __ ___  _| |_ 
     //| |    / _ \| '_ ` _ \| '_ ` _ \| | __|
     //| |___| (_) | | | | | | | | | | | | |_ 
     // \_____\___/|_| |_| |_|_| |_| |_|_|\__|
-
-
-    // TODO, unwrap
 
     function commit(effect, shadow, origin) {
       if(effect instanceof Effect.SetPrototypeOf) {
