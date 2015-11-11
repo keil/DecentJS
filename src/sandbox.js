@@ -662,9 +662,16 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __verbose__ && logc("construct");
       __effect__  && trace(new Effect.Construct(origin));
 
+      // TODO, cpecial treatment for date
+      if(origin===Date)
+        return new Date(Date.apply({}, argumentsList));
+
       //var thisArg = wrap(Object.create(shadow.prototype));
-      var thisArg = Object.create(shadow.prototype);
+      var thisArg = native ? Object.create(origin.prototype) : Object.create(shadow.prototype);
       var result =  native ? origin.apply(thisArg, argumentsList) : shadow.apply(thisArg, argumentsList);
+
+
+      //return result ? result : thisArg;
 
       return (result instanceof Object) ? result : thisArg;
     };

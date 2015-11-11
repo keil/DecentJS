@@ -1,6 +1,62 @@
 
 
-load("demo/storyline.js");
+(function() {
+
+  var sbx = new Sandbox(this, Sandbox.DEBUG);
+/*
+  // Array
+  sbx.call(function() {
+
+    var array = new Array();
+    array.push(0);
+    array.push(1);
+
+    array = array.concat([1,2]);
+
+    Array.isArray(array);
+    Array.prototype.push.call(array, 1);
+
+    print(array)
+
+  }, this, []); */
+
+  // Date 
+  sbx.call(function() {
+
+    var date = new Date(1995, 11, 17);
+    print(date);
+    print(date.valueOf());
+
+//    var today = new Date();
+//    print(today);
+
+//    var now = Date.now();
+//    print(now);
+
+//  print(date.valueOf());
+//  print(today.valueOf());
+//  print(now.valueOf());
+
+  }, this, []);
+
+})()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//load("demo/storyline.js");
 
 quit();
 
