@@ -20,9 +20,9 @@ var runfile  = (base_dir + 'run.js');
 
 var benchmarks = [];
 
-//benchmarks.push(base_dir + 'richards.js');
+benchmarks.push(base_dir + 'richards.js');
 //benchmarks.push(base_dir + 'deltablue.js'); // XXX
-//benchmarks.push(base_dir + 'crypto.js');
+benchmarks.push(base_dir + 'crypto.js');
 //benchmarks.push(base_dir + 'raytrace.js');
 //benchmarks.push(base_dir + 'earley-boyer.js'); 
 //benchmarks.push(base_dir + 'regexp.js');
