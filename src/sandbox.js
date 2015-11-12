@@ -204,7 +204,17 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param target The Target Object.
    * @return JavaScript Proxy 
    */
-  function wrap(target) { 
+  function wrap(target) {
+
+
+
+
+    // TEST
+    //
+var s = new WeakSet([ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array]);
+      if(s.has(target)) return target;
+
+
     __verbose__   && logc("wrap");
     __statistic__ && increment(Statistic.WRAP);
 
@@ -662,13 +672,31 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __verbose__ && logc("construct");
       __effect__  && trace(new Effect.Construct(origin));
 
+//      return new origin();
+
       // TODO, cpecial treatment for date
       if(origin===Date)
         return new Date(Date.apply({}, argumentsList));
 
+
+      var s = new WeakSet([ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array]);
+      if(s.has(origin)) return new origin(argumentsList[0], argumentsList[1], argumentsList[2], argumentsList[3], argumentsList[4]);
+
+
+     
       //var thisArg = wrap(Object.create(shadow.prototype));
       var thisArg = native ? Object.create(origin.prototype) : Object.create(shadow.prototype);
       var result =  native ? origin.apply(thisArg, argumentsList) : shadow.apply(thisArg, argumentsList);
+
+     // putstr("#######", origin===Object);
+     // if(origin===Object) {
+      /* copy properties from object.prototype when creating new oejcts
+      var objectsShadow = shadows.get(Object.prototype);
+      for(var property of Object.getOwnPropertyNames(objectsShadow))
+        thisArg[property] = objectsShadow[property];
+          result[property] = objectsShadow[property];
+     // }
+*/
 
 
       //return result ? result : thisArg;
@@ -714,6 +742,20 @@ function Sandbox(global = {}, params = [], prestate = []) {
       } 
     }
 
+    /** sbxeval
+     * Sandbox eval.
+     * @param bosy The source body.
+     * @param env The current Global Object
+     */
+    function sbxeval(body, env) {
+      try {
+        var sbxed = eval("with(env) { (function(){'use strict'; " + body + " })()}");
+        return sbxed;
+      } catch(error) {
+        throw new SyntaxError("Incompatible body." + "\n" + body + "\n" + error);
+      } 
+    }
+      
     /** evaluate
      * Evaluates the given function.
      * @param fun JavaScript Function
@@ -773,6 +815,16 @@ function Sandbox(global = {}, params = [], prestate = []) {
       return bound;
     }
 
+    /** run
+     * Runs the given source in the sandbox.
+     * @param body JavaScript source code
+     */
+    function run(body) {
+      __verbose__ && logc("run", fun);
+      // evaluates body
+      sbxeval(body, wrap(global));
+    }
+
     //   _             _      
     //  /_\  _ __ _ __| |_  _ 
     // / _ \| '_ \ '_ \ | || |
@@ -821,6 +873,68 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
       return wrap(object);
     }, this);
+   
+    // _              _ 
+    //| |___  __ _ __| |
+    //| / _ \/ _` / _` |
+    //|_\___/\__,_\__,_|
+
+    define("load", function(filename) {
+      if(typeof filename !== "string") throw new TypeError("Invalid filename.");
+
+      if(read) {
+        var source = read(filename);
+        if(typeof source === "string") run(source);
+        else throw new TypeError("Invalid source file.");
+
+      } else throw new TypeError("Function read is not supported.");
+    }, this);
+
+    //              _ 
+    // _____ ____ _| |
+    /// -_) V / _` | |
+    //\___|\_/\__,_|_|
+
+    define("eval", function(source) {
+      if(typeof source === "string") run(source);
+      else throw new TypeError("Invalid source string.");
+    }, this);
+
+
+    define("request", function(url) {
+      if(typeof filename !== "string") throw new TypeError("Invalid url.");
+
+      function processXMLHttpRequest(file, location) {
+        var xmlObj = null;
+        if (window.XMLHttpRequest) {
+          xmlObj = new XMLHttpRequest();
+        } else if (window.ActiveXObject) {
+          xmlObj = new ActiveXObject("Microsoft.XMLHTTP");
+        } else {
+          return true;
+        }
+        xmlObj.onreadystatechange = function() {
+          if(xmlObj.readyState == 4) {
+            processXML(xmlObj.responseXML, location);
+          }
+        }
+        xmlObj.open ('GET', file, true);
+        xmlObj.send ('');
+        return false;
+      }
+
+      if(read) {
+        var source = read(filename);
+        if(typeof source === "string") run(source);
+        else throw new TypeError("Invalid source file.");
+
+      } else throw new TypeError("Function read is not supported.");
+    }, this);
+
+
+
+
+
 
     // ______  __  __          _       
     //|  ____|/ _|/ _|        | |      
@@ -828,7 +942,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
     //|  __| |  _|  _/ _ \/ __| __/ __|
     //| |____| | | ||  __/ (__| |_\__ \
     //|______|_| |_| \___|\___|\__|___/   
-
 
     var readeffects = new WeakMap();
     var writeeffects = new WeakMap();

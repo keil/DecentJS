@@ -3,7 +3,11 @@
 (function() {
 
   var sbx = new Sandbox(this, Sandbox.DEBUG);
-/*
+  sbx.load("demo/codeloading.js");
+
+  return false;
+
+  /*
   // Array
   sbx.call(function() {
 
@@ -21,7 +25,7 @@
   }, this, []); */
 
   // Date 
-  sbx.call(function() {
+  /*sbx.call(function() {
 
     var date = new Date(1995, 11, 17);
     print(date);
@@ -37,16 +41,52 @@
 //  print(today.valueOf());
 //  print(now.valueOf());
 
+  }, this, []);*/
+
+
+/*
+  (function() {
+
+    Object.defineProperty(Object.prototype, "inheritsFrom", {
+      value: 4711
+    });
+
+    var obj1 = {};
+    print("#1", obj1.inheritsFrom);
+    var obj2 = new Object();
+    print("#2", obj2.inheritsFrom);
+
+    function A() {}
+    var a = new A();
+    print("#3", a.inheritsFrom);
+
+  });
+*/
+
+//  return null;
+
+    // Date 
+  sbx.call(function() {
+
+    /*Object.defineProperty(Object.prototype, "inheritsFrom", {
+      value: 4711
+    });*/
+
+    Object.prototype.inheritsFrom = 4711;
+    
+    var obj1 = {};
+    print("#1", obj1.inheritsFrom);
+    var obj2 = new Object();
+    print("#2", obj2.inheritsFrom);
+
+    function A() {}
+    var a = new A();
+    print("#3", a.inheritsFrom);
+
   }, this, []);
 
+
 })()
-
-
-
-
-
-
-
 
 
 

@@ -20,7 +20,6 @@
 //
 //   https://github.com/mozilla/pdf.js
 
-
 //////// Benchmark set-up. (c) by Google. ////////
 
 var pdf_file = "test.pdf";

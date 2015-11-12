@@ -218,7 +218,7 @@ function UnaryConstraint(v, strength) {
   this.satisfied = false;
   this.addConstraint();
 }
-
+UnaryConstraint.inheritsFrom = Object.prototype.inheritsFrom;
 UnaryConstraint.inheritsFrom(Constraint);
 
 /**
@@ -296,7 +296,7 @@ UnaryConstraint.prototype.removeFromGraph = function () {
 function StayConstraint(v, str) {
   StayConstraint.superConstructor.call(this, v, str);
 }
-
+StayConstraint.inheritsFrom = Object.prototype.inheritsFrom;
 StayConstraint.inheritsFrom(UnaryConstraint);
 
 StayConstraint.prototype.execute = function () {
@@ -314,7 +314,7 @@ StayConstraint.prototype.execute = function () {
 function EditConstraint(v, str) {
   EditConstraint.superConstructor.call(this, v, str);
 }
-
+EditConstraint.inheritsFrom = Object.prototype.inheritsFrom;
 EditConstraint.inheritsFrom(UnaryConstraint);
 
 /**
@@ -348,7 +348,7 @@ function BinaryConstraint(var1, var2, strength) {
   this.direction = Direction.NONE;
   this.addConstraint();
 }
-
+BinaryConstraint.inheritsFrom = Object.prototype.inheritsFrom;
 BinaryConstraint.inheritsFrom(Constraint);
 
 /**
@@ -461,7 +461,7 @@ function ScaleConstraint(src, scale, offset, dest, strength) {
   this.offset = offset;
   ScaleConstraint.superConstructor.call(this, src, dest, strength);
 }
-
+ScaleConstraint.inheritsFrom = Object.prototype.inheritsFrom;
 ScaleConstraint.inheritsFrom(BinaryConstraint);
 
 /**
@@ -517,7 +517,7 @@ ScaleConstraint.prototype.recalculate = function () {
 function EqualityConstraint(var1, var2, strength) {
   EqualityConstraint.superConstructor.call(this, var1, var2, strength);
 }
-
+EqualityConstraint.inheritsFrom = Object.prototype.inheritsFrom;
 EqualityConstraint.inheritsFrom(BinaryConstraint);
 
 /**
