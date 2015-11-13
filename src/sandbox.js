@@ -883,14 +883,18 @@ function Sandbox(global = {}, params = [], prestate = []) {
   //| / _ \/ _` / _` |
   //|_\___/\__,_\__,_|
 
-  define("load", function(filename) {
-    if(typeof filename !== "string") throw new TypeError("Invalid filename.");
-
+  define("load", function() {
     if(read) {
-      var source = read(filename);
-      if(typeof source === "string") run(source);
-      else throw new TypeError("Invalid source file.");
-
+      var body = "";
+      for(var i in arguments) {
+        var filename = arguments[i];
+        if(typeof filename === "string") {
+          var source = read(filename);
+          if(typeof source === "string") body += source;
+          else throw new TypeError("Invalid source file.");
+        } else throw new TypeError("Invalid filename.");
+      }
+      run(body);
     } else throw new TypeError("Function read is not supported.");
   }, this);
 
@@ -905,6 +909,8 @@ function Sandbox(global = {}, params = [], prestate = []) {
   }, this);
 
 
+
+  // TODO
   define("request", function(url) {
     if(typeof filename !== "string") throw new TypeError("Invalid url.");
 
