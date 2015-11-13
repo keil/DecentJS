@@ -8,6 +8,9 @@ test:
 octane:
 	./js -f bootstrap.js -f benchmark/octane/octane.js
 
+octane2:
+	./js -f bootstrap.js -f benchmark/octane2/octane.js
+
 sync:
 	svn ci -m "sync"
 

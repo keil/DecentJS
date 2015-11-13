@@ -69,7 +69,7 @@ function getNewSandbox() {
      */ verbose:false,
     /** Enable Statistic
      * (default: false)
-     */ statistic:false,
+     */ statistic:true,
     /** Decompile
      * (default: true)
      */ decompile:true,
