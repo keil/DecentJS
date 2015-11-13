@@ -1,0 +1,141 @@
+*** Include benchmark/sbxbench/richards.js ***
+Richards: 2836
+----
+Score (version 9): 2836
+Statistic: wrap:164021 Cache miss:3 decompile:1 Cache hit:7 trace:328060 
+
+
+
+*** Include benchmark/sbxbench/deltablue.js ***
+DeltaBlue: 127
+----
+Score (version 9): 127
+Statistic: wrap:7348024 Cache miss:3 decompile:1 Cache hit:7 trace:14696066 
+
+
+
+*** Include benchmark/sbxbench/crypto.js ***
+Crypto: 777
+----
+Score (version 9): 777
+Statistic: wrap:2329634 Cache miss:3 decompile:1 Cache hit:1046550 trace:3629234 
+
+
+
+*** Include benchmark/sbxbench/raytrace.js ***
+RayTrace: 78.7
+----
+Score (version 9): 78.7
+Statistic: wrap:25519224 Cache miss:3 decompile:1 Cache hit:12757207 trace:38281266 
+
+
+
+*** Include benchmark/sbxbench/earley-boyer.js ***
+EarleyBoyer: 568
+----
+Score (version 9): 568
+Statistic: wrap:5465 Cache miss:3 decompile:1 Cache hit:24 trace:4194942 
+
+
+
+*** Include benchmark/sbxbench/regexp.js ***
+RegExp: 870
+----
+Score (version 9): 870
+Statistic: wrap:115474 Cache miss:3 decompile:1 Cache hit:65923 trace:230966 
+
+
+
+*** Include benchmark/sbxbench/splay.js ***
+Splay: 366
+SplayLatency: 1048
+----
+Score (version 9): 619
+Statistic: wrap:466840 Cache miss:3 decompile:1 Cache hit:232019 trace:1397701 
+
+
+
+*** Include benchmark/sbxbench/navier-stokes.js ***
+NavierStokes: 917
+----
+Score (version 9): 917
+Statistic: wrap:1839 Cache miss:3 decompile:1 Cache hit:727 trace:2978 
+
+
+
+*** Include benchmark/sbxbench/pdfjs.js ***
+PdfJS: 29.9
+----
+Score (version 9): 29.9
+Statistic: wrap:18222921 Cache miss:4 decompile:1 Cache hit:37302 trace:37477198 
+
+
+
+*** Include benchmark/sbxbench/mandreel.js ***
+Mandreel: 32.9
+MandreelLatency: 145
+----
+Score (version 9): 69.1
+Statistic: wrap:19954116 Cache miss:3 decompile:1 Cache hit:9974959 trace:29934936 
+
+
+
+
+*** Include benchmark/sbxbench/gbemu-part1.js,benchmark/sbxbench/gbemu-part2.js ***
+65538
+Gameboy: 2644
+----
+Score (version 9): 2644
+Statistic: wrap:467585 Cache miss:4 decompile:1 Cache hit:121250 trace:813987 
+
+
+
+*** Include benchmark/sbxbench/code-load.js ***
+CodeLoad: Error: eval not supported
+wrap@/home/keilr/workspace/JSProxy/branches/TreatJSSandbox/src/sandbox.js:243:7
+doGet@/home/keilr/workspace/JSProxy/branches/TreatJSSandbox/src/sandbox.js:417:7
+Membrane/this.get@/home/keilr/workspace/JSProxy/branches/TreatJSSandbox/src/sandbox.js:576:7
+setupCodeLoad@/home/keilr/workspace/JSProxy/branches/TreatJSSandbox/src/sandbox.js line 678 > eval:484:3
+RunNextSetup@/home/keilr/workspace/JSProxy/branches/TreatJSSandbox/src/sandbox.js line 678 > eval:356:9
+BenchmarkSuite.prototype.RunStep@/home/keilr/workspace/JSProxy/branches/TreatJSSandbox/src/sandbox.js line 678 > eval:389:3
+RunStep@/home/keilr/workspace/JSProxy/branches/TreatJSSandbox/src/sandbox.js line 678 > eval:157:11
+BenchmarkSuite.RunSuites@/home/keilr/workspace/JSProxy/branches/TreatJSSandbox/src/sandbox.js line 678 > eval:173:3
+@/home/keilr/workspace/JSProxy/branches/TreatJSSandbox/src/sandbox.js line 678 > eval:2025:28
+evaluate@/home/keilr/workspace/JSProxy/branches/TreatJSSandbox/src/sandbox.js:701:9
+Sandbox/<@/home/keilr/workspace/JSProxy/branches/TreatJSSandbox/src/sandbox.js:769:3
+runBenchmark@benchmark/sbxbench/octane.js:87:7
+@benchmark/sbxbench/octane.js:99:1
+
+Statistic: wrap:12 Cache miss:3 decompile:1 Cache hit:3 trace:32 
+
+
+
+*** Include benchmark/sbxbench/box2d.js ***
+Box2D: 12.9
+----
+Score (version 9): 12.9
+Statistic: wrap:24876419 Cache miss:3 decompile:1 Cache hit:7800731 trace:115579412 
+
+
+
+*** Include benchmark/sbxbench/zlib.js,benchmark/sbxbench/zlib-data.js ***
+Error: eval not supported
+
+
+wrap@/home/keilr/workspace/JSProxy/branches/TreatJSSandbox/src/sandbox.js:243:7
+doGet@/home/keilr/workspace/JSProxy/branches/TreatJSSandbox/src/sandbox.js:417:7
+Membrane/this.get@/home/keilr/workspace/JSProxy/branches/TreatJSSandbox/src/sandbox.js:576:7
+@/home/keilr/workspace/JSProxy/branches/TreatJSSandbox/src/sandbox.js line 678 > eval:424:5
+evaluate@/home/keilr/workspace/JSProxy/branches/TreatJSSandbox/src/sandbox.js:701:9
+Sandbox/<@/home/keilr/workspace/JSProxy/branches/TreatJSSandbox/src/sandbox.js:769:3
+runBenchmark@benchmark/sbxbench/octane.js:87:7
+@benchmark/sbxbench/octane.js:99:1
+
+
+
+
+*** Include benchmark/sbxbench/typescript-input.js,benchmark/sbxbench/typescript-compiler.js,benchmark/sbxbench/typescript.js ***
+Typescript: 246
+----
+Score (version 9): 246
+Statistic: wrap:1114199 Cache miss:3 decompile:1 Cache hit:17 trace:26404297

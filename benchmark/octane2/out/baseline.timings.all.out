@@ -1,0 +1,413 @@
+./js --available-memory=6000 -f bootstrap.js -f benchmark/sbxbench/octane.js
+
+
+
+*** Include benchmark/sbxbench/richards.js ***
+Richards: 6789
+----
+Score (version 9): 6789
+[[--end-of-text--]]
+
+Process 18447 terminated (ok).
+make: *** No targets specified and no makefile found.  Stop.
+Resident set size: 10 MByte
+Text/Data segment size: 57 MByte
+Shared memory segment: 5 MByte
+
+./js --available-memory=6000 -f bootstrap.js -f benchmark/sbxbench/octane.js
+
+
+
+*** Include benchmark/sbxbench/deltablue.js ***
+DeltaBlue: 4631
+----
+Score (version 9): 4631
+[[--end-of-text--]]
+
+Process 18480 terminated (ok).
+Task completed after 13 sec.
+Charging 12.6s processor usage (0.45 Euro).
+
+Resource usage:
+Average processor load: 100%
+
+Processor idle time: 1237 sec
+Total execution time: 13 sec
+Total processing time: 13 sec
+Kernel mode time: 0 sec
+User mode time: 12 sec
+
+Virtual memory size: 79 MByte
+Resident set size: 14 MByte
+Text/Data segment size: 62 MByte
+Shared memory segment: 5 MByte
+
+./js --available-memory=6000 -f bootstrap.js -f benchmark/sbxbench/octane.js
+
+
+
+*** Include benchmark/sbxbench/crypto.js ***
+Crypto: 11368
+----
+Score (version 9): 11368
+[[--end-of-text--]]
+
+Process 18520 terminated (ok).
+Task completed after 9 sec.
+Charging 8.830s processor usage (0.32 Euro).
+
+Resource usage:
+Average processor load: 100%
+
+Processor idle time: 865 sec
+Total execution time: 9 sec
+Total processing time: 9 sec
+Kernel mode time: 0 sec
+User mode time: 9 sec
+
+Virtual memory size: 79 MByte
+Resident set size: 14 MByte
+Text/Data segment size: 62 MByte
+Shared memory segment: 5 MByte
+
+./js --available-memory=6000 -f bootstrap.js -f benchmark/sbxbench/octane.js
+
+
+
+*** Include benchmark/sbxbench/raytrace.js ***
+RayTrace: 3862
+----
+Score (version 9): 3862
+[[--end-of-text--]]
+
+Process 18556 terminated (ok).
+Task completed after 23 sec.
+Charging 23.1s processor usage (0.82 Euro).
+
+Resource usage:
+Average processor load: 99.4%
+
+Processor idle time: 2277.3 sec
+Total execution time: 23.2 sec
+Total processing time: 23.1 sec
+Kernel mode time: 0.1 sec
+User mode time: 23.0 sec
+
+Virtual memory size: 79 MByte
+Resident set size: 15 MByte
+Text/Data segment size: 62 MByte
+Shared memory segment: 5 MByte
+
+./js --available-memory=6000 -f bootstrap.js -f benchmark/sbxbench/octane.js
+
+
+
+*** Include benchmark/sbxbench/earley-boyer.js ***
+EarleyBoyer: 2769
+----
+Score (version 9): 2769
+[[--end-of-text--]]
+
+Process 18594 terminated (ok).
+Task completed after 1 min, 15 sec.
+Charging 75.4s processor usage (2.69 Euro).
+
+Resource usage:
+Average processor load: 100%
+
+Processor idle time: 7352 sec
+Total execution time: 75 sec
+Total processing time: 75 sec
+Kernel mode time: 0 sec
+User mode time: 75 sec
+
+Virtual memory size: 193 MByte
+Resident set size: 140 MByte
+Text/Data segment size: 176 MByte
+Shared memory segment: 5 MByte
+
+./js --available-memory=6000 -f bootstrap.js -f benchmark/sbxbench/octane.js
+
+
+
+*** Include benchmark/sbxbench/regexp.js ***
+RegExp: 1190
+----
+Score (version 9): 1190
+[[--end-of-text--]]
+
+Process 18655 terminated (ok).
+Task completed after 8 sec.
+Charging 8.150s processor usage (0.29 Euro).
+
+Resource usage:
+Average processor load: 101%
+
+Processor idle time: 794 sec
+Total execution time: 8 sec
+Total processing time: 8 sec
+Kernel mode time: 0 sec
+User mode time: 8 sec
+
+Virtual memory size: 174 MByte
+Resident set size: 107 MByte
+Text/Data segment size: 157 MByte
+Shared memory segment: 5 MByte
+
+./js --available-memory=6000 -f bootstrap.js -f benchmark/sbxbench/octane.js
+
+
+
+*** Include benchmark/sbxbench/splay.js ***
+Splay: 1491
+SplayLatency: 1265
+----
+Score (version 9): 1374
+[[--end-of-text--]]
+
+Process 18687 terminated (ok).
+Task completed after 17 sec.
+Charging 17.4s processor usage (0.62 Euro).
+
+Resource usage:
+Average processor load: 106%
+
+Processor idle time: 1611 sec
+Total execution time: 16 sec
+Total processing time: 17 sec
+Kernel mode time: 1 sec
+User mode time: 17 sec
+
+Virtual memory size: 361 MByte
+Resident set size: 299 MByte
+Text/Data segment size: 344 MByte
+Shared memory segment: 5 MByte
+
+./js --available-memory=6000 -f bootstrap.js -f benchmark/sbxbench/octane.js
+
+
+
+*** Include benchmark/sbxbench/navier-stokes.js ***
+NavierStokes: 12618
+----
+Score (version 9): 12618
+[[--end-of-text--]]
+
+Process 18725 terminated (ok).
+Task completed after 5 sec.
+Charging 4.350s processor usage (0.16 Euro).
+
+Resource usage:
+Average processor load: 97.6%
+
+Processor idle time: 436.7 sec
+Total execution time: 4.5 sec
+Total processing time: 4.3 sec
+Kernel mode time: 0.0 sec
+User mode time: 4.3 sec
+
+Virtual memory size: 76 MByte
+Resident set size: 10 MByte
+Text/Data segment size: 59 MByte
+Shared memory segment: 4 MByte
+
+./js --available-memory=6000 -f bootstrap.js -f benchmark/sbxbench/octane.js
+
+
+
+*** Include benchmark/sbxbench/pdfjs.js ***
+PdfJS: 6886
+----
+Score (version 9): 6886
+[[--end-of-text--]]
+
+Process 18756 terminated (ok).
+Task completed after 9 sec.
+Charging 8.390s processor usage (0.30 Euro).
+
+Resource usage:
+Average processor load: 99.5%
+
+Processor idle time: 826.6 sec
+Total execution time: 8.4 sec
+Total processing time: 8.4 sec
+Kernel mode time: 0.1 sec
+User mode time: 8.3 sec
+
+Virtual memory size: 167 MByte
+Resident set size: 101 MByte
+Text/Data segment size: 150 MByte
+Shared memory segment: 5 MByte
+
+./js --available-memory=6000 -f bootstrap.js -f benchmark/sbxbench/octane.js
+
+
+
+*** Include benchmark/sbxbench/mandreel.js ***
+Mandreel: 8561
+MandreelLatency: 16507
+----
+Score (version 9): 11888
+[[--end-of-text--]]
+
+Process 18789 terminated (ok).
+Task completed after 9 sec.
+Charging 8.780s processor usage (0.31 Euro).
+
+Resource usage:
+Average processor load: 96.0%
+
+Processor idle time: 897.0 sec
+Total execution time: 9.1 sec
+Total processing time: 8.8 sec
+Kernel mode time: 0.1 sec
+User mode time: 8.7 sec
+
+Virtual memory size: 200 MByte
+Resident set size: 133 MByte
+Text/Data segment size: 183 MByte
+Shared memory segment: 5 MByte
+
+./js --available-memory=6000 -f bootstrap.js -f benchmark/sbxbench/octane.js
+
+
+
+*** Include benchmark/sbxbench/gbemu-part1.js,benchmark/sbxbench/gbemu-part2.js ***
+65538
+Gameboy: 22063
+----
+Score (version 9): 22063
+[[--end-of-text--]]
+
+Process 18821 terminated (ok).
+Task completed after 7 sec.
+Charging 5.340s processor usage (0.19 Euro).
+
+Resource usage:
+Average processor load: 72.5%
+
+Processor idle time: 724.0 sec
+Total execution time: 7.4 sec
+Total processing time: 5.3 sec
+Kernel mode time: 0.0 sec
+User mode time: 5.3 sec
+
+Virtual memory size: 99 MByte
+Resident set size: 25 MByte
+Text/Data segment size: 82 MByte
+Shared memory segment: 5 MByte
+
+./js --available-memory=6000 -f bootstrap.js -f benchmark/sbxbench/octane.js
+
+
+
+
+*** Include benchmark/sbxbench/code-load.js ***
+CodeLoad: 5123
+----
+Score (version 9): 5123
+Statistic: 
+[[--end-of-text--]]
+
+Process 37536 terminated (ok).
+Task completed after 14 sec.
+Charging 14.0s processor usage (0.50 Euro).
+
+Resource usage:
+Average processor load: 103%
+
+Processor idle time: 1331 sec
+Total execution time: 14 sec
+Total processing time: 14 sec
+Kernel mode time: 0 sec
+User mode time: 14 sec
+
+Virtual memory size: 187 MByte
+Resident set size: 119 MByte
+Text/Data segment size: 170 MByte
+Shared memory segment: 5 MByte
+
+./js --available-memory=6000 -f bootstrap.js -f benchmark/sbxbench/octane.js
+
+
+
+*** Include benchmark/sbxbench/box2d.js ***
+Box2D: 13696
+----
+Score (version 9): 13696
+[[--end-of-text--]]
+
+Process 18886 terminated (ok).
+Task completed after 6 sec.
+Charging 5.350s processor usage (0.19 Euro).
+
+Resource usage:
+Average processor load: 98.6%
+
+Processor idle time: 531.8 sec
+Total execution time: 5.4 sec
+Total processing time: 5.3 sec
+Kernel mode time: 0.0 sec
+User mode time: 5.3 sec
+
+Virtual memory size: 107 MByte
+Resident set size: 56 MByte
+Text/Data segment size: 90 MByte
+Shared memory segment: 5 MByte
+
+./js --available-memory=6000 -f bootstrap.js -f benchmark/sbxbench/octane.js
+
+
+
+*** Include benchmark/sbxbench/zlib.js,benchmark/sbxbench/zlib-data.js ***
+zlib: 28986
+----
+Score (version 9): 28986
+[[--end-of-text--]]
+
+Process 18918 terminated (ok).
+Task completed after 11 sec.
+Charging 10.8s processor usage (0.39 Euro).
+
+Resource usage:
+Average processor load: 98.5%
+
+Processor idle time: 1078.5 sec
+Total execution time: 11.0 sec
+Total processing time: 10.8 sec
+Kernel mode time: 0.0 sec
+User mode time: 10.8 sec
+
+Virtual memory size: 206 MByte
+Resident set size: 37 MByte
+Text/Data segment size: 189 MByte
+Shared memory segment: 5 MByte
+
+./js --available-memory=6000 -f bootstrap.js -f benchmark/sbxbench/octane.js
+
+
+
+*** Include benchmark/sbxbench/typescript-input.js,benchmark/sbxbench/typescript-compiler.js,benchmark/sbxbench/typescript.js ***
+Typescript: 11875
+----
+Score (version 9): 11875
+[[--end-of-text--]]
+
+Process 18952 terminated (ok).
+Task completed after 24 sec.
+Charging 27.5s processor usage (0.98 Euro).
+
+Resource usage:
+Average processor load: 114%
+
+Processor idle time: 2374 sec
+Total execution time: 24 sec
+Total processing time: 28 sec
+Kernel mode time: 0 sec
+User mode time: 27 sec
+
+Virtual memory size: 214 MByte
+Resident set size: 161 MByte
+Text/Data segment size: 197 MByte
+Shared memory segment: 5 MByte
+
