@@ -206,13 +206,16 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   function wrap(target) {
 
-
-
-
+    // TODO
     // TEST
     //
-var s = new WeakSet([ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array]);
-      if(s.has(target)) return target;
+//var s = new WeakSet([ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array]);
+//var s = new WeakSet([Uint8Array]);
+     // if(s.has(target)) return target;
+
+    //if(target === console.log) return target;
+
+    //if(target === Uint8Array) return target;
 
 
     __verbose__   && logc("wrap");
@@ -278,7 +281,7 @@ var s = new WeakSet([ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int1
     proxies.set(target, proxy);
     handlers.set(proxy, handler);
     shadows.set(target, shadow);
-    targets.set(shadow, target); // TODO
+    targets.set(shadow, target);
 
     return proxy;
   }
@@ -679,8 +682,63 @@ var s = new WeakSet([ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int1
         return new Date(Date.apply({}, argumentsList));
 
 
+
       var s = new WeakSet([ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array]);
-      if(s.has(origin)) return new origin(argumentsList[0], argumentsList[1], argumentsList[2], argumentsList[3], argumentsList[4]);
+      if(s.has(origin)) {
+      
+      switch(argumentsList.length) {
+      
+        case 0:
+          return new origin();
+          break;
+
+        case 1:
+          return new origin(argumentsList[0]);
+          break;
+
+
+        case 2:
+          return new origin(argumentsList[0], argumentsList[1]);
+          break;
+
+
+        case 3:
+          return new origin(argumentsList[0], argumentsList[1], argumentsList[2]);
+          break;
+
+
+        case 4:
+          return new origin(argumentsList[0], argumentsList[1], argumentsList[2], argumentsList[3]);
+          break;
+      
+        default:
+          throw new TypeError('Incalid constructor call.');
+
+      }
+
+
+        //var bounded = origin.bind(undefined);
+        //for(var i in argumentsList)
+        //bounded = bounded.bind(argumentsList[0]);
+
+        //var x = origin.bind(undefined, argumentsList[0]);
+        //return new x();
+       //return new origin(argumentsList[0])
+
+/*       var thisArg = Object.create(origin.prototype);
+       var result =  origin.prototype.constructor.apply(thisArg, argumentsList);
+      return thisArg;
+*/      
+        
+        //return new origin(argumentsList[0])
+       return new origin(
+           argumentsList[0] ? argumentsList[0] : null,
+           argumentsList[1] ? argumentsList[1] : null,
+           argumentsList[2] ? argumentsList[2] : null,
+           argumentsList[3] ? argumentsList[3] : null);
+        
+        //return new origin(argumentsList[0], argumentsList[1], argumentsList[2], argumentsList[3]);
+      }
 
 
      

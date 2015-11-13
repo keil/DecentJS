@@ -31,8 +31,8 @@ var benchmarks = [];
 //benchmarks.push(base_dir + 'regexp.js');
 //benchmarks.push(base_dir + 'splay.js'); 
 //benchmarks.push(base_dir + 'navier-stokes.js');
-//benchmarks.push(base_dir + 'pdfjs.js'); // XXX
-benchmarks.push(base_dir + 'mandreel.js'); // XXX
+// benchmarks.push(base_dir + 'pdfjs.js'); // XXX
+benchmarks.push(base_dir + 'mandreel.js'); // XXX only with quick fix
 //benchmarks.push([base_dir + 'gbemu-part1.js', base_dir + 'gbemu-part2.js']);
 //benchmarks.push(base_dir + 'code-load.js');
 //benchmarks.push(base_dir + 'box2d.js');
