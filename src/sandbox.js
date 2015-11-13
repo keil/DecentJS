@@ -169,6 +169,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
     return (fun instanceof Function) && __passthrough__.has(fun);
   }
 
+  /* List of typed arrays
+  */
+  var typedArrays = new WeakSet([ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array]);
+
   // _    ___          _ 
   //(_)__| __|_ ____ _| |
   //| (_-< _|\ V / _` | |
@@ -205,19 +209,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @return JavaScript Proxy 
    */
   function wrap(target) {
-
-    // TODO
-    // TEST
-    //
-//var s = new WeakSet([ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array]);
-//var s = new WeakSet([Uint8Array]);
-     // if(s.has(target)) return target;
-
-    //if(target === console.log) return target;
-
-    //if(target === Uint8Array) return target;
-
-
     __verbose__   && logc("wrap");
     __statistic__ && increment(Statistic.WRAP);
 
@@ -532,11 +523,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __verbose__ && logc("get", (typeof name === 'string') ? name : name.toString());
       __effect__  && trace(new Effect.Get(origin, (typeof name === 'string') ? name : name.toString()));
 
-      //if(name==="Date") return origin[name];
-
-      if(name === "valueOf") print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@", shadow, targets.get(receiver));
-      
       // TODO
+      /** Handles the Symbol.toPrimitive property
+      */
       if(name === Symbol.toPrimitive) return origin[name];
       //if(name === "valueOf") return origin[name];
 
@@ -545,7 +534,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
       // property access on the global object.
       // TODO, test if this also happens in the new engine
       if(origin===global && name==='undefined') return undefined;
- 
+
       // TODO, implement getter functions
       return touched(name) ? shadow[name] : wrap(origin[name]);
     };
@@ -583,7 +572,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
         }
       }
       return true;
-      // TODO, implement setter functions
     };
 
     /**
@@ -654,18 +642,14 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __verbose__ && logc("apply");
       __effect__  && trace(new Effect.Apply(origin));
 
-
-      // TODO
+      /* Special treatment for calling native functions
+      */
       if(native && thisArg && targets.has(thisArg)) {
         thisArg = targets.get(thisArg);
       }
 
       thisArg = thisArg ? thisArg : wrap(global);
-
-      // TODO, make singel tests for constructor calls
       return native ? origin.apply(thisArg, argumentsList) : shadow.apply(thisArg, argumentsList);
-      //print("$$$$$$$$$$$$$$$$$$$", shadow.toString(), origin.toString());
-      //return native ? origin.apply(thisArg, argumentsList) : shadow.apply(thisArg, argumentsList);
     };
 
     /** 
@@ -675,1057 +659,1019 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __verbose__ && logc("construct");
       __effect__  && trace(new Effect.Construct(origin));
 
-//      return new origin();
-
-      // TODO, cpecial treatment for date
+      /* Special treatment for constructing new date objects
+      */
       if(origin===Date)
         return new Date(Date.apply({}, argumentsList));
 
-
-
-      var s = new WeakSet([ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array]);
-      if(s.has(origin)) {
-      
-      switch(argumentsList.length) {
-      
-        case 0:
-          return new origin();
-          break;
-
-        case 1:
-          return new origin(argumentsList[0]);
-          break;
-
-
-        case 2:
-          return new origin(argumentsList[0], argumentsList[1]);
-          break;
-
-
-        case 3:
-          return new origin(argumentsList[0], argumentsList[1], argumentsList[2]);
-          break;
-
-
-        case 4:
-          return new origin(argumentsList[0], argumentsList[1], argumentsList[2], argumentsList[3]);
-          break;
-      
-        default:
-          throw new TypeError('Incalid constructor call.');
-
+      /* Special treatment for constructing typed arrays
+      */
+      if(typedArrays.has(origin)) {
+        switch(argumentsList.length) {
+          case 0:
+            return new origin();
+            break;
+          case 1:
+            return new origin(argumentsList[0]);
+            break;
+          case 2:
+            return new origin(argumentsList[0], argumentsList[1]);
+            break;
+          case 3:
+            return new origin(argumentsList[0], argumentsList[1], argumentsList[2]);
+            break;
+          case 4:
+            return new origin(argumentsList[0], argumentsList[1], argumentsList[2], argumentsList[3]);
+            break;
+          default:
+            throw new TypeError('Incalid constructor call.');
+        }
       }
 
-
-        //var bounded = origin.bind(undefined);
-        //for(var i in argumentsList)
-        //bounded = bounded.bind(argumentsList[0]);
-
-        //var x = origin.bind(undefined, argumentsList[0]);
-        //return new x();
-       //return new origin(argumentsList[0])
-
-/*       var thisArg = Object.create(origin.prototype);
-       var result =  origin.prototype.constructor.apply(thisArg, argumentsList);
-      return thisArg;
-*/      
-        
-        //return new origin(argumentsList[0])
-       return new origin(
-           argumentsList[0] ? argumentsList[0] : null,
-           argumentsList[1] ? argumentsList[1] : null,
-           argumentsList[2] ? argumentsList[2] : null,
-           argumentsList[3] ? argumentsList[3] : null);
-        
-        //return new origin(argumentsList[0], argumentsList[1], argumentsList[2], argumentsList[3]);
-      }
-
-
-     
+      // TODO
       //var thisArg = wrap(Object.create(shadow.prototype));
       var thisArg = native ? Object.create(origin.prototype) : Object.create(shadow.prototype);
       var result =  native ? origin.apply(thisArg, argumentsList) : shadow.apply(thisArg, argumentsList);
 
-     // putstr("#######", origin===Object);
-     // if(origin===Object) {
+      // TODO
+      // putstr("#######", origin===Object);
+      // if(origin===Object) {
       /* copy properties from object.prototype when creating new oejcts
-      var objectsShadow = shadows.get(Object.prototype);
-      for(var property of Object.getOwnPropertyNames(objectsShadow))
-        thisArg[property] = objectsShadow[property];
-          result[property] = objectsShadow[property];
-     // }
-*/
-
+         var objectsShadow = shadows.get(Object.prototype);
+         for(var property of Object.getOwnPropertyNames(objectsShadow))
+         thisArg[property] = objectsShadow[property];
+         result[property] = objectsShadow[property];
+      // }
+      */
 
       //return result ? result : thisArg;
-
-      return (result instanceof Object) ? result : thisArg;
-    };
-    };
-
-    //  _____                 _ _               
-    // / ____|               | | |              
-    //| (___   __ _ _ __   __| | |__   _____  __
-    // \___ \ / _` | '_ \ / _` | '_ \ / _ \ \/ /
-    // ____) | (_| | | | | (_| | |_) | (_) >  < 
-    //|_____/ \__,_|_| |_|\__,_|_.__/ \___/_/\_\
-
-    //    _                       _ _     
-    // __| |___ __ ___ _ __  _ __(_) |___ 
-    /// _` / -_) _/ _ \ '  \| '_ \ | / -_)
-    //\__,_\___\__\___/_|_|_| .__/_|_\___|
-    //                      |_|           
-
-    /** decompile
-     * Decompiles functions.
-     * @param fun JavaScript Function
-     * @param env The current Global Object
-     * @return JavaScript Function
-     */
-    function decompile(fun, env) {
-      __verbose__   && logc("decompile", fun.name ? fun.name : fun.toString());
-      __statistic__ && increment(Statistic.DECOMPILE );
-
-      if(!(fun instanceof Function))
-        throw new TypeError("fun");
-      if(!(env instanceof Object))
-        throw new TypeError("env");
-      
-      try {
-        var body = "(function() {'use strict'; return " + ("(" + fun.toString() + ")") + "})();";
-        var sbxed = eval("(function() { with(env) { return " + body + " }})();");
-        return sbxed;
-      } catch(error) {
-        throw new SyntaxError("Incompatible function object." + "\n" + fun + "\n" + error);
-      } 
-    }
-
-    /** sbxeval
-     * Sandbox eval.
-     * @param bosy The source body.
-     * @param env The current Global Object
-     */
-    function sbxeval(body, env) {
-      try {
-        var sbxed = eval("with(env) { (function(){'use strict'; " + body + " })()}");
-        return sbxed;
-      } catch(error) {
-        throw new SyntaxError("Incompatible body." + "\n" + body + "\n" + error);
-      } 
-    }
-      
-    /** evaluate
-     * Evaluates the given function.
-     * @param fun JavaScript Function
-     * @param thisArg The current this Object
-     * @param argsArray The Function arguments
-     * @return Any
-     */
-    function evaluate(fun, thisArg, argumentsList) {
-      __verbose__ && logc("evaluate", fun);
-
-      // sandboxed function
-      var sbxed = __decompile__ ? decompile(fun, wrap(global)) : fun;
-      // apply constructor function
-      var result = sbxed.apply(wrap(thisArg), wrap(argumentsList));
-      // return val
-      return result;
-    }
-
-    /** Construct
-     * Evaluates the given constructor.
-     * @param fun JavaScript Function
-     * @param argsArray The Function arguments
-     * @return Object
-     */
-    function construct(fun, argumentsList) {
-      __verbose__ && logc("construct", fun);
-
-      // sandboxed function
-      var sbxed = __decompile__ ? decompile(fun, wrap(global)) : fun;
-      // new this reference
-      var thisArg = wrap(Object.create(fun.prototype));
-      // apply function
-      var result = sbxed.apply(thisArg, wrap(argumentsList)); 
-      // return thisArg | val
       return (result instanceof Object) ? result : thisArg;
     }
+  };
 
-    /** bind
-     * Binds the given function in the sandbox.
-     * @param fun JavaScript Function
-     * @param thisArg The current this Object
-     * @param argsArray The Function arguments
-     * @return Any
-     */
-    function bind(fun, thisArg, argumentsList) {
-      __verbose__ && logc("bind", fun);
+  //  _____                 _ _               
+  // / ____|               | | |              
+  //| (___   __ _ _ __   __| | |__   _____  __
+  // \___ \ / _` | '_ \ / _` | '_ \ / _ \ \/ /
+  // ____) | (_| | | | | (_| | |_) | (_) >  < 
+  //|_____/ \__,_|_| |_|\__,_|_.__/ \___/_/\_\
 
-      // sandboxed function
-      var sbxed = __decompile__ ? decompile(fun, wrap(global)) : fun;
-      // bind thisArg
-      var bound = sbxed.bind(wrap(thisArg));
-      // bind arguments
-      for(var arg in argumentsList) {
-        bound = bound.bind(null, wrap(arg));
-      }
-      // return bound function
-      return bound;
+  //    _                       _ _     
+  // __| |___ __ ___ _ __  _ __(_) |___ 
+  /// _` / -_) _/ _ \ '  \| '_ \ | / -_)
+  //\__,_\___\__\___/_|_|_| .__/_|_\___|
+  //                      |_|           
+
+  /** decompile
+   * Decompiles functions.
+   * @param fun JavaScript Function
+   * @param env The current Global Object
+   * @return JavaScript Function
+   */
+  function decompile(fun, env) {
+    __verbose__   && logc("decompile", fun.name ? fun.name : fun.toString());
+    __statistic__ && increment(Statistic.DECOMPILE );
+
+    if(!(fun instanceof Function))
+      throw new TypeError("fun");
+    if(!(env instanceof Object))
+      throw new TypeError("env");
+
+    try {
+      var body = "(function() {'use strict'; return " + ("(" + fun.toString() + ")") + "})();";
+      var sbxed = eval("(function() { with(env) { return " + body + " }})();");
+      return sbxed;
+    } catch(error) {
+      throw new SyntaxError("Incompatible function object." + "\n" + fun + "\n" + error);
+    } 
+  }
+
+  /** sbxeval
+   * Sandbox eval.
+   * @param bosy The source body.
+   * @param env The current Global Object
+   */
+  function sbxeval(body, env) {
+    try {
+      var sbxed = eval("with(env) { (function(){'use strict'; " + body + " })()}");
+      return sbxed;
+    } catch(error) {
+      throw new SyntaxError("Incompatible body." + "\n" + body + "\n" + error);
+    } 
+  }
+
+  /** evaluate
+   * Evaluates the given function.
+   * @param fun JavaScript Function
+   * @param thisArg The current this Object
+   * @param argsArray The Function arguments
+   * @return Any
+   */
+  function evaluate(fun, thisArg, argumentsList) {
+    __verbose__ && logc("evaluate", fun);
+
+    // sandboxed function
+    var sbxed = __decompile__ ? decompile(fun, wrap(global)) : fun;
+    // apply constructor function
+    var result = sbxed.apply(wrap(thisArg), wrap(argumentsList));
+    // return val
+    return result;
+  }
+
+  /** Construct
+   * Evaluates the given constructor.
+   * @param fun JavaScript Function
+   * @param argsArray The Function arguments
+   * @return Object
+   */
+  function construct(fun, argumentsList) {
+    __verbose__ && logc("construct", fun);
+
+    // sandboxed function
+    var sbxed = __decompile__ ? decompile(fun, wrap(global)) : fun;
+    // new this reference
+    var thisArg = wrap(Object.create(fun.prototype));
+    // apply function
+    var result = sbxed.apply(thisArg, wrap(argumentsList)); 
+    // return thisArg | val
+    return (result instanceof Object) ? result : thisArg;
+  }
+
+  /** bind
+   * Binds the given function in the sandbox.
+   * @param fun JavaScript Function
+   * @param thisArg The current this Object
+   * @param argsArray The Function arguments
+   * @return Any
+   */
+  function bind(fun, thisArg, argumentsList) {
+    __verbose__ && logc("bind", fun);
+
+    // sandboxed function
+    var sbxed = __decompile__ ? decompile(fun, wrap(global)) : fun;
+    // bind thisArg
+    var bound = sbxed.bind(wrap(thisArg));
+    // bind arguments
+    for(var arg in argumentsList) {
+      bound = bound.bind(null, wrap(arg));
     }
+    // return bound function
+    return bound;
+  }
 
-    /** run
-     * Runs the given source in the sandbox.
-     * @param body JavaScript source code
-     */
-    function run(body) {
-      __verbose__ && logc("run", fun);
-      // evaluates body
-      sbxeval(body, wrap(global));
-    }
+  /** run
+   * Runs the given source in the sandbox.
+   * @param body JavaScript source code
+   */
+  function run(body) {
+    __verbose__ && logc("run", fun);
+    // evaluates body
+    sbxeval(body, wrap(global));
+  }
 
-    //   _             _      
-    //  /_\  _ __ _ __| |_  _ 
-    // / _ \| '_ \ '_ \ | || |
-    ///_/ \_\ .__/ .__/_|\_, |
-    //      |_|  |_|     |__/ 
+  //   _             _      
+  //  /_\  _ __ _ __| |_  _ 
+  // / _ \| '_ \ '_ \ | || |
+  ///_/ \_\ .__/ .__/_|\_, |
+  //      |_|  |_|     |__/ 
 
-    define("apply", function(fun, thisArg = global, argumentsList = []) {
-      if(!(fun instanceof Function)) throw new TypeError("No function object.");
+  define("apply", function(fun, thisArg = global, argumentsList = []) {
+    if(!(fun instanceof Function)) throw new TypeError("No function object.");
 
-      return evaluate(fun, thisArg, argumentsList);
-    }, this);
+    return evaluate(fun, thisArg, argumentsList);
+  }, this);
 
-    //  ___      _ _ 
-    // / __|__ _| | |
-    //| (__/ _` | | |
-    // \___\__,_|_|_|
+  //  ___      _ _ 
+  // / __|__ _| | |
+  //| (__/ _` | | |
+  // \___\__,_|_|_|
 
-    define("call", function(fun, thisArg = global) {
-      if(!(fun instanceof Function)) throw new TypeError("No function object.");
+  define("call", function(fun, thisArg = global) {
+    if(!(fun instanceof Function)) throw new TypeError("No function object.");
 
-      var argumentsList = [];
-      for(var i=2; i<arguments.length;i++) argumentsList.push(arguments[i]);
+    var argumentsList = [];
+    for(var i=2; i<arguments.length;i++) argumentsList.push(arguments[i]);
 
-      return evaluate(fun, thisArg, argumentsList);
-    }, this);
+    return evaluate(fun, thisArg, argumentsList);
+  }, this);
 
-    // ___ _         _ 
-    //| _ |_)_ _  __| |
-    //| _ \ | ' \/ _` |
-    //|___/_|_||_\__,_|
+  // ___ _         _ 
+  //| _ |_)_ _  __| |
+  //| _ \ | ' \/ _` |
+  //|___/_|_||_\__,_|
 
-    define("bind", function(fun, thisArg = global, argumentsList = []) {
-      if(!(fun instanceof Function)) throw new TypeError("No function object.");
+  define("bind", function(fun, thisArg = global, argumentsList = []) {
+    if(!(fun instanceof Function)) throw new TypeError("No function object.");
 
-      return bind(fun, thisArg, argsArray);
-    }, this);
+    return bind(fun, thisArg, argsArray);
+  }, this);
 
-    //__      __             
-    //\ \    / / _ __ _ _ __ 
-    // \ \/\/ / '_/ _` | '_ \
-    //  \_/\_/|_| \__,_| .__/
-    //                 |_|   
+  //__      __             
+  //\ \    / / _ __ _ _ __ 
+  // \ \/\/ / '_/ _` | '_ \
+  //  \_/\_/|_| \__,_| .__/
+  //                 |_|   
 
-    define("wrap", function(object) {
-      if(!(object instanceof Object)) throw new TypeError("No object.");
+  define("wrap", function(object) {
+    if(!(object instanceof Object)) throw new TypeError("No object.");
 
-      return wrap(object);
-    }, this);
-   
-    // _              _ 
-    //| |___  __ _ __| |
-    //| / _ \/ _` / _` |
-    //|_\___/\__,_\__,_|
+    return wrap(object);
+  }, this);
 
-    define("load", function(filename) {
-      if(typeof filename !== "string") throw new TypeError("Invalid filename.");
+  // _              _ 
+  //| |___  __ _ __| |
+  //| / _ \/ _` / _` |
+  //|_\___/\__,_\__,_|
 
-      if(read) {
-        var source = read(filename);
-        if(typeof source === "string") run(source);
-        else throw new TypeError("Invalid source file.");
+  define("load", function(filename) {
+    if(typeof filename !== "string") throw new TypeError("Invalid filename.");
 
-      } else throw new TypeError("Function read is not supported.");
-    }, this);
-
-    //              _ 
-    // _____ ____ _| |
-    /// -_) V / _` | |
-    //\___|\_/\__,_|_|
-
-    define("eval", function(source) {
+    if(read) {
+      var source = read(filename);
       if(typeof source === "string") run(source);
-      else throw new TypeError("Invalid source string.");
-    }, this);
+      else throw new TypeError("Invalid source file.");
+
+    } else throw new TypeError("Function read is not supported.");
+  }, this);
+
+  //              _ 
+  // _____ ____ _| |
+  /// -_) V / _` | |
+  //\___|\_/\__,_|_|
+
+  define("eval", function(source) {
+    if(typeof source === "string") run(source);
+    else throw new TypeError("Invalid source string.");
+  }, this);
 
 
-    define("request", function(url) {
-      if(typeof filename !== "string") throw new TypeError("Invalid url.");
+  define("request", function(url) {
+    if(typeof filename !== "string") throw new TypeError("Invalid url.");
 
-      function processXMLHttpRequest(file, location) {
-        var xmlObj = null;
-        if (window.XMLHttpRequest) {
-          xmlObj = new XMLHttpRequest();
-        } else if (window.ActiveXObject) {
-          xmlObj = new ActiveXObject("Microsoft.XMLHTTP");
-        } else {
-          return true;
-        }
-        xmlObj.onreadystatechange = function() {
-          if(xmlObj.readyState == 4) {
-            processXML(xmlObj.responseXML, location);
-          }
-        }
-        xmlObj.open ('GET', file, true);
-        xmlObj.send ('');
-        return false;
-      }
-
-      if(read) {
-        var source = read(filename);
-        if(typeof source === "string") run(source);
-        else throw new TypeError("Invalid source file.");
-
-      } else throw new TypeError("Function read is not supported.");
-    }, this);
-
-
-
-
-
-
-    // ______  __  __          _       
-    //|  ____|/ _|/ _|        | |      
-    //| |__  | |_| |_ ___  ___| |_ ___ 
-    //|  __| |  _|  _/ _ \/ __| __/ __|
-    //| |____| | | ||  __/ (__| |_\__ \
-    //|______|_| |_| \___|\___|\__|___/   
-
-    var readeffects = new WeakMap();
-    var writeeffects = new WeakMap();
-    var calleffects = new WeakMap();
-
-    var readtargets = [];
-    var writetargets = [];
-    var calltargets = [];
-
-    /** saves an sandbox effect
-     * @param effect Effect
-     */
-    function trace(effect) {
-      __verbose__   && logc("trace", effect.toString());
-      __statistic__ && increment(Statistic.TRACE); 
-
-      if(!(effect instanceof Effect.Effect))
-        throw new TypeError("No effect object.");
-
-      if(effect instanceof Effect.Read) {
-        if(!readeffects.has(effect.target)) readeffects.set(effect.target, []);
-
-        readeffects.get(effect.target).push(effect);
-        readtargets.push(effect.target);
-
-      } else if(effect instanceof Effect.Write) {
-        if(!writeeffects.has(effect.target)) writeeffects.set(effect.target, []);
-
-        writeeffects.get(effect.target).push(effect);
-        writetargets.push(effect.target);
-
-      } else if(effect instanceof Effect.Call) {
-        if(!calleffects.has(effect.target)) calleffects.set(effect.target, []);
-
-        calleffects.get(effect.target).push(effect);
-        calltargets.push(effect.target);
-      }
-    }
-
-    /** Get Read Effects
-     * @param target JavaScript Obejct
-     * @return JavaScript Array [Effect]
-     */
-    define("readeffectsOf", function(target) {
-      if(readeffects.has(target)) return readeffects.get(target);
-      else return [];
-    }, this);
-
-    /** Get Write Effects
-     * @param target JavaScript Obejct
-     * @return JavaScript Array [Effect]
-     */
-    define("writeeffectsOf", function(target) {
-      if(writeeffects.has(target)) return writeeffects.get(target);
-      else return [];
-    }, this);
-
-    /** Get Call Effects
-     * @param target JavaScript Obejct
-     * @return JavaScript Array [Effect]
-     */
-    define("calleffectsOf", function(target) {
-      if(calleffects.has(target)) return calleffects.get(target);
-      else return [];
-    }, this);
-
-    /** Get Effects
-     * @param target JavaScript Obejct
-     * @return JavaScript Array [Effect]
-     */
-    define("effectsOf", function(target) {  
-      var effectsOfTarget = this.readeffectsOf(target).concat(this.writeeffectsOf(target)).concat(this.calleffectsOf(target));
-      effectsOfTarget.sort();
-      return effectsOfTarget;
-    }, this);
-
-    /** Get All Read Effects
-     * @return JavaScript Array [Effect]
-     */
-    getter("readeffects", function() {
-      var readEffects = [];
-
-      for(var target of readtargets) {
-        readEffects = readEffects.concat(this.readeffectsOf(target));
-      }
-      readEffects.sort();
-      return readEffects;
-    }, this);
-
-    /** Get All Write Effects
-     * @return JavaScript Array [Effect]
-     */
-    getter("writeeffects", function() {
-      var writeEffects = [];
-
-      for(var target of writetargets) {
-        writeEffects = writeEffects.concat(this.writeeffectsOf(target));
-      }
-      writeEffects.sort();
-      return writeEffects;
-
-    }, this);
-
-    /** Get All Call Effects
-     * @return JavaScript Array [Effect]
-     */
-    getter("calleffects", function() {
-      var callEffects = [];
-
-      for(var target of calltargets) {
-        callEffects = callEffects.concat(this.calleffectsOf(target));
-      }
-      callEffects.sort()
-      return callEffects;
-    }, this);
-
-    /** Get All Effects
-     * @return JavaScript Array [Effect]
-     */
-    getter("effects", function() {
-      var effects = this.readeffects.concat(this.writeeffects).concat(this.calleffects);
-      effects.sort();
-      return effects;
-    }, this);
-
-    // _____  _  __  __                                  
-    //|  __ \(_)/ _|/ _|                                 
-    //| |  | |_| |_| |_ ___ _ __ ___ _ __   ___ ___  ___ 
-    //| |  | | |  _|  _/ _ \ '__/ _ \ '_ \ / __/ _ \/ __|
-    //| |__| | | | | ||  __/ | |  __/ | | | (_|  __/\__ \
-    //|_____/|_|_| |_| \___|_|  \___|_| |_|\___\___||___/
-
-    function comparePropertyDescriptor(desc1, desc2) {
-      if(desc1===desc2) return true;
-
-      var keys = ["configurable", "enumerable", "value", "writable", "get", "set"];
-      for (var key of keys) {
-        if(desc1[key]===desc2[key]) continue;
-        else return false;
-      }
-      return true;
-    }
-
-    function hasDifferences(effect, shadow, origin) {
-
-      if(effect instanceof Effect.SetPrototypeOf) {
-        return Object.getPrototypeOf(origin) !== Object.getPrototypeOf(shadow);
-
-      } else if(effect instanceof Effect.PreventExtensions) {
-        return Object.isExtensible(origin) !== Object.isExtensible(shadow);
-
-      } else if(effect instanceof Effect.DefineProperty) {
-        return !comparePropertyDescriptor(
-            Object.getOwnPropertyDescriptor(shadow, effect.name),
-            Object.getOwnPropertyDescriptor(origin, effect.name));
-
-      } else if(effect instanceof Effect.Set) {
-        return !comparePropertyDescriptor(
-            Object.getOwnPropertyDescriptor(shadow, effect.name),
-            Object.getOwnPropertyDescriptor(origin, effect.name));
-
-      } else if(effect instanceof Effect.DeleteProperty) {
-        return !comparePropertyDescriptor(
-            Object.getOwnPropertyDescriptor(shadow, effect.name),
-            Object.getOwnPropertyDescriptor(origin, effect.name));
+    function processXMLHttpRequest(file, location) {
+      var xmlObj = null;
+      if (window.XMLHttpRequest) {
+        xmlObj = new XMLHttpRequest();
+      } else if (window.ActiveXObject) {
+        xmlObj = new ActiveXObject("Microsoft.XMLHTTP");
       } else {
-        throw new TypeError("Invalid Effect");
+        return true;
       }
-    }
-
-    /** Has Difference With
-     * @param target JavaScript Object
-     * return true|false
-     */
-    define("hasDifferenceWith", function(target) {
-      var writeeffects = this.writeeffectsOf(target);
-
-      for(var effect of writeeffects) {
-        if(hasDifferences(effect, shadows.get(target), target)) return true
-        else continue;
-      }
-      return false;
-    }, this);
-
-    /** Has Difference
-     * return true|false
-     */
-    getter("hasDifference", function() {
-      for(var target of writetargets) {
-        if(this.hasDifferenceWith(target)) return true
-        else continue;
-      }
-      return false;
-    }, this);
-
-    /** Differences Of
-     * @param target JavaScript Object
-     * return [Differences]
-     */
-    define("differencesOf", function(target) {
-      var writeeffects = this.writeeffectsOf(target);
-
-      var differences = [];
-      for(var effect of writeeffects) {
-        if(hasDifferences(effect, shadows.get(target), target)) {
-          differences.push(new Effect.Difference(this, effect));
+      xmlObj.onreadystatechange = function() {
+        if(xmlObj.readyState == 4) {
+          processXML(xmlObj.responseXML, location);
         }
-        else continue;
       }
-      differences.sort();
-      return differences;
-    }, this);
+      xmlObj.open ('GET', file, true);
+      xmlObj.send ('');
+      return false;
+    }
 
-    /** Differences 
-     * return [Differences]
-     */
-    getter("differences", function() {
-      var differences = [];
-      for(var target of writetargets) {
-        differences = differences.concat(this.differencesOf(target));
+    if(read) {
+      var source = read(filename);
+      if(typeof source === "string") run(source);
+      else throw new TypeError("Invalid source file.");
+
+    } else throw new TypeError("Function read is not supported.");
+  }, this);
+
+
+
+
+
+
+  // ______  __  __          _       
+  //|  ____|/ _|/ _|        | |      
+  //| |__  | |_| |_ ___  ___| |_ ___ 
+  //|  __| |  _|  _/ _ \/ __| __/ __|
+  //| |____| | | ||  __/ (__| |_\__ \
+  //|______|_| |_| \___|\___|\__|___/   
+
+  var readeffects = new WeakMap();
+  var writeeffects = new WeakMap();
+  var calleffects = new WeakMap();
+
+  var readtargets = [];
+  var writetargets = [];
+  var calltargets = [];
+
+  /** saves an sandbox effect
+   * @param effect Effect
+   */
+  function trace(effect) {
+    __verbose__   && logc("trace", effect.toString());
+    __statistic__ && increment(Statistic.TRACE); 
+
+    if(!(effect instanceof Effect.Effect))
+      throw new TypeError("No effect object.");
+
+    if(effect instanceof Effect.Read) {
+      if(!readeffects.has(effect.target)) readeffects.set(effect.target, []);
+
+      readeffects.get(effect.target).push(effect);
+      readtargets.push(effect.target);
+
+    } else if(effect instanceof Effect.Write) {
+      if(!writeeffects.has(effect.target)) writeeffects.set(effect.target, []);
+
+      writeeffects.get(effect.target).push(effect);
+      writetargets.push(effect.target);
+
+    } else if(effect instanceof Effect.Call) {
+      if(!calleffects.has(effect.target)) calleffects.set(effect.target, []);
+
+      calleffects.get(effect.target).push(effect);
+      calltargets.push(effect.target);
+    }
+  }
+
+  /** Get Read Effects
+   * @param target JavaScript Obejct
+   * @return JavaScript Array [Effect]
+   */
+  define("readeffectsOf", function(target) {
+    if(readeffects.has(target)) return readeffects.get(target);
+    else return [];
+  }, this);
+
+  /** Get Write Effects
+   * @param target JavaScript Obejct
+   * @return JavaScript Array [Effect]
+   */
+  define("writeeffectsOf", function(target) {
+    if(writeeffects.has(target)) return writeeffects.get(target);
+    else return [];
+  }, this);
+
+  /** Get Call Effects
+   * @param target JavaScript Obejct
+   * @return JavaScript Array [Effect]
+   */
+  define("calleffectsOf", function(target) {
+    if(calleffects.has(target)) return calleffects.get(target);
+    else return [];
+  }, this);
+
+  /** Get Effects
+   * @param target JavaScript Obejct
+   * @return JavaScript Array [Effect]
+   */
+  define("effectsOf", function(target) {  
+    var effectsOfTarget = this.readeffectsOf(target).concat(this.writeeffectsOf(target)).concat(this.calleffectsOf(target));
+    effectsOfTarget.sort();
+    return effectsOfTarget;
+  }, this);
+
+  /** Get All Read Effects
+   * @return JavaScript Array [Effect]
+   */
+  getter("readeffects", function() {
+    var readEffects = [];
+
+    for(var target of readtargets) {
+      readEffects = readEffects.concat(this.readeffectsOf(target));
+    }
+    readEffects.sort();
+    return readEffects;
+  }, this);
+
+  /** Get All Write Effects
+   * @return JavaScript Array [Effect]
+   */
+  getter("writeeffects", function() {
+    var writeEffects = [];
+
+    for(var target of writetargets) {
+      writeEffects = writeEffects.concat(this.writeeffectsOf(target));
+    }
+    writeEffects.sort();
+    return writeEffects;
+
+  }, this);
+
+  /** Get All Call Effects
+   * @return JavaScript Array [Effect]
+   */
+  getter("calleffects", function() {
+    var callEffects = [];
+
+    for(var target of calltargets) {
+      callEffects = callEffects.concat(this.calleffectsOf(target));
+    }
+    callEffects.sort()
+    return callEffects;
+  }, this);
+
+  /** Get All Effects
+   * @return JavaScript Array [Effect]
+   */
+  getter("effects", function() {
+    var effects = this.readeffects.concat(this.writeeffects).concat(this.calleffects);
+    effects.sort();
+    return effects;
+  }, this);
+
+  // _____  _  __  __                                  
+  //|  __ \(_)/ _|/ _|                                 
+  //| |  | |_| |_| |_ ___ _ __ ___ _ __   ___ ___  ___ 
+  //| |  | | |  _|  _/ _ \ '__/ _ \ '_ \ / __/ _ \/ __|
+  //| |__| | | | | ||  __/ | |  __/ | | | (_|  __/\__ \
+  //|_____/|_|_| |_| \___|_|  \___|_| |_|\___\___||___/
+
+  function comparePropertyDescriptor(desc1, desc2) {
+    if(desc1===desc2) return true;
+
+    var keys = ["configurable", "enumerable", "value", "writable", "get", "set"];
+    for (var key of keys) {
+      if(desc1[key]===desc2[key]) continue;
+      else return false;
+    }
+    return true;
+  }
+
+  function hasDifferences(effect, shadow, origin) {
+
+    if(effect instanceof Effect.SetPrototypeOf) {
+      return Object.getPrototypeOf(origin) !== Object.getPrototypeOf(shadow);
+
+    } else if(effect instanceof Effect.PreventExtensions) {
+      return Object.isExtensible(origin) !== Object.isExtensible(shadow);
+
+    } else if(effect instanceof Effect.DefineProperty) {
+      return !comparePropertyDescriptor(
+          Object.getOwnPropertyDescriptor(shadow, effect.name),
+          Object.getOwnPropertyDescriptor(origin, effect.name));
+
+    } else if(effect instanceof Effect.Set) {
+      return !comparePropertyDescriptor(
+          Object.getOwnPropertyDescriptor(shadow, effect.name),
+          Object.getOwnPropertyDescriptor(origin, effect.name));
+
+    } else if(effect instanceof Effect.DeleteProperty) {
+      return !comparePropertyDescriptor(
+          Object.getOwnPropertyDescriptor(shadow, effect.name),
+          Object.getOwnPropertyDescriptor(origin, effect.name));
+    } else {
+      throw new TypeError("Invalid Effect");
+    }
+  }
+
+  /** Has Difference With
+   * @param target JavaScript Object
+   * return true|false
+   */
+  define("hasDifferenceWith", function(target) {
+    var writeeffects = this.writeeffectsOf(target);
+
+    for(var effect of writeeffects) {
+      if(hasDifferences(effect, shadows.get(target), target)) return true
+      else continue;
+    }
+    return false;
+  }, this);
+
+  /** Has Difference
+   * return true|false
+   */
+  getter("hasDifference", function() {
+    for(var target of writetargets) {
+      if(this.hasDifferenceWith(target)) return true
+      else continue;
+    }
+    return false;
+  }, this);
+
+  /** Differences Of
+   * @param target JavaScript Object
+   * return [Differences]
+   */
+  define("differencesOf", function(target) {
+    var writeeffects = this.writeeffectsOf(target);
+
+    var differences = [];
+    for(var effect of writeeffects) {
+      if(hasDifferences(effect, shadows.get(target), target)) {
+        differences.push(new Effect.Difference(this, effect));
       }
-      differences.sort();
-      return differences;
-    }, this);
+      else continue;
+    }
+    differences.sort();
+    return differences;
+  }, this);
 
-    //  _____ _                                 
-    // / ____| |                                
-    //| |    | |__   __ _ _ __   __ _  ___  ___ 
-    //| |    | '_ \ / _` | '_ \ / _` |/ _ \/ __|
-    //| |____| | | | (_| | | | | (_| |  __/\__ \
-    // \_____|_| |_|\__,_|_| |_|\__, |\___||___/
-    //                           __/ |          
-    //                          |___/           
+  /** Differences 
+   * return [Differences]
+   */
+  getter("differences", function() {
+    var differences = [];
+    for(var target of writetargets) {
+      differences = differences.concat(this.differencesOf(target));
+    }
+    differences.sort();
+    return differences;
+  }, this);
 
-    // TODO, deprecated
-    // it may work when reimplementing the snapshot mode
-    function hasChanges(effect, shadow, origin) {
+  //  _____ _                                 
+  // / ____| |                                
+  //| |    | |__   __ _ _ __   __ _  ___  ___ 
+  //| |    | '_ \ / _` | '_ \ / _` |/ _ \/ __|
+  //| |____| | | | (_| | | | | (_| |  __/\__ \
+  // \_____|_| |_|\__,_|_| |_|\__, |\___||___/
+  //                           __/ |          
+  //                          |___/           
 
-      if(effect instanceof Effect.GetPrototypeOf) {
-        return Object.getPrototypeOf(shadow) !== Object.getPrototypeOf(origin);
+  // TODO, deprecated
+  // it may work when reimplementing the snapshot mode
+  function hasChanges(effect, shadow, origin) {
 
-      } else if(effect instanceof Effect.IsExtensible) {
-        return Object.isExtensible(shadow) !== Object.isExtensible(origin)
+    if(effect instanceof Effect.GetPrototypeOf) {
+      return Object.getPrototypeOf(shadow) !== Object.getPrototypeOf(origin);
 
-      } else if(effect instanceof Effect.GetOwnPropertyDescriptor) {
-        return comparePropertyDescriptor(Object.getOwnPropertyDescriptor(shadow, effect.name), Object.getOwnPropertyDescriptor(origin, effect.name));
+    } else if(effect instanceof Effect.IsExtensible) {
+      return Object.isExtensible(shadow) !== Object.isExtensible(origin)
 
-      } else if(effect instanceof Effect.Has) {
-        return (effect.name in shadow) === (effect.name in origin);
+    } else if(effect instanceof Effect.GetOwnPropertyDescriptor) {
+      return comparePropertyDescriptor(Object.getOwnPropertyDescriptor(shadow, effect.name), Object.getOwnPropertyDescriptor(origin, effect.name));
 
-      } else if(effect instanceof Effect.Get) {
+    } else if(effect instanceof Effect.Has) {
+      return (effect.name in shadow) === (effect.name in origin);
 
-      } else if(effect instanceof Effect.Enumerate) {
+    } else if(effect instanceof Effect.Get) {
 
-      } else if(effect instanceof Effect.OwnKeys) {
+    } else if(effect instanceof Effect.Enumerate) {
 
-      }
+    } else if(effect instanceof Effect.OwnKeys) {
 
     }
 
-    /** Has Changes With
-     * @param target JavaScript Object
-     * return true|false
-     */
-    /*define("hasChangesOn", function(target) {
-      var es = this.writeeffectsOf(target);
+  }
 
-      var changes = false;
-      for(var e in es) {
-    // TODO, unroll needed
-    var result =  es[e].stat;
-    log("check " + es[e] + " = " + result);
-    changes = (result) ? true : changes;
+  /** Has Changes With
+   * @param target JavaScript Object
+   * return true|false
+   */
+  /*define("hasChangesOn", function(target) {
+    var es = this.writeeffectsOf(target);
+
+    var changes = false;
+    for(var e in es) {
+  // TODO, unroll needed
+  var result =  es[e].stat;
+  log("check " + es[e] + " = " + result);
+  changes = (result) ? true : changes;
+  }
+  return changes;
+  }, this);*/
+
+  /** Has Changes
+   * return true|false
+   */
+  /*getter("hasChanges", function() {
+    var changes = false;
+    for(var i in writetargets) {
+    changes = (this.hasChangesOn(writetargets[i])) ? true : changes;
     }
     return changes;
-    }, this);*/
 
-    /** Has Changes
-     * return true|false
-     */
-    /*getter("hasChanges", function() {
-      var changes = false;
-      for(var i in writetargets) {
-      changes = (this.hasChangesOn(writetargets[i])) ? true : changes;
-      }
-      return changes;
+    }, this);*/ // TODO
 
-      }, this);*/ // TODO
+  /** Changes Of
+   * @param target JavaScript Object
+   * return [Differences]
+   */
+  /*define("changesOf", function(target) {
+    var sbxA = this;
+    var es = this.effectsOf(target);
 
-    /** Changes Of
-     * @param target JavaScript Object
-     * return [Differences]
-     */
-    /*define("changesOf", function(target) {
-      var sbxA = this;
-      var es = this.effectsOf(target);
-
-      var changes = [];
-      for(var e in es) {
-      var result =  es[e].stat;
-      log("check " + es[e] + " = " + result);
-      if(result) changes.push(new Effect.Change(sbxA, es[e]));
-      }
-      return changes;
-      }, this);*/ // TODO
-
-    /** Changes 
-     * return [Changes]
-     */
-    /*getter("changes", function() {
-      var sbxA = this;
-      var es = writeeffects;
-
-      var changes = [];
-      for(var e in es) {
-      var result =  es[e].stat;
-      log("check " + es[e] + " = " + result);
-      if(result) changes.push(new Effect.Change(sbxA, es[e]));
-      }
-      return changes;
-      }, this);*/ // TODO
-
-    //  _____             __ _ _      _       
-    // / ____|           / _| (_)    | |      
-    //| |     ___  _ __ | |_| |_  ___| |_ ___ 
-    //| |    / _ \| '_ \|  _| | |/ __| __/ __|
-    //| |___| (_) | | | | | | | | (__| |_\__ \
-    // \_____\___/|_| |_|_| |_|_|\___|\__|___/
-
-
-    /** In Read-Write Conflict
-     * @param read Read Effect
-     * @param write Write Effect
-     * @return true|false
-     */
-    function inReadWriteConflict(read, write) {
-      if(!(read instanceof Effect.Read))
-        throw new TypeError("No Read Effect.");
-
-      if(!(write instanceof Effect.Write))
-        throw new TypeError("No Write Effect.");
-
-      if((read.target!==write.target) || (read.name!==write.name) || (read.date<write.date))
-        return false;
-      else 
-        return true;
+    var changes = [];
+    for(var e in es) {
+    var result =  es[e].stat;
+    log("check " + es[e] + " = " + result);
+    if(result) changes.push(new Effect.Change(sbxA, es[e]));
     }
+    return changes;
+    }, this);*/ // TODO
 
-    /** In Write-Write Conflict
-     * @param write Write Effect
-     * @param writep Write Effect
-     * @return true|false
-     */
-    function inWriteWriteConflict(write, writep) {
-      if(!(write instanceof Effect.Write))
-        throw new TypeError("No Write Effect.");
+  /** Changes 
+   * return [Changes]
+   */
+  /*getter("changes", function() {
+    var sbxA = this;
+    var es = writeeffects;
 
-      if(!(writep instanceof Effect.Write))
-        throw new TypeError("No Write Effect.");
-
-      if((write.target!==writep.target) || (write.name!==writep.name))
-        return false;
-      else 
-        return true;
+    var changes = [];
+    for(var e in es) {
+    var result =  es[e].stat;
+    log("check " + es[e] + " = " + result);
+    if(result) changes.push(new Effect.Change(sbxA, es[e]));
     }
+    return changes;
+    }, this);*/ // TODO
 
-    /** In Conflict
-     * @param e Effect
-     * @[aram f Effect
-     * @return true|false
-     */
-    function inConflict(e, f) {
-      if((e instanceof Effect.Read) && (f instanceof Effect.Read))
-        return false;
-      else if((e instanceof Effect.Read) && (f instanceof Effect.Write)) {
-        return inReadWriteConflict(e, f);
-      } else if((e instanceof Effect.Write) && (f instanceof Effect.Read)) {
-        return inReadWriteConflict(f, e);
-      } else if((e instanceof Effect.Write) && (f instanceof Effect.Write)) {
-        return inWriteWriteConflict(e, f);
-      } else {
-        return false;
+  //  _____             __ _ _      _       
+  // / ____|           / _| (_)    | |      
+  //| |     ___  _ __ | |_| |_  ___| |_ ___ 
+  //| |    / _ \| '_ \|  _| | |/ __| __/ __|
+  //| |___| (_) | | | | | | | | (__| |_\__ \
+  // \_____\___/|_| |_|_| |_|_|\___|\__|___/
+
+
+  /** In Read-Write Conflict
+   * @param read Read Effect
+   * @param write Write Effect
+   * @return true|false
+   */
+  function inReadWriteConflict(read, write) {
+    if(!(read instanceof Effect.Read))
+      throw new TypeError("No Read Effect.");
+
+    if(!(write instanceof Effect.Write))
+      throw new TypeError("No Write Effect.");
+
+    if((read.target!==write.target) || (read.name!==write.name) || (read.date<write.date))
+      return false;
+    else 
+      return true;
+  }
+
+  /** In Write-Write Conflict
+   * @param write Write Effect
+   * @param writep Write Effect
+   * @return true|false
+   */
+  function inWriteWriteConflict(write, writep) {
+    if(!(write instanceof Effect.Write))
+      throw new TypeError("No Write Effect.");
+
+    if(!(writep instanceof Effect.Write))
+      throw new TypeError("No Write Effect.");
+
+    if((write.target!==writep.target) || (write.name!==writep.name))
+      return false;
+    else 
+      return true;
+  }
+
+  /** In Conflict
+   * @param e Effect
+   * @[aram f Effect
+   * @return true|false
+   */
+  function inConflict(e, f) {
+    if((e instanceof Effect.Read) && (f instanceof Effect.Read))
+      return false;
+    else if((e instanceof Effect.Read) && (f instanceof Effect.Write)) {
+      return inReadWriteConflict(e, f);
+    } else if((e instanceof Effect.Write) && (f instanceof Effect.Read)) {
+      return inReadWriteConflict(f, e);
+    } else if((e instanceof Effect.Write) && (f instanceof Effect.Write)) {
+      return inWriteWriteConflict(e, f);
+    } else {
+      return false;
+    }
+  }
+
+  /** Conflict Of
+   * @param sbx Sandbox
+   * @param target JavaScript Object
+   * return true|false
+   */
+  define("inConflictWith", function(sbx, target) {
+    if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
+
+    for(var e of this.effectsOf(target)) {
+      for(var f of sbx.effectsOf(target)) {
+        if(inConflict(e, f)) return true;
+        else continue;
       }
     }
+    return false;
+  }, this);
 
-    /** Conflict Of
-     * @param sbx Sandbox
-     * @param target JavaScript Object
-     * return true|false
-     */
-    define("inConflictWith", function(sbx, target) {
-      if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
+  /** Conflict Of
+   * @param sbx Sandbox
+   * @param target JavaScript Object
+   * return true|false
+   */
+  define("inConflict", function(sbx) {
+    if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
 
+    for(var target of readtargets.concat(writetargets)) {
       for(var e of this.effectsOf(target)) {
         for(var f of sbx.effectsOf(target)) {
           if(inConflict(e, f)) return true;
           else continue;
         }
       }
-      return false;
-    }, this);
+    }
+    return false;
+  }, this);
 
-    /** Conflict Of
-     * @param sbx Sandbox
-     * @param target JavaScript Object
-     * return true|false
-     */
-    define("inConflict", function(sbx) {
-      if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
+  /** Conflicts
+   * @param sbx Sandbox
+   * @param target JavaScript Object
+   * return [Conflict]
+   */
+  define("conflictsOf", function(sbx, target) {
+    if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
 
-      for(var target of readtargets.concat(writetargets)) {
-        for(var e of this.effectsOf(target)) {
-          for(var f of sbx.effectsOf(target)) {
-            if(inConflict(e, f)) return true;
-            else continue;
-          }
-        }
+    var conflicts = [];
+    for(var e of this.effectsOf(target)) {
+      for(var f of sbx.effectsOf(target)) {
+        if(inConflict(e, f)) conflicts.push(Effect.Conflict(this, e, sbx, f));
+        else continue;
       }
-      return false;
-    }, this);
+    }
+    conflicts.sort();
+    return conflicts;
+  }, this);
 
-    /** Conflicts
-     * @param sbx Sandbox
-     * @param target JavaScript Object
-     * return [Conflict]
-     */
-    define("conflictsOf", function(sbx, target) {
-      if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
+  /** Conflicts
+   * @param sbx Sandbox
+   * return [Conflict]
+   */
+  define("conflicts", function(sbx) {
+    if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
 
-      var conflicts = [];
+    var conflicts = [];
+    for(var target of readtargets.concat(writetargets)) {
       for(var e of this.effectsOf(target)) {
         for(var f of sbx.effectsOf(target)) {
           if(inConflict(e, f)) conflicts.push(Effect.Conflict(this, e, sbx, f));
           else continue;
         }
       }
-      conflicts.sort();
-      return conflicts;
-    }, this);
-
-    /** Conflicts
-     * @param sbx Sandbox
-     * return [Conflict]
-     */
-    define("conflicts", function(sbx) {
-      if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
-
-      var conflicts = [];
-      for(var target of readtargets.concat(writetargets)) {
-        for(var e of this.effectsOf(target)) {
-          for(var f of sbx.effectsOf(target)) {
-            if(inConflict(e, f)) conflicts.push(Effect.Conflict(this, e, sbx, f));
-            else continue;
-          }
-        }
-      }
-      conflicts.sort();
-      return conflicts;
-    }, this);
-
-    //  _____                          _ _   
-    // / ____|                        (_) |  
-    //| |     ___  _ __ ___  _ __ ___  _| |_ 
-    //| |    / _ \| '_ ` _ \| '_ ` _ \| | __|
-    //| |___| (_) | | | | | | | | | | | | |_ 
-    // \_____\___/|_| |_| |_|_| |_| |_|_|\__|
-
-    function commit(effect, shadow, origin) {
-      if(effect instanceof Effect.SetPrototypeOf) {
-        Object.setPrototypeOf(origin, Object.getPrototypeOf(shadow));
-
-      } else if(effect instanceof Effect.PreventExtensions) {
-        Object.preventExtensions(origin);
-
-      } else if(effect instanceof Effect.DefineProperty) {
-        Object.defineProperty(origin, effect.name,  Object.getOwnPropertyDescriptor(shadow, effect.name));
-
-      } else if(effect instanceof Effect.Set) {
-        origin[effect.name]=shadow[effect.name];
-
-      } else if(effect instanceof Effect.DeleteProperty) {
-        delete origin[effect.name];
-
-      } else throw new TypeError("Invalid Effect" + effect);
     }
+    conflicts.sort();
+    return conflicts;
+  }, this);
 
-    /** Commit Of Target
-     * @return JavaScript Array [Effect]
-     */
-    define("commitOf", function(target) {
-      var effects = this.writeeffectsOf(target);
-      for(var effect of effects) {
-        commit(effect, shadows.get(target), target);
-      }
-    }, this);
+  //  _____                          _ _   
+  // / ____|                        (_) |  
+  //| |     ___  _ __ ___  _ __ ___  _| |_ 
+  //| |    / _ \| '_ ` _ \| '_ ` _ \| | __|
+  //| |___| (_) | | | | | | | | | | | | |_ 
+  // \_____\___/|_| |_| |_|_| |_| |_|_|\__|
 
-    /** Commit All Targets
-     * @return JavaScript Array [Effect]
-     */
-    define("commit", function() {
-      for(var target of writetargets) {
-        this.commitOf(target);
-      }
-    }, this);
+  function commit(effect, shadow, origin) {
+    if(effect instanceof Effect.SetPrototypeOf) {
+      Object.setPrototypeOf(origin, Object.getPrototypeOf(shadow));
 
-    // _____       _ _ _                _    
-    //|  __ \     | | | |              | |   
-    //| |__) |___ | | | |__   __ _  ___| | __
-    //|  _  // _ \| | | '_ \ / _` |/ __| |/ /
-    //| | \ \ (_) | | | |_) | (_| | (__|   < 
-    //|_|  \_\___/|_|_|_.__/ \__,_|\___|_|\_\
+    } else if(effect instanceof Effect.PreventExtensions) {
+      Object.preventExtensions(origin);
 
-    /** 
-     * Rollback Of Target
-     * @param target JavaScript Object
-     */
-    define("rollbackOf", function(target) {
-      if(proxies.has(target) && handlers.has(proxies.get(target))) handlers.get(proxies.get(target)).touchedPropertyNames.clear();
-    }, this);
+    } else if(effect instanceof Effect.DefineProperty) {
+      Object.defineProperty(origin, effect.name,  Object.getOwnPropertyDescriptor(shadow, effect.name));
 
-    /** 
-     * Rollback All Targets
-     */
-    define("rollback", function() {
-      for(var target of writetargets) {
-        this.rollbackOf(target);
-      }
-    }, this);
+    } else if(effect instanceof Effect.Set) {
+      origin[effect.name]=shadow[effect.name];
 
-    // _____                     _   
-    //|  __ \                   | |  
-    //| |__) |_____   _____ _ __| |_ 
-    //|  _  // _ \ \ / / _ \ '__| __|
-    //| | \ \  __/\ V /  __/ |  | |_ 
-    //|_|  \_\___| \_/ \___|_|   \__|
+    } else if(effect instanceof Effect.DeleteProperty) {
+      delete origin[effect.name];
 
-    /** Revert Of
-     * @param target JavaScript Object
-     */
-    define("revertOf", function(target) {
-      var proxy = proxies.get(target);
-
-      proxies.delete(target);
-      handlers.delete(proxy);
-      shadows.delete(target);
-
-    }, this);
-
-    /** Rrevert
-    */
-    define("revert", function() {
-      for(var target of writetargets) {
-        this.revertOf(target);
-      }
-    }, this);
-
-    //  _____ _        _   _     _   _      
-    // / ____| |      | | (_)   | | (_)     
-    //| (___ | |_ __ _| |_ _ ___| |_ _  ___ 
-    // \___ \| __/ _` | __| / __| __| |/ __|
-    // ____) | || (_| | |_| \__ \ |_| | (__ 
-    //|_____/ \__\__,_|\__|_|___/\__|_|\___|
-
-    /** Statistic
-    */
-    define("statistic", statistic, this);
+    } else throw new TypeError("Invalid Effect" + effect);
   }
 
-  // ___               _ _               ___ ___  
-  /// __| __ _ _ _  __| | |__  _____ __ |_ _|   \ 
-  //\__ \/ _` | ' \/ _` | '_ \/ _ \ \ /  | || |) |
-  //|___/\__,_|_||_\__,_|_.__/\___/_\_\ |___|___/ 
-
-  Object.defineProperty(Sandbox.prototype, "id", {
-    get: (function() {
-      var str = "SBX";
-      var i = 0;
-
-      function makeID() {
-        i = i+1;
-        return (str+(padding_left(String(i), "0", 3)));
-      }
-
-      return function() {
-        var id = makeID();
-
-        Object.defineProperty(this, "id", {
-          get: function() { return id; }});
-
-        return id;
-      };
-    })()
-  });
-
-  // _       ___ _       _           
-  //| |_ ___/ __| |_ _ _(_)_ _  __ _ 
-  //|  _/ _ \__ \  _| '_| | ' \/ _` |
-  // \__\___/___/\__|_| |_|_||_\__, |
-  //                           |___/ 
-
-  Object.defineProperty(Sandbox.prototype, "toString", {
-    get: function() {
-      return function() { return "[[Sandbox#" + this.id + "]]"; };
+  /** Commit Of Target
+   * @return JavaScript Array [Effect]
+   */
+  define("commitOf", function(target) {
+    var effects = this.writeeffectsOf(target);
+    for(var effect of effects) {
+      commit(effect, shadows.get(target), target);
     }
-  });
+  }, this);
 
-  //                _          
-  //__ _____ _ _ __(_)___ _ _  
-  //\ V / -_) '_(_-< / _ \ ' \ 
-  // \_/\___|_| /__/_\___/_||_|
-
-  Object.defineProperty(Sandbox, "version", {
-    value: "DecentJS 1.0.3 (PoC)"
-  });
-
-  Object.defineProperty(Sandbox.prototype, "version", {
-    value: Sandbox.version
-  });
-
-  //              __ _      
-  // __ ___ _ _  / _(_)__ _ 
-  /// _/ _ \ ' \|  _| / _` |
-  //\__\___/_||_|_| |_\__, |
-  //                  |___/ 
-
-  Object.defineProperty(Sandbox, "DEFAULT", {
-    value: {
-      /** Verbose Mode
-       * (default: false)
-       */ verbose:false,
-      /** Enable Statistic
-       * (default: false)
-       */ statistic:false,
-      /** Decompile
-       * (default: true)
-       */ decompile:true,
-      /** Effect
-       * (default: true)
-       */ effect:true,
-      /** Transparent Mode
-       * (default: false)
-       */ transparent:false,
-      /** MetaHandler
-       * (default: true)
-       */ metahandler:false,
-      /** Debug Mode
-       * (default: false)
-       */ debug:false,
-      /** Function pass-through
-       * (default: [])
-       */ passthrough:new Set(),
-      /** Allow Strict Mode Eval
-       * (default: false)
-       */ eval:false,
-      /** Output handler
-       * (default: ShellOut)
-       */ out:ShellOut()
+  /** Commit All Targets
+   * @return JavaScript Array [Effect]
+   */
+  define("commit", function() {
+    for(var target of writetargets) {
+      this.commitOf(target);
     }
-  });
+  }, this);
 
-  Object.defineProperty(Sandbox, "TRANSPARENT", {
-    value: {
-      /** Verbose Mode
-       * (default: false)
-       */ verbose:false,
-      /** Enable Statistic
-       * (default: false)
-       */ statistic:false,
-      /** Decompile
-       * (default: true)
-       */ decompile:true,
-      /** Effect
-       * (default: true)
-       */ effect:true,
-      /** Transparent Mode
-       * (default: false)
-       */ transparent:true,
-      /** MetaHandler
-       * (default: true)
-       */ metahandler:false,
-      /** Debug Mode
-       * (default: false)
-       */ debug:false,
-      /** Function pass-through
-       * (default: [])
-       */ passthrough:new Set(),
-      /** Allow Strict Mode Eval
-       * (default: false)
-       */ eval:false,
-      /** Output handler
-       * (default: ShellOut)
-       */ out:ShellOut()
-    }
-  });
+  // _____       _ _ _                _    
+  //|  __ \     | | | |              | |   
+  //| |__) |___ | | | |__   __ _  ___| | __
+  //|  _  // _ \| | | '_ \ / _` |/ __| |/ /
+  //| | \ \ (_) | | | |_) | (_| | (__|   < 
+  //|_|  \_\___/|_|_|_.__/ \__,_|\___|_|\_\
 
-  Object.defineProperty(Sandbox, "DEBUG", {
-    value: {
-      /** Verbose Mode
-       * (default: false)
-       */ verbose:true,
-      /** Enable Statistic
-       * (default: false)
-       */ statistic:true,
-      /** Decompile
-       * (default: true)
-       */ decompile:true,
-      /** Effect
-       * (default: true)
-       */ effect:true,
-      /** Transparent Mode
-       * (default: false)
-       */ transparent:false,
-      /** MetaHandler
-       * (default: true)
-       */ metahandler:true,
-      /** Debug Mode
-       * (default: false)
-       */ debug:true,
-      /** Function pass-through
-       * (default: [])
-       */ passthrough:dumpGlobal(), 
-      /** Allow Strict Mode Eval
-       * (default: false)
-       */ eval:true,
-      /** Output handler
-       * (default: ShellOut)
-       */ out:ShellOut()
+  /** 
+   * Rollback Of Target
+   * @param target JavaScript Object
+   */
+  define("rollbackOf", function(target) {
+    if(proxies.has(target) && handlers.has(proxies.get(target))) handlers.get(proxies.get(target)).touchedPropertyNames.clear();
+  }, this);
+
+  /** 
+   * Rollback All Targets
+   */
+  define("rollback", function() {
+    for(var target of writetargets) {
+      this.rollbackOf(target);
     }
-  });
+  }, this);
+
+  // _____                     _   
+  //|  __ \                   | |  
+  //| |__) |_____   _____ _ __| |_ 
+  //|  _  // _ \ \ / / _ \ '__| __|
+  //| | \ \  __/\ V /  __/ |  | |_ 
+  //|_|  \_\___| \_/ \___|_|   \__|
+
+  /** Revert Of
+   * @param target JavaScript Object
+   */
+  define("revertOf", function(target) {
+    var proxy = proxies.get(target);
+
+    proxies.delete(target);
+    handlers.delete(proxy);
+    shadows.delete(target);
+
+  }, this);
+
+  /** Rrevert
+  */
+  define("revert", function() {
+    for(var target of writetargets) {
+      this.revertOf(target);
+    }
+  }, this);
+
+  //  _____ _        _   _     _   _      
+  // / ____| |      | | (_)   | | (_)     
+  //| (___ | |_ __ _| |_ _ ___| |_ _  ___ 
+  // \___ \| __/ _` | __| / __| __| |/ __|
+  // ____) | || (_| | |_| \__ \ |_| | (__ 
+  //|_____/ \__\__,_|\__|_|___/\__|_|\___|
+
+  /** Statistic
+  */
+  define("statistic", statistic, this);
+}
+
+// ___               _ _               ___ ___  
+/// __| __ _ _ _  __| | |__  _____ __ |_ _|   \ 
+//\__ \/ _` | ' \/ _` | '_ \/ _ \ \ /  | || |) |
+//|___/\__,_|_||_\__,_|_.__/\___/_\_\ |___|___/ 
+
+Object.defineProperty(Sandbox.prototype, "id", {
+  get: (function() {
+    var str = "SBX";
+    var i = 0;
+
+    function makeID() {
+      i = i+1;
+      return (str+(padding_left(String(i), "0", 3)));
+    }
+
+    return function() {
+      var id = makeID();
+
+      Object.defineProperty(this, "id", {
+        get: function() { return id; }});
+
+      return id;
+    };
+  })()
+});
+
+// _       ___ _       _           
+//| |_ ___/ __| |_ _ _(_)_ _  __ _ 
+//|  _/ _ \__ \  _| '_| | ' \/ _` |
+// \__\___/___/\__|_| |_|_||_\__, |
+//                           |___/ 
+
+Object.defineProperty(Sandbox.prototype, "toString", {
+  get: function() {
+    return function() { return "[[Sandbox#" + this.id + "]]"; };
+  }
+});
+
+//                _          
+//__ _____ _ _ __(_)___ _ _  
+//\ V / -_) '_(_-< / _ \ ' \ 
+// \_/\___|_| /__/_\___/_||_|
+
+Object.defineProperty(Sandbox, "version", {
+  value: "DecentJS 1.0.3 (PoC)"
+});
+
+Object.defineProperty(Sandbox.prototype, "version", {
+  value: Sandbox.version
+});
+
+//              __ _      
+// __ ___ _ _  / _(_)__ _ 
+/// _/ _ \ ' \|  _| / _` |
+//\__\___/_||_|_| |_\__, |
+//                  |___/ 
+
+Object.defineProperty(Sandbox, "DEFAULT", {
+  value: {
+    /** Verbose Mode
+     * (default: false)
+     */ verbose:false,
+    /** Enable Statistic
+     * (default: false)
+     */ statistic:false,
+    /** Decompile
+     * (default: true)
+     */ decompile:true,
+    /** Effect
+     * (default: true)
+     */ effect:true,
+    /** Transparent Mode
+     * (default: false)
+     */ transparent:false,
+    /** MetaHandler
+     * (default: true)
+     */ metahandler:false,
+    /** Debug Mode
+     * (default: false)
+     */ debug:false,
+    /** Function pass-through
+     * (default: [])
+     */ passthrough:new Set(),
+    /** Allow Strict Mode Eval
+     * (default: false)
+     */ eval:false,
+    /** Output handler
+     * (default: ShellOut)
+     */ out:ShellOut()
+  }
+});
+
+Object.defineProperty(Sandbox, "TRANSPARENT", {
+  value: {
+    /** Verbose Mode
+     * (default: false)
+     */ verbose:false,
+    /** Enable Statistic
+     * (default: false)
+     */ statistic:false,
+    /** Decompile
+     * (default: true)
+     */ decompile:true,
+    /** Effect
+     * (default: true)
+     */ effect:true,
+    /** Transparent Mode
+     * (default: false)
+     */ transparent:true,
+    /** MetaHandler
+     * (default: true)
+     */ metahandler:false,
+    /** Debug Mode
+     * (default: false)
+     */ debug:false,
+    /** Function pass-through
+     * (default: [])
+     */ passthrough:new Set(),
+    /** Allow Strict Mode Eval
+     * (default: false)
+     */ eval:false,
+    /** Output handler
+     * (default: ShellOut)
+     */ out:ShellOut()
+  }
+});
+
+Object.defineProperty(Sandbox, "DEBUG", {
+  value: {
+    /** Verbose Mode
+     * (default: false)
+     */ verbose:true,
+    /** Enable Statistic
+     * (default: false)
+     */ statistic:true,
+    /** Decompile
+     * (default: true)
+     */ decompile:true,
+    /** Effect
+     * (default: true)
+     */ effect:true,
+    /** Transparent Mode
+     * (default: false)
+     */ transparent:false,
+    /** MetaHandler
+     * (default: true)
+     */ metahandler:true,
+    /** Debug Mode
+     * (default: false)
+     */ debug:true,
+    /** Function pass-through
+     * (default: [])
+     */ passthrough:dumpGlobal(), 
+    /** Allow Strict Mode Eval
+     * (default: false)
+     */ eval:true,
+    /** Output handler
+     * (default: ShellOut)
+     */ out:ShellOut()
+  }
+});
