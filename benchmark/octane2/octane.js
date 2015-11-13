@@ -69,7 +69,7 @@ function getNewSandbox() {
      */ verbose:false,
     /** Enable Statistic
      * (default: false)
-     */ statistic:false,
+     */ statistic:true,
     /** Decompile
      * (default: true)
      */ decompile:true,
@@ -98,8 +98,7 @@ function getNewSandbox() {
   return new Sandbox(this, sbxArgs);
 }
 
-
-function makeBenchmark(benchmark) {
+/*function makeBenchmark(benchmark) {
   var basestr = read(basefile);
   var runstr = read(runfile);
 
@@ -111,23 +110,26 @@ function makeBenchmark(benchmark) {
     var benchmarkstr = read(benchmark);
   }
 
-  var str = "(function() { \"use strict\";\n " + basestr + benchmarkstr + runstr + "})";
+  //var str = "(function() { \"use strict\";\n " + basestr + benchmarkstr + runstr + "})";
   //print(str);
-  var fun = eval(str);
-  return fun;
-}
+  //var fun = eval(str);
+  //return fun;
+}*/
 
 function runBenchmark(inSandbox) {
   for(var i in benchmarks) {
     print("\n\n\n*** Include " + benchmarks[i] + " ***");
-    var fun = makeBenchmark(benchmarks[i]);
     var sbx = getNewSandbox();
     try{
       if(inSandbox) { 
-        sbx.apply(fun);
+        sbx.load(basefile, benchmarks[i], runfile);
         print(sbx.statistic);
       }
-      else fun.apply(this);
+      else {
+        load(basefile);
+        load(benchmarks[i]);
+        load(runfile);
+      }
     }catch(e){
       print(e);
       print("\n");
