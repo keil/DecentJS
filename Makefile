@@ -16,4 +16,5 @@ sync:
 
 .PHONY: benchmark
 benchmark:
-	./jsx -f bootstrap.js -f benchmark/octane/octane.js >> benchmark/octane/out/$(file).$(mode).$(system).decentjs1.0.3poc.out 
+	#	./jsx -f bootstrap.js -f benchmark/octane/octane.js >> benchmark/octane/out/$(file).$(mode).$(system).decentjs1.0.3poc.out 
+	vpt -w pool4 -p\#99 -V LD_LIBRARY_PATH=$LD_LIBRARY_PATH -c "make octane" >>  benchmark/octane/out/$(file).$(mode).$(system).decentjs1.0.3poc.out
