@@ -14,5 +14,5 @@ octane2:
 sync:
 	svn ci -m "sync"
 
-octanex:
-	./jsx -f bootstrap.js -f benchmark/octane/octane.js >> benchmark/octane/out/full.poc.out 
+benchmark:
+	./jsx -f bootstrap.js -f benchmark/octane/octane.js >> benchmark/octane/out/${file}.${mode}.${system}.decentjs1.0.3poc.out 
