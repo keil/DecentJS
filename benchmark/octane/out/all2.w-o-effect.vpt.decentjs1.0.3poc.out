@@ -1,0 +1,143 @@
+make[1]: Entering directory `/home/keilr/workspace/DecentJS/trunk'
+./js -f bootstrap.js -f benchmark/octane/octane.js
+make[1]: Leaving directory `/home/keilr/workspace/DecentJS/trunk'
+[[--end-of-text--]]
+
+Process 12103 terminated (error 002).
+Task completed after 0 sec.
+
+make[1]: Entering directory `/home/keilr/workspace/DecentJS/trunk'
+./js -f bootstrap.js -f benchmark/octane/octane.js
+make[1]: Leaving directory `/home/keilr/workspace/DecentJS/trunk'
+[[--end-of-text--]]
+
+Process 12152 terminated (error 002).
+Task completed after 0 sec.
+
+
+
+
+*** Include benchmark/octane/richards.js ***
+Richards: 5790
+----
+Score (version 9): 5790
+Statistic: #wrap:164032 #cache miss:12 #decompile:1 #cache hit:164012 #touched:2 
+
+
+
+*** Include benchmark/octane/crypto.js ***
+Crypto: 2197
+----
+Score (version 9): 2197
+Statistic: #wrap:2379800 #cache miss:19 #decompile:1 #cache hit:2379770 #touched:2 
+
+
+
+*** Include benchmark/octane/raytrace.js ***
+RayTrace: 854
+----
+Score (version 9): 854
+Statistic: #wrap:25519236 #cache miss:16 #decompile:1 #cache hit:25519211 #touched:3 
+
+
+
+*** Include benchmark/octane/earley-boyer.js ***
+EarleyBoyer: 1004
+----
+Score (version 9): 1004
+Statistic: #wrap:5491 #cache miss:31 #decompile:1 #cache hit:5443 #touched:8 
+
+
+
+*** Include benchmark/octane/regexp.js ***
+RegExp: 911
+----
+Score (version 9): 911
+Statistic: #wrap:131964 #cache miss:14 #decompile:1 #cache hit:131942 #touched:2 
+
+
+
+*** Include benchmark/octane/splay.js ***
+Splay: 1268
+SplayLatency: 3528
+----
+Score (version 9): 2115
+Statistic: #wrap:466852 #cache miss:14 #decompile:1 #cache hit:466829 #touched:2 
+
+
+
+*** Include benchmark/octane/navier-stokes.js ***
+NavierStokes: 954
+----
+Score (version 9): 954
+Statistic: #wrap:1850 #cache miss:13 #decompile:1 #cache hit:1829 #touched:2 
+
+
+
+*** Include benchmark/octane/pdfjs.js ***
+PdfJS: 293
+----
+Score (version 9): 293
+Statistic: #wrap:35363478 #cache miss:33 #decompile:1 #cache hit:35363430 #touched:8 
+
+
+
+*** Include benchmark/octane/mandreel.js ***
+Mandreel: 304
+MandreelLatency: 2025
+----
+Score (version 9): 785
+Statistic: #wrap:19958253 #cache miss:27 #decompile:1 #cache hit:19958215 #touched:3 
+
+
+
+*** Include benchmark/octane/gbemu-part1.js,benchmark/octane/gbemu-part2.js ***
+65538
+Gameboy: 6572
+----
+Score (version 9): 6572
+Statistic: #wrap:533175 #cache miss:24 #decompile:1 #cache hit:533102 #touched:2 
+
+
+
+*** Include benchmark/octane/code-load.js ***
+CodeLoad: 6364
+----
+Score (version 9): 6364
+Statistic: #wrap:50821 #cache miss:231 #decompile:1 #cache hit:50179 #touched:2 
+
+
+
+*** Include benchmark/octane/box2d.js ***
+Box2D: 354
+----
+Score (version 9): 354
+Statistic: #wrap:27014006 #cache miss:23 #decompile:1 #cache hit:24876414 #touched:2 
+
+
+
+*** Include benchmark/octane/typescript-input.js,benchmark/octane/typescript-compiler.js,benchmark/octane/typescript.js ***
+Typescript: 4113
+----
+Score (version 9): 4113
+Statistic: #wrap:1114215 #cache miss:18 #decompile:1 #cache hit:1114186 #touched:2 
+[[--end-of-text--]]
+
+Process 12411 terminated (ok).
+Task completed after 17 min, 30 sec.
+Charging 1089s processor usage (38.87 Euro).
+
+Resource usage:
+Average processor load: 104%
+
+Processor idle time: 102829 sec
+Total execution time: 1050 sec
+Total processing time: 1089 sec
+Kernel mode time: 5 sec
+User mode time: 1084 sec
+
+Virtual memory size: 648 MByte
+Resident set size: 498 MByte
+Text/Data segment size: 623 MByte
+Shared memory segment: 6 MByte
+

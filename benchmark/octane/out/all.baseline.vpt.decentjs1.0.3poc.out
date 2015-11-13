@@ -1,0 +1,91 @@
+
+
+
+
+
+*** Include benchmark/octane/richards.js ***
+Richards: 6526
+----
+Score (version 9): 6526
+
+
+
+*** Include benchmark/octane/crypto.js ***
+Crypto: 5577
+----
+Score (version 9): 5577
+
+
+
+*** Include benchmark/octane/raytrace.js ***
+RayTrace: 9937
+----
+Score (version 9): 9937
+
+
+
+*** Include benchmark/octane/earley-boyer.js ***
+EarleyBoyer: 9991
+----
+Score (version 9): 9991
+
+
+
+*** Include benchmark/octane/regexp.js ***
+RegExp: 1515
+----
+Score (version 9): 1515
+
+
+
+*** Include benchmark/octane/splay.js ***
+Splay: 8470
+SplayLatency: 12791
+----
+Score (version 9): 10408
+
+
+
+*** Include benchmark/octane/navier-stokes.js ***
+NavierStokes: 15881
+----
+Score (version 9): 15881
+
+
+
+*** Include benchmark/octane/pdfjs.js ***
+PdfJS: 8081
+----
+Score (version 9): 8081
+
+
+
+*** Include benchmark/octane/mandreel.js ***
+Mandreel: 9320
+MandreelLatency: 11675
+----
+Score (version 9): 10431
+
+
+
+*** Include benchmark/octane/gbemu-part1.js,benchmark/octane/gbemu-part2.js ***
+[[--end-of-text--]]
+
+Process 19443 terminated (error 003).
+Task completed after 1 min, 23 sec.
+Charging 108s processor usage (3.84 Euro).
+
+Resource usage:
+Average processor load: 130%
+
+Processor idle time: 8111 sec
+Total execution time: 83 sec
+Total processing time: 108 sec
+Kernel mode time: 3 sec
+User mode time: 105 sec
+
+Virtual memory size: 678 MByte
+Resident set size: 531 MByte
+Text/Data segment size: 654 MByte
+Shared memory segment: 6 MByte
+

@@ -1,0 +1,27 @@
+
+
+
+*** Include benchmark/octane/box2d.js ***
+Box2D: 18777
+----
+Score (version 9): 18777
+[[--end-of-text--]]
+
+Process 20306 terminated (ok).
+Task completed after 5 sec.
+Charging 4.510s processor usage (0.16 Euro).
+
+Resource usage:
+Average processor load: 110%
+
+Processor idle time: 400 sec
+Total execution time: 4 sec
+Total processing time: 5 sec
+Kernel mode time: 0 sec
+User mode time: 4 sec
+
+Virtual memory size: 150 MByte
+Resident set size: 44 MByte
+Text/Data segment size: 125 MByte
+Shared memory segment: 5 MByte
+
