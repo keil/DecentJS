@@ -2,3 +2,27 @@
 
 
 *** Include benchmark/octane/crypto.js ***
+Crypto: 1275
+----
+Score (version 9): 1275
+Statistic: 
+[[--end-of-text--]]
+
+Process 21781 terminated (ok).
+Task completed after 1 min, 17 sec.
+Charging 113s processor usage (4.03 Euro).
+
+Resource usage:
+Average processor load: 146%
+
+Processor idle time: 7529 sec
+Total execution time: 77 sec
+Total processing time: 113 sec
+Kernel mode time: 1 sec
+User mode time: 112 sec
+
+Virtual memory size: 626 MByte
+Resident set size: 432 MByte
+Text/Data segment size: 602 MByte
+Shared memory segment: 6 MByte
+

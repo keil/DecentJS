@@ -1,0 +1,53 @@
+
+
+
+*** Include benchmark/octane/pdfjs.js ***
+PdfJS: out of memory
+out of memory
+
+
+undefined
+[[--end-of-text--]]
+
+Process 22840 terminated (ok).
+Task completed after 17 min, 36 sec.
+Charging 1101s processor usage (39.31 Euro).
+
+Resource usage:
+Average processor load: 104%
+
+Processor idle time: 103514 sec
+Total execution time: 1057 sec
+Total processing time: 1101 sec
+Kernel mode time: 8 sec
+User mode time: 1093 sec
+
+Virtual memory size: 5819 MByte
+Resident set size: 5468 MByte
+Text/Data segment size: 5794 MByte
+Shared memory segment: 6 MByte
+
+
+
+
+*** Include benchmark/octane/mandreel.js ***
+[[--end-of-text--]]
+
+Process 23593 terminated (Interrupt).
+Task completed after 5 sec.
+Charging 4.890s processor usage (0.17 Euro).
+
+Resource usage:
+Average processor load: 100%
+
+Processor idle time: 478 sec
+Total execution time: 5 sec
+Total processing time: 5 sec
+Kernel mode time: 0 sec
+User mode time: 5 sec
+
+Virtual memory size: 258 MByte
+Resident set size: 129 MByte
+Text/Data segment size: 234 MByte
+Shared memory segment: 5 MByte
+
