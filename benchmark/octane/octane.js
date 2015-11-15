@@ -51,7 +51,7 @@ var benchmarks = [];
  * benchmarks.push([base_dir + 'zlib.js', base_dir + 'zlib-data.js']); //Error: eval not supported
  */
 
-//benchmarks.push([base_dir + 'typescript-input.js', base_dir + 'typescript-compiler.js', base_dir + 'typescript.js']);
+benchmarks.push([base_dir + 'typescript-input.js', base_dir + 'typescript-compiler.js', base_dir + 'typescript.js']);
 
 //for(var i in benchmarks) print("$$$" + benchmarks[i]);
 
@@ -78,7 +78,7 @@ function getNewSandbox() {
      */ effect:true,
     /** Transparent Mode
      * (default: false)
-     */ transparent:false,
+     */ transparent:true,
     /** MetaHandler
      * (default: true)
      */ metahandler:false,

@@ -1,0 +1,33 @@
+
+
+
+*** Include benchmark/octane/earley-boyer.js ***
+TypeError: proxy must report the same value for a non-writable, non-configurable property
+
+
+@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:1734:1
+evaluate@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js:776:18
+Sandbox/<@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js:841:12
+runBenchmark@benchmark/octane/octane.js:127:9
+@benchmark/octane/octane.js:139:1
+
+[[--end-of-text--]]
+
+Process 53979 terminated (ok).
+Task completed after 0 sec.
+Charging 0.090s processor usage (0.00 Euro).
+
+Resource usage:
+Average processor load: 54.9%
+
+Processor idle time: 16.1 sec
+Total execution time: 0.2 sec
+Total processing time: 0.1 sec
+Kernel mode time: 0.0 sec
+User mode time: 0.1 sec
+
+Virtual memory size: 126 MByte
+Resident set size: 13 MByte
+Text/Data segment size: 101 MByte
+Shared memory segment: 5 MByte
+
