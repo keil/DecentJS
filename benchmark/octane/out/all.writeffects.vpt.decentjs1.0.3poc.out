@@ -1,0 +1,198 @@
+*** Include benchmark/octane/richards.js ***
+Richards: 4135
+----
+Score (version 9): 4135
+Statistic: 
+(1447679283474) set [name=alert],
+(1447679283475) set [name=random]
+
+
+
+*** Include benchmark/octane/crypto.js ***
+Crypto: 1389
+----
+Score (version 9): 1389
+Statistic: 
+(1447679297501) set [name=alert],
+(1447679297515) set [name=random]
+
+
+
+*** Include benchmark/octane/raytrace.js ***
+RayTrace: 103
+----
+Score (version 9): 103
+Statistic: 
+(1447679369639) set [name=alert],
+(1447679369640) set [name=extend],
+(1447679369641) set [name=random]
+
+
+
+*** Include benchmark/octane/earley-boyer.js ***
+EarleyBoyer: 639
+----
+Score (version 9): 639
+Statistic: 
+(1447680072069) set [name=alert],
+(1447680072071) set [name=sc_toDisplayString],
+(1447680072071) set [name=sc_toDisplayString],
+(1447680072071) set [name=sc_toDisplayString],
+(1447680072071) set [name=sc_toDisplayString],
+(1447680072071) set [name=sc_toWriteOrDisplayString],
+(1447680072071) set [name=sc_toWriteOrDisplayString],
+(1447680072071) set [name=sc_toWriteOrDisplayString],
+(1447680072071) set [name=sc_toWriteOrDisplayString],
+(1447680072071) set [name=sc_toWriteString],
+(1447680072071) set [name=sc_toWriteString],
+(1447680072071) set [name=sc_toWriteString],
+(1447680072071) set [name=sc_toWriteString],
+(1447680072072) set [name=sc_toDisplayString],
+(1447680072072) set [name=sc_toDisplayString],
+(1447680072072) set [name=sc_toWriteCircleString],
+(1447680072072) set [name=sc_toWriteCircleString],
+(1447680072072) set [name=sc_toWriteCircleString],
+(1447680072072) set [name=sc_toWriteCircleString],
+(1447680072072) set [name=sc_toWriteString],
+(1447680072072) set [name=sc_toWriteString],
+(1447680072074) set [name=random]
+
+
+
+*** Include benchmark/octane/regexp.js ***
+RegExp: 759
+----
+Score (version 9): 759
+Statistic: 
+(1447680348746) set [name=alert],
+(1447680348747) set [name=random]
+
+
+
+*** Include benchmark/octane/splay.js ***
+Splay: 815
+SplayLatency: 2439
+----
+Score (version 9): 1410
+Statistic: 
+(1447680363769) set [name=alert],
+(1447680363770) set [name=random]
+
+
+
+*** Include benchmark/octane/navier-stokes.js ***
+NavierStokes: 921
+----
+Score (version 9): 921
+Statistic: 
+(1447680392708) set [name=alert],
+(1447680392708) set [name=random]
+
+
+
+*** Include benchmark/octane/pdfjs.js ***
+PdfJS: out of memory
+Statistic: 
+(1447680451444) set [name=__resources__],
+(1447680451444) set [name=__resources__],
+(1447680451444) set [name=__resources__],
+(1447680451444) set [name=__resources__],
+(1447680451444) set [name=__resources__],
+(1447680451444) set [name=__resources__],
+(1447680451444) set [name=__resources__],
+(1447680451444) set [name=__timeouts__],
+(1447680451444) set [name=__timeouts__],
+(1447680451444) set [name=__timeouts__],
+(1447680451444) set [name=__timeouts__],
+(1447680451444) set [name=__timeouts__],
+(1447680451444) set [name=__timeouts__],
+(1447680451444) set [name=__timeouts__],
+(1447680451444) set [name=__to64__],
+(1447680451444) set [name=__to64__],
+(1447680451444) set [name=__to64__],
+(1447680451444) set [name=__to64__],
+(1447680451444) set [name=__to64__],
+(1447680451444) set [name=__to64__],
+(1447680451444) set [name=__to64__],
+(1447680451444) set [name=alert],
+(1447680451444) set [name=alert],
+(1447680451444) set [name=alert],
+(1447680451444) set [name=alert],
+(1447680451444) set [name=alert],
+(1447680451444) set [name=alert],
+(1447680451444) set [name=alert],
+(1447680451445) set [name=PDFJS],
+(1447680451445) set [name=PDFJS],
+(1447680451445) set [name=PDFJS],
+(1447680451445) set [name=PDFJS],
+(1447680451445) set [name=PDFJS],
+(1447680451445) set [name=PDFJS],
+(1447680451445) set [name=PDFJS],
+(1447680451445) set [name=__from64__],
+(1447680451445) set [name=__from64__],
+(1447680451445) set [name=__from64__],
+(1447680451445) set [name=__from64__],
+(1447680451445) set [name=__from64__],
+(1447680451445) set [name=__from64__],
+(1447680451445) set [name=__from64__],
+(1447680451445) set [name=addEventListener],
+(1447680451445) set [name=addEventListener],
+(1447680451445) set [name=addEventListener],
+(1447680451445) set [name=addEventListener],
+(1447680451445) set [name=addEventListener],
+(1447680451445) set [name=addEventListener],
+(1447680451445) set [name=addEventListener],
+(1447680451483) set [name=random]
+
+
+
+*** Include benchmark/octane/mandreel.js ***
+Mandreel: 83.3
+MandreelLatency: 424
+----
+Score (version 9): 188
+Statistic: 
+(1447683602876) set [name=alert],
+(1447683602876) set [name=alert],
+(1447683602878) set [name=alert],
+(1447683602878) set [name=alert],
+(1447683602901) set [name=random]
+
+
+
+*** Include benchmark/octane/gbemu-part1.js,benchmark/octane/gbemu-part2.js ***
+65538
+Gameboy: 2767
+----
+Score (version 9): 2767
+Statistic: 
+(1447684136148) set [name=alert],
+(1447684136150) set [name=random]
+
+
+
+*** Include benchmark/octane/code-load.js ***
+CodeLoad: 1450
+----
+Score (version 9): 1450
+Statistic: 
+(1447684180843) set [name=alert],
+(1447684180843) set [name=random]
+
+
+
+*** Include benchmark/octane/box2d.js ***
+Box2D: out of memory
+Statistic: 
+(1447684228192) set [name=alert],
+(1447684228204) set [name=random]
+
+
+
+*** Include benchmark/octane/typescript-input.js,benchmark/octane/typescript-compiler.js,benchmark/octane/typescript.js ***
+Typescript: 737
+----
+Score (version 9): 737
+Statistic: 
+(1447684505503) set [name=alert],
+(1447684505515) set [name=random]
