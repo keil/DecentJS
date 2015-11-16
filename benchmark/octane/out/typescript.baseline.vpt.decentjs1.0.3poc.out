@@ -1,6 +1,3 @@
-
-
-
 *** Include benchmark/octane/typescript-input.js,benchmark/octane/typescript-compiler.js,benchmark/octane/typescript.js ***
 Typescript: 12134
 ----
@@ -24,4 +21,3 @@ Virtual memory size: 441 MByte
 Resident set size: 335 MByte
 Text/Data segment size: 416 MByte
 Shared memory segment: 6 MByte
-

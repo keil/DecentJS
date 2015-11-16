@@ -1,6 +1,3 @@
-
-
-
 *** Include benchmark/octane/navier-stokes.js ***
 NavierStokes: 15909
 ----
@@ -24,4 +21,3 @@ Virtual memory size: 134 MByte
 Resident set size: 17 MByte
 Text/Data segment size: 109 MByte
 Shared memory segment: 5 MByte
-

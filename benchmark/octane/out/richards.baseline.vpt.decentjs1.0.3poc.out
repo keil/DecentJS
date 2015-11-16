@@ -1,6 +1,3 @@
-
-
-
 *** Include benchmark/octane/richards.js ***
 Richards: 6581
 ----
@@ -24,4 +21,3 @@ Virtual memory size: 126 MByte
 Resident set size: 13 MByte
 Text/Data segment size: 101 MByte
 Shared memory segment: 5 MByte
-

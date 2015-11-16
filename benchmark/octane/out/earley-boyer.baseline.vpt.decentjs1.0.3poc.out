@@ -1,6 +1,3 @@
-
-
-
 *** Include benchmark/octane/earley-boyer.js ***
 EarleyBoyer: 10097
 ----
@@ -24,4 +21,3 @@ Virtual memory size: 469 MByte
 Resident set size: 367 MByte
 Text/Data segment size: 445 MByte
 Shared memory segment: 6 MByte
-

@@ -1,6 +1,3 @@
-
-
-
 *** Include benchmark/octane/code-load.js ***
 CodeLoad: 6000
 ----
@@ -25,4 +22,3 @@ Virtual memory size: 256 MByte
 Resident set size: 135 MByte
 Text/Data segment size: 231 MByte
 Shared memory segment: 6 MByte
-
