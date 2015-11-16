@@ -1,6 +1,3 @@
-
-
-
 *** Include benchmark/octane/pdfjs.js ***
 PdfJS: 398
 ----
@@ -25,4 +22,3 @@ Virtual memory size: 274 MByte
 Resident set size: 119 MByte
 Text/Data segment size: 250 MByte
 Shared memory segment: 6 MByte
-

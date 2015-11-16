@@ -1,6 +1,3 @@
-
-
-
 *** Include benchmark/octane/splay.js ***
 Splay: 815
 SplayLatency: 2288
@@ -26,4 +23,3 @@ Virtual memory size: 523 MByte
 Resident set size: 376 MByte
 Text/Data segment size: 499 MByte
 Shared memory segment: 6 MByte
-

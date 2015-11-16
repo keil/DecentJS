@@ -1,6 +1,3 @@
-
-
-
 *** Include benchmark/octane/splay.js ***
 [[--end-of-text--]]
 
@@ -21,4 +18,3 @@ Virtual memory size: 172 MByte
 Resident set size: 63 MByte
 Text/Data segment size: 147 MByte
 Shared memory segment: 6 MByte
-

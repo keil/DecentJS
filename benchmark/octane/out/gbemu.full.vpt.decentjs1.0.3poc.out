@@ -1,6 +1,3 @@
-
-
-
 *** Include benchmark/octane/gbemu-part1.js,benchmark/octane/gbemu-part2.js ***
 65538
 Gameboy: 4780
@@ -26,4 +23,3 @@ Virtual memory size: 283 MByte
 Resident set size: 144 MByte
 Text/Data segment size: 259 MByte
 Shared memory segment: 6 MByte
-
