@@ -1,6 +1,3 @@
-
-
-
 *** Include benchmark/octane/box2d.js ***
 Box2D: out of memory
 out of memory
@@ -26,4 +23,3 @@ Virtual memory size: 5889 MByte
 Resident set size: 5434 MByte
 Text/Data segment size: 5865 MByte
 Shared memory segment: 6 MByte
-

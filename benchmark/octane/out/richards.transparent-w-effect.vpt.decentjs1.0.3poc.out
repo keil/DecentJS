@@ -1,26 +1,3 @@
-[[--end-of-text--]]
-
-Process 53252 terminated (ok).
-Task completed after 0 sec.
-Charging 0.020s processor usage (0.00 Euro).
-
-Resource usage:
-Average processor load: 24.4%
-
-Processor idle time: 8.1 sec
-Total execution time: 0.1 sec
-Total processing time: 0.0 sec
-Kernel mode time: 0.0 sec
-User mode time: 0.0 sec
-
-Virtual memory size: 119 MByte
-Resident set size: 4 MByte
-Text/Data segment size: 95 MByte
-Shared memory segment: 2 MByte
-
-
-
-
 *** Include benchmark/octane/richards.js ***
 Richards: 4135
 ----
@@ -45,4 +22,3 @@ Virtual memory size: 175 MByte
 Resident set size: 69 MByte
 Text/Data segment size: 150 MByte
 Shared memory segment: 6 MByte
-

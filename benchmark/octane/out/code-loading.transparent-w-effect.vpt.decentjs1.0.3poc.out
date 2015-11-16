@@ -1,6 +1,3 @@
-
-
-
 *** Include benchmark/octane/code-load.js ***
 CodeLoad: TypeError: proxy must report the same value for a non-writable, non-configurable property
 f<@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval line 1939 > eval:1:6919
@@ -40,4 +37,3 @@ Virtual memory size: 232 MByte
 Resident set size: 120 MByte
 Text/Data segment size: 208 MByte
 Shared memory segment: 6 MByte
-

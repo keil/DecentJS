@@ -1,6 +1,3 @@
-
-
-
 *** Include benchmark/octane/pdfjs.js ***
 PdfJS: out of memory
 Statistic: 
@@ -23,4 +20,3 @@ Virtual memory size: 5817 MByte
 Resident set size: 5450 MByte
 Text/Data segment size: 5792 MByte
 Shared memory segment: 6 MByte
-
