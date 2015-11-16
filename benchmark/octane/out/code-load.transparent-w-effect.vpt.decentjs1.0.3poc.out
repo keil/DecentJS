@@ -1,0 +1,39 @@
+*** Include benchmark/octane/code-load.js ***
+CodeLoad: TypeError: proxy must report the same value for a non-writable, non-configurable property
+f<@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval line 1939 > eval:1:6919
+@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval line 1939 > eval:1:6262
+@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval line 1939 > eval:1:410
+runJQuery/<@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:1939:18
+runJQuery@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:1931:4
+runCodeLoadJQuery@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:498:3
+Measure@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:307:7
+BenchmarkSuite.prototype.RunSingleBenchmark@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:322:5
+RunNextBenchmark@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:369:14
+RunStep@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:150:24
+BenchmarkSuite.RunSuites@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:173:3
+@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:2023:1
+evaluate@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js:776:18
+Sandbox/<@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js:841:12
+runBenchmark@benchmark/octane/octane.js:127:9
+@benchmark/octane/octane.js:139:1
+
+Statistic: 
+[[--end-of-text--]]
+
+Process 56910 terminated (ok).
+Task completed after 6 sec.
+Charging 6.560s processor usage (0.23 Euro).
+
+Resource usage:
+Average processor load: 124%
+
+Processor idle time: 516 sec
+Total execution time: 5 sec
+Total processing time: 7 sec
+Kernel mode time: 0 sec
+User mode time: 6 sec
+
+Virtual memory size: 232 MByte
+Resident set size: 120 MByte
+Text/Data segment size: 208 MByte
+Shared memory segment: 6 MByte
