@@ -1,0 +1,32 @@
+
+
+
+*** Include benchmark/octane/deltablue.js ***
+DeltaBlue: 206
+----
+Score (version 9): 206
+Statistic: 
+;;; write effects
+(1447688784805) set [name=alert]
+(1447688784807) defineProperty [name=inheritsFrom]
+(1447688784808) set [name=random]
+[[--end-of-text--]]
+
+Process 46452 terminated (ok).
+Task completed after 4 min, 15 sec.
+Charging 257s processor usage (9.19 Euro).
+
+Resource usage:
+Average processor load: 101%
+
+Processor idle time: 24982 sec
+Total execution time: 255 sec
+Total processing time: 257 sec
+Kernel mode time: 3 sec
+User mode time: 255 sec
+
+Virtual memory size: 2104 MByte
+Resident set size: 1776 MByte
+Text/Data segment size: 2079 MByte
+Shared memory segment: 6 MByte
+
