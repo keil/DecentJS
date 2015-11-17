@@ -1,0 +1,147 @@
+
+
+
+*** Include benchmark/octane/code-load.js ***
+CodeLoad: TypeError: proxy must report the same value for a non-writable, non-configurable property
+f<@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval line 1939 > eval:1:6919
+@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval line 1939 > eval:1:6262
+@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval line 1939 > eval:1:410
+runJQuery/<@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:1939:18
+runJQuery@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:1931:4
+runCodeLoadJQuery@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:498:3
+Measure@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:307:7
+BenchmarkSuite.prototype.RunSingleBenchmark@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:322:5
+RunNextBenchmark@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:369:14
+RunStep@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:150:24
+BenchmarkSuite.RunSuites@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:173:3
+@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:2023:1
+evaluate@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js:776:18
+Sandbox/<@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js:841:12
+runBenchmark@benchmark/octane/octane.js:127:9
+@benchmark/octane/octane.js:146:1
+
+Statistic: 
+[[--end-of-text--]]
+
+Process 14544 terminated (ok).
+Task completed after 5 sec.
+Charging 6.550s processor usage (0.23 Euro).
+
+Resource usage:
+Average processor load: 126%
+
+Processor idle time: 509 sec
+Total execution time: 5 sec
+Total processing time: 7 sec
+Kernel mode time: 0 sec
+User mode time: 6 sec
+
+Virtual memory size: 232 MByte
+Resident set size: 120 MByte
+Text/Data segment size: 208 MByte
+Shared memory segment: 6 MByte
+
+
+
+
+*** Include benchmark/octane/earley-boyer.js ***
+TypeError: proxy must report the same value for a non-writable, non-configurable property
+
+
+@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:1734:1
+evaluate@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js:776:18
+Sandbox/<@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js:841:12
+runBenchmark@benchmark/octane/octane.js:127:9
+@benchmark/octane/octane.js:146:1
+
+
+
+
+*** Include benchmark/octane/pdfjs.js ***
+PdfJS: out of memory
+Statistic: 
+
+
+
+*** Include benchmark/octane/box2d.js ***
+(Unable to print stack trace)
+[[--end-of-text--]]
+
+Process 14596 terminated (error 003).
+Task completed after 24 min, 44 sec.
+Charging 1762s processor usage (62.92 Euro).
+
+Resource usage:
+Average processor load: 119%
+
+Processor idle time: 145161 sec
+Total execution time: 1484 sec
+Total processing time: 1762 sec
+Kernel mode time: 8 sec
+User mode time: 1754 sec
+
+Virtual memory size: 5818 MByte
+Resident set size: 5432 MByte
+Text/Data segment size: 5793 MByte
+Shared memory segment: 6 MByte
+
+
+
+
+*** Include benchmark/octane/pdfjs.js ***
+PdfJS: out of memory
+Statistic: 
+[[--end-of-text--]]
+
+Process 15670 terminated (ok).
+Task completed after 19 min, 31 sec.
+Charging 1352s processor usage (48.27 Euro).
+
+Resource usage:
+Average processor load: 116%
+
+Processor idle time: 114545 sec
+Total execution time: 1171 sec
+Total processing time: 1352 sec
+Kernel mode time: 9 sec
+User mode time: 1344 sec
+
+Virtual memory size: 5823 MByte
+Resident set size: 5438 MByte
+Text/Data segment size: 5799 MByte
+Shared memory segment: 6 MByte
+
+
+
+
+*** Include benchmark/octane/typescript-input.js,benchmark/octane/typescript-compiler.js,benchmark/octane/typescript.js ***
+TypeError: proxy must report the same value for a non-writable, non-configurable property
+
+
+@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:5043:8
+@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js line 742 > eval:5038:3
+evaluate@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js:776:18
+Sandbox/<@/home/keilr/workspace/DecentJS/trunk/src/sandbox.js:841:12
+runBenchmark@benchmark/octane/octane.js:127:9
+@benchmark/octane/octane.js:146:1
+
+[[--end-of-text--]]
+
+Process 16549 terminated (ok).
+Task completed after 0 sec.
+Charging 0.260s processor usage (0.01 Euro).
+
+Resource usage:
+Average processor load: 63.7%
+
+Processor idle time: 40.1 sec
+Total execution time: 0.4 sec
+Total processing time: 0.3 sec
+Kernel mode time: 0.0 sec
+User mode time: 0.2 sec
+
+Virtual memory size: 164 MByte
+Resident set size: 38 MByte
+Text/Data segment size: 139 MByte
+Shared memory segment: 5 MByte
+

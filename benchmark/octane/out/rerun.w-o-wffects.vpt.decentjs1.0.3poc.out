@@ -1,0 +1,99 @@
+
+
+
+*** Include benchmark/octane/deltablue.js ***
+DeltaBlue: 209
+----
+Score (version 9): 209
+Statistic: 
+;;; write effects
+(1447743535994) set [name=alert]
+(1447743535996) defineProperty [name=inheritsFrom]
+(1447743535998) set [name=random]
+
+
+
+*** Include benchmark/octane/code-load.js ***
+CodeLoad: 2598
+----
+Score (version 9): 2598
+Statistic: 
+;;; write effects
+(1447743786521) set [name=alert]
+(1447743786522) set [name=random]
+[[--end-of-text--]]
+
+Process 12697 terminated (ok).
+Task completed after 4 min, 42 sec.
+Charging 288s processor usage (10.29 Euro).
+
+Resource usage:
+Average processor load: 102%
+
+Processor idle time: 27567 sec
+Total execution time: 281 sec
+Total processing time: 288 sec
+Kernel mode time: 3 sec
+User mode time: 285 sec
+
+Virtual memory size: 2104 MByte
+Resident set size: 1874 MByte
+Text/Data segment size: 2079 MByte
+Shared memory segment: 6 MByte
+
+
+
+
+*** Include benchmark/octane/code-load.js ***
+CodeLoad: 5196
+----
+Score (version 9): 5196
+Statistic: 
+[[--end-of-text--]]
+
+Process 13152 terminated (ok).
+Task completed after 12 sec.
+Charging 14.4s processor usage (0.52 Euro).
+
+Resource usage:
+Average processor load: 118%
+
+Processor idle time: 1192 sec
+Total execution time: 12 sec
+Total processing time: 14 sec
+Kernel mode time: 0 sec
+User mode time: 14 sec
+
+Virtual memory size: 265 MByte
+Resident set size: 149 MByte
+Text/Data segment size: 241 MByte
+Shared memory segment: 6 MByte
+
+
+
+
+*** Include benchmark/octane/box2d.js ***
+out of memory
+
+
+undefined
+[[--end-of-text--]]
+
+Process 13625 terminated (ok).
+Task completed after 14 min, 7 sec.
+Charging 872s processor usage (31.14 Euro).
+
+Resource usage:
+Average processor load: 103%
+
+Processor idle time: 82918 sec
+Total execution time: 846 sec
+Total processing time: 872 sec
+Kernel mode time: 8 sec
+User mode time: 864 sec
+
+Virtual memory size: 5889 MByte
+Resident set size: 5423 MByte
+Text/Data segment size: 5865 MByte
+Shared memory segment: 6 MByte
+
