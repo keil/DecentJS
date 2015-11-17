@@ -957,9 +957,14 @@ function Sandbox(global = {}, params = [], prestate = []) {
   var writeeffects = new WeakMap();
   var calleffects = new WeakMap();
 
-  var readtargets = [];
+  /*var readtargets = [];
   var writetargets = [];
-  var calltargets = [];
+  var calltargets = [];*/
+
+  var readtargets = new Set();
+  var writetargets = new Set();
+  var calltargets = new Set();
+
 
   /** saves an sandbox effect
    * @param effect Effect
@@ -975,19 +980,19 @@ function Sandbox(global = {}, params = [], prestate = []) {
       if(!readeffects.has(effect.target)) readeffects.set(effect.target, []);
 
       readeffects.get(effect.target).push(effect);
-      readtargets.push(effect.target);
+      readtargets.add(effect.target);
 
     } else if(effect instanceof Effect.Write) {
       if(!writeeffects.has(effect.target)) writeeffects.set(effect.target, []);
 
       writeeffects.get(effect.target).push(effect);
-      writetargets.push(effect.target);
+      writetargets.add(effect.target);
 
     } else if(effect instanceof Effect.Call) {
       if(!calleffects.has(effect.target)) calleffects.set(effect.target, []);
 
       calleffects.get(effect.target).push(effect);
-      calltargets.push(effect.target);
+      calltargets.add(effect.target);
     }
   }
 
@@ -1362,7 +1367,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
   define("inConflict", function(sbx) {
     if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
 
-    for(var target of readtargets.concat(writetargets)) {
+    var targets = new Set([...readtargets, ...writetargets]);
+    //for(var target of readtargets.concat(writetargets)) {
+    for(var target of targets) {
       for(var e of this.effectsOf(target)) {
         for(var f of sbx.effectsOf(target)) {
           if(inConflict(e, f)) return true;
@@ -1400,7 +1407,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
     if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
 
     var conflicts = [];
-    for(var target of readtargets.concat(writetargets)) {
+    var targets = new Set([...readtargets, ...writetargets]);
+    //for(var target of readtargets.concat(writetargets)) {
+    for(var target of targets) {
       for(var e of this.effectsOf(target)) {
         for(var f of sbx.effectsOf(target)) {
           if(inConflict(e, f)) conflicts.push(Effect.Conflict(this, e, sbx, f));
@@ -1436,6 +1445,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
       delete origin[effect.name];
 
     } else throw new TypeError("Invalid Effect" + effect);
+
+    // cleanup // TODO
+    return writeffects.delete(effect);
   }
 
   /** Commit Of Target
@@ -1446,6 +1458,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
     for(var effect of effects) {
       commit(effect, shadows.get(target), target);
     }
+
+    // cleanup // TODO
+    writetargets.delete(effect);
   }, this);
 
   /** Commit All Targets
@@ -1480,6 +1495,17 @@ function Sandbox(global = {}, params = [], prestate = []) {
       this.rollbackOf(target);
     }
   }, this);
+
+
+  // TODO, clear
+  // clear after rollback
+
+  define("clearOf", function(target) {
+  }, this);
+
+  define("clear", function() {
+  }, this);
+
 
   // _____                     _   
   //|  __ \                   | |  

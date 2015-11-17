@@ -2,9 +2,12 @@ Tests
 =====
 
 *** Native Constructor test
+*** Test scrip mode of direct eval
 
 Major Features
 ==============
+
+*** Reduce amount of effects
 
 *** Make load as external package
 
