@@ -36,7 +36,7 @@ var benchmarks = [];
 //benchmarks.push(base_dir + 'regexp.js');
 //benchmarks.push(base_dir + 'splay.js'); 
 //benchmarks.push(base_dir + 'navier-stokes.js');
-//benchmarks.push(base_dir + 'pdfjs.js'); 
+benchmarks.push(base_dir + 'pdfjs.js'); 
 //benchmarks.push(base_dir + 'mandreel.js'); 
 //benchmarks.push([base_dir + 'gbemu-part1.js', base_dir + 'gbemu-part2.js']);
 //benchmarks.push(base_dir + 'code-load.js');
@@ -51,7 +51,7 @@ var benchmarks = [];
  * benchmarks.push([base_dir + 'zlib.js', base_dir + 'zlib-data.js']); //Error: eval not supported
  */
 
-benchmarks.push([base_dir + 'typescript-input.js', base_dir + 'typescript-compiler.js', base_dir + 'typescript.js']);
+//benchmarks.push([base_dir + 'typescript-input.js', base_dir + 'typescript-compiler.js', base_dir + 'typescript.js']);
 
 //for(var i in benchmarks) print("$$$" + benchmarks[i]);
 
@@ -75,10 +75,10 @@ function getNewSandbox() {
      */ decompile:true,
     /** Effect
      * (default: true)
-     */ effect:true,
+     */ effect:false
     /** Transparent Mode
      * (default: false)
-     */ transparent:true,
+     */ transparent:false,
     /** MetaHandler
      * (default: true)
      */ metahandler:false,
@@ -126,6 +126,13 @@ function runBenchmark(inSandbox) {
       if(inSandbox) { 
         sbx.apply(fun);
         print(sbx.statistic);
+        //print(sbx.writeeffects)
+        //print(";;; read effects")
+        //for(var effect of sbx.readeffects)
+        //  print(effect);
+        //print(";;; write effects");
+        //for(var effect of sbx.writeeffects)
+        //  print(effect);
       }
       else fun.apply(this);
     }catch(e){
