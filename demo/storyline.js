@@ -215,7 +215,7 @@ var sbx = new Sandbox(this, params);
   ects.forEach(function(i, e) {print(e)});
   print("\n");
 
-})();
+});
 
 //    _ _  __  __                            
 // __| (_)/ _|/ _|___ _ _ ___ _ _  __ ___ ___
@@ -239,33 +239,7 @@ var sbx = new Sandbox(this, params);
   difs.foreach(function(i, e) {print(e)});
   print("\n");
 
-})();
-
-//    _                          
-// __| |_  __ _ _ _  __ _ ___ ___
-/// _| ' \/ _` | ' \/ _` / -_|_-<
-//\__|_||_\__,_|_||_\__, \___/__/
-//                  |___/        
-
-/*(function() {
-
-  print("HasChanges(root): " + (sbx.hasChangesOn(root)));
-
-  var difso = sbx.changesOf(root);
-  print(";;; Changes of root");
-  difso.foreach(function(i, e) {print(e)});
-  print("\n");
-
-  root.value = -1;
-  print("HasChanges: " + (sbx.hasChanges));
-
-  var difs = sbx.changes;
-  print(";;; All Changes");
-  difs.foreach(function(i, e) {print(e)});
-  print("\n");
-
-  });*/ // Notes: changes are deprecated
-
+});
 
 //                    _ _   
 // __ ___ _ __  _ __ (_) |_ 
@@ -276,8 +250,8 @@ var sbx = new Sandbox(this, params);
 
   var wects = sbx.writeeffects;
 
-  print(";;; Read Effects");
-  wects.foreach(function(i, e) {print(e)});
+  print(";;; Write Effects");
+  wects.forEach(function(i, e) {print(e)});
   print("\n");
 
   print(";;; outside sandbox");
@@ -285,13 +259,26 @@ var sbx = new Sandbox(this, params);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
-  //sbx.commitOf(root);
-  //sbx.commit();
+  sbx.commitOf(root);
 
+  var wects = sbx.writeeffects;
+
+  print(";;; Write Effects");
+  wects.forEach(function(i, e) {print(e)});
+  print("\n");
+
+  sbx.commit();
+  
   print(";;; outside sandbox");
   print("tree: " + root);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
+
+  var wects = sbx.writeeffects;
+
+  print(";;; Write Effects");
+  wects.forEach(function(i, e) {print(e)});
+  print("\n");
 
 });
 
@@ -305,8 +292,8 @@ var sbx = new Sandbox(this, params);
   root.value = -1;
 
   var effects = sbx.writeeffects;
-  print(";;; Read Effects");
-  effects.foreach(function(i, e) {print(e)});
+  print(";;; Write Effects");
+  effects.forEach(function(i, e) {print(e)});
   print("\n");
 
   print(";;; outside sandbox");
@@ -320,6 +307,11 @@ var sbx = new Sandbox(this, params);
   print("deptOf: " + sbx.call(depthOf, this, root));
 
   sbx.rollbackOf(root);
+  
+  var effects = sbx.writeeffects;
+  print(";;; Write Effects");
+  effects.forEach(function(i, e) {print(e)});
+  print("\n");
 
   print(";;; inside sandbox");
   print("tree: " + sbx.call(Node.prototype.toString, root));
@@ -327,6 +319,11 @@ var sbx = new Sandbox(this, params);
   print("deptOf: " + sbx.call(depthOf, this, root));
 
   sbx.rollback();
+
+  var effects = sbx.writeeffects;
+  print(";;; Write Effects");
+  effects.forEach(function(i, e) {print(e)});
+  print("\n");
 
   print(";;; inside sandbox");
   print("tree: " + sbx.call(Node.prototype.toString, root));
@@ -347,6 +344,11 @@ var sbx = new Sandbox(this, params);
 
 (function() {
 
+  var effects = sbx.effects;
+  print(";;; Effects");
+  effects.forEach(function(i, e) {print(e)});
+  print("\n");
+
   print(";;; outside sandbox");
   print("tree: " + root);
   print("sumOf: " + sumOf(root));
@@ -359,12 +361,22 @@ var sbx = new Sandbox(this, params);
 
   sbx.revertOf(root);
 
+  var effects = sbx.effects;
+  print(";;; Effects");
+  effects.forEach(function(i, e) {print(e)});
+  print("\n");
+
   print(";;; inside sandbox");
   print("tree: " + sbx.call(Node.prototype.toString, root));
   print("sumOf: " + sbx.call(sumOf, this, root));
   print("deptOf: " + sbx.call(depthOf, this, root));
 
   sbx.revert();
+
+  var effects = sbx.effects;
+  print(";;; Effects");
+  effects.forEach(function(i, e) {print(e)});
+  print("\n");
 
   print(";;; inside sandbox");
   print("tree: " + sbx.call(Node.prototype.toString, root));
@@ -376,7 +388,7 @@ var sbx = new Sandbox(this, params);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
-});
+})();
 
 //              __ _ _       _   
 // __ ___ _ _  / _| (_)__ __| |_ 

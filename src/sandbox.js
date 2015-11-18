@@ -266,6 +266,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
       shadow = target;
     }
 
+    // Initializes effect logging
+    if(__effect__) initialize(target);
+
     var handler = new Membrane(target, native);
     var proxy = new Proxy(shadow, __metahandler__ ? new Proxy(handler, metahandler) : handler);
 
@@ -957,14 +960,43 @@ function Sandbox(global = {}, params = [], prestate = []) {
   var writeeffects = new WeakMap();
   var calleffects = new WeakMap();
 
-  /*var readtargets = [];
-  var writetargets = [];
-  var calltargets = [];*/
-
   var readtargets = new Set();
   var writetargets = new Set();
   var calltargets = new Set();
 
+  /** initializes effect cache
+   * @param target Object
+   */
+  function initialize(target) {
+    if(!readeffects.has(target)) readeffects.set(target, new Map());
+    if(!writeeffects.has(target)) writeeffects.set(target, new Map());
+    if(!calleffects.has(target)) calleffects.set(target, new Map());
+  }
+
+  /** cleanup effect cache
+   * @param target Object
+   */
+  function cleanup(target) {
+    // removes target obejcts
+    readtargets.delete(target);
+    writetargets.delete(target);
+    calltargets.delete(target);
+
+    // initializes new effect cache
+    readeffects.set(target, new Map());
+    writeeffects.set(target, new Map());
+    calleffects.set(target, new Map());
+  }
+
+  /** reset write effects 
+   * @param target Object
+   */
+  function reset(target) {
+    // removes target obejcts
+    writetargets.delete(target);
+    // initializes new effect cache
+    writeeffects.set(target, new Map());
+  }
 
   /** saves an sandbox effect
    * @param effect Effect
@@ -977,30 +1009,12 @@ function Sandbox(global = {}, params = [], prestate = []) {
       throw new TypeError("No effect object.");
 
     if(effect instanceof Effect.Read) {
-      // Move this to the initialization point // XXX
-      if(!readeffects.has(effect.target)) readeffects.set(effect.target, new Map());
- 
-      //print(effect.toString());
-      //readeffects.get(effect.target)[effect.toString()] = effect;
-      // TODO
       readeffects.get(effect.target).set(effect.hashCode(), effect);
-      //readeffects.get(effect.target).push(effect);
       readtargets.add(effect.target);
-
     } else if(effect instanceof Effect.Write) {
-      if(!writeeffects.has(effect.target)) writeeffects.set(effect.target, new Map());
-
-      //writeeffects.get(effect.target)[effect.toString()] = effect;
-      // TODO
       writeeffects.get(effect.target).set(effect.hashCode(), effect);
-      //writeeffects.get(effect.target).push(effect);
       writetargets.add(effect.target);
-
     } else if(effect instanceof Effect.Call) {
-      if(!calleffects.has(effect.target)) calleffects.set(effect.target, new Map());
-
-      //calleffects.get(effect.target)[effect.toString()] = effect;
-      // TODO
       calleffects.get(effect.target).set(effect.hashCode(), effect);
       calltargets.add(effect.target);
     }
@@ -1039,8 +1053,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   define("effectsOf", function(target) {  
     var effectsOfTarget = [...this.readeffectsOf(target), ...this.writeeffectsOf(target), ...this.calleffectsOf(target)];
-    //var effectsOfTarget = this.readeffectsOf(target).concat(this.writeeffectsOf(target)).concat(this.calleffectsOf(target));
-    //effectsOfTarget.sort();
+    effectsOfTarget.sort();
     return new Set(effectsOfTarget);
   }, this);
 
@@ -1053,7 +1066,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
     for(var target of readtargets) {
       readEffects = readEffects.concat([...this.readeffectsOf(target)]);
     }
-    //readEffects.sort();
+    readEffects.sort();
     return new Set(readEffects);
   }, this);
 
@@ -1066,7 +1079,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
     for(var target of writetargets) {
       writeEffects = writeEffects.concat([...this.writeeffectsOf(target)]);
     }
-    //writeEffects.sort();
+    writeEffects.sort();
     return new Set(writeEffects);
 
   }, this);
@@ -1080,7 +1093,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
     for(var target of calltargets) {
       callEffects = callEffects.concat([...this.calleffectsOf(target)]);
     }
-    //callEffects.sort()
+    callEffects.sort()
     return new Set(callEffects);
   }, this);
 
@@ -1089,9 +1102,29 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   getter("effects", function() {
     var effects = [...this.readeffects, ...this.writeeffects, ...this.calleffects];
-    //var effects = [this.readeffects.concat(this.writeeffects).concat(this.calleffects);
-    //effects.sort();
+    effects.sort();
     return new Set(effects);
+  }, this);
+
+  // TODO, clear effect list
+  // clear after rollback
+  /** Get All Effects
+   * @return JavaScript Array [Effect]
+   */
+  define("cleanOf", function(target) {
+    clean(target);
+  }, this);
+
+  define("clean", function() {
+    var targets = new Set([...readtargets, ...writetargets, ...calltargets]);
+    /**
+     * Note: Matthias Keil
+     * Needs to iterate over all targets because
+     * re-inizialization process.
+     */
+    for(var target of targets) {
+      this.clean(target)
+    }
   }, this);
 
   // _____  _  __  __                                  
@@ -1205,7 +1238,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
   // TODO, deprecated
   // it may work when reimplementing the snapshot mode
-  function hasChanges(effect, shadow, origin) {
+  /*function hasChanges(effect, shadow, origin) {
 
     if(effect instanceof Effect.GetPrototypeOf) {
       return Object.getPrototypeOf(shadow) !== Object.getPrototypeOf(origin);
@@ -1227,7 +1260,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
     }
 
-  }
+  }*/
 
   /** Has Changes With
    * @param target JavaScript Object
@@ -1311,7 +1344,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
     if(!(write instanceof Effect.Write))
       throw new TypeError("No Write Effect.");
 
-    if((read.target!==write.target) || (read.name!==write.name) || (read.date<write.date))
+    if((read.target!==write.target) || (read.name!==write.name))
       return false;
     else 
       return true;
@@ -1457,9 +1490,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
       delete origin[effect.name];
 
     } else throw new TypeError("Invalid Effect" + effect);
-
-    // cleanup // TODO
-    return writeffects.delete(effect);
   }
 
   /** Commit Of Target
@@ -1468,11 +1498,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
   define("commitOf", function(target) {
     var effects = this.writeeffectsOf(target);
     for(var effect of effects) {
-      commit(effect, shadows.get(target), target);
+      commit(effect, shadows.get(target), target); 
     }
-
-    // cleanup // TODO
-    writetargets.delete(effect);
+    // cleanup effects of commited target
+    reset(target);
   }, this);
 
   /** Commit All Targets
@@ -1497,6 +1526,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   define("rollbackOf", function(target) {
     if(proxies.has(target) && handlers.has(proxies.get(target))) handlers.get(proxies.get(target)).touchedPropertyNames.clear();
+
+    // cleanup effects of rolled back target
+    reset(target);
   }, this);
 
   /** 
@@ -1507,17 +1539,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
       this.rollbackOf(target);
     }
   }, this);
-
-
-  // TODO, clear
-  // clear after rollback
-
-  define("clearOf", function(target) {
-  }, this);
-
-  define("clear", function() {
-  }, this);
-
 
   // _____                     _   
   //|  __ \                   | |  
@@ -1532,18 +1553,24 @@ function Sandbox(global = {}, params = [], prestate = []) {
   define("revertOf", function(target) {
     var proxy = proxies.get(target);
 
+    // cleanup proxies, handler, shadow objects
     proxies.delete(target);
     handlers.delete(proxy);
     shadows.delete(target);
 
+    // cleanup effects 
+    cleanup(target);
   }, this);
 
-  /** Rrevert
+  /** Revert
   */
   define("revert", function() {
     for(var target of writetargets) {
       this.revertOf(target);
     }
+
+    // cleanup all effects 
+    cleanAll();
   }, this);
 
   //  _____ _        _   _     _   _      
