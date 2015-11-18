@@ -1,5 +1,9 @@
 *** DeentJS 1.0.5 (PoC)
 
+- [Change] Optimizing effect logging 
+- [New] Cleanup effects
+- [Change] Conflict calculation
+
 
 *** DeentJS 1.0.4 (PoC)
 
