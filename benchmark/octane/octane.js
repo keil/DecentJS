@@ -36,11 +36,11 @@ var benchmarks = [];
 //benchmarks.push(base_dir + 'regexp.js');
 //benchmarks.push(base_dir + 'splay.js'); 
 //benchmarks.push(base_dir + 'navier-stokes.js');
-benchmarks.push(base_dir + 'pdfjs.js'); 
-//benchmarks.push(base_dir + 'mandreel.js'); 
-//benchmarks.push([base_dir + 'gbemu-part1.js', base_dir + 'gbemu-part2.js']);
-//benchmarks.push(base_dir + 'code-load.js');
-//benchmarks.push(base_dir + 'box2d.js');
+//benchmarks.push(base_dir + 'pdfjs.js'); 
+benchmarks.push(base_dir + 'mandreel.js'); 
+benchmarks.push([base_dir + 'gbemu-part1.js', base_dir + 'gbemu-part2.js']);
+benchmarks.push(base_dir + 'code-load.js');
+benchmarks.push(base_dir + 'box2d.js');
 
 /**
  * Note: Matthias Keil
@@ -51,9 +51,7 @@ benchmarks.push(base_dir + 'pdfjs.js');
  * benchmarks.push([base_dir + 'zlib.js', base_dir + 'zlib-data.js']); //Error: eval not supported
  */
 
-//benchmarks.push([base_dir + 'typescript-input.js', base_dir + 'typescript-compiler.js', base_dir + 'typescript.js']);
-
-//for(var i in benchmarks) print("$$$" + benchmarks[i]);
+benchmarks.push([base_dir + 'typescript-input.js', base_dir + 'typescript-compiler.js', base_dir + 'typescript.js']);
 
 var global = dumpGlobal();
 
@@ -75,7 +73,7 @@ function getNewSandbox() {
      */ decompile:true,
     /** Effect
      * (default: true)
-     */ effect:false
+     */ effect:true,
     /** Transparent Mode
      * (default: false)
      */ transparent:false,
@@ -126,7 +124,10 @@ function runBenchmark(inSandbox) {
       if(inSandbox) { 
         sbx.apply(fun);
         print(sbx.statistic);
-        //print(sbx.writeeffects)
+        print("#ffects", sbx.effects.length);
+        print("#readeffects", sbx.readeffects.length);
+        print("#writeeffects", sbx.writeeffects.length);
+        print("#calleffects", sbx.calleffects.length);
         //print(";;; read effects")
         //for(var effect of sbx.readeffects)
         //  print(effect);

@@ -151,42 +151,42 @@ var sbx = new Sandbox(this, params);
 
   var rects = sbx.readeffectsOf(this);
   print(";;; Read Effects");
-  rects.foreach(function(i, e) {print(e)});
+  rects.forEach(function(i, e) {print(e)});
   print("\n");
 
   var wects = sbx.writeeffectsOf(this);
   print(";;; Write Effects");
-  wects.foreach(function(i, e) {print(e)});
+  wects.forEach(function(i, e) {print(e)});
   print("\n");
 
   var cects = sbx.calleffectsOf(this);
   print(";;; Call Effects");
-  cects.foreach(function(i, e) {print(e)});
+  cects.forEach(function(i, e) {print(e)});
   print("\n");
 
   var ects = sbx.effectsOf(this);
   print(";;; All Effects");
-  ects.foreach(function(i, e) {print(e)});
+  ects.forEach(function(i, e) {print(e)});
   print("\n");
 
   var rectso = sbx.readeffectsOf(root);
   print(";;; Read Effects of root");
-  rectso.foreach(function(i, e) {print(e)});
+  rectso.forEach(function(i, e) {print(e)});
   print("\n");
 
   var wectso = sbx.writeeffectsOf(root);
   print(";;; Write Effects of root");
-  wectso.foreach(function(i, e) {print(e)});
+  wectso.forEach(function(i, e) {print(e)});
   print("\n");
 
   var cectso = sbx.calleffectsOf(root);
   print(";;; Call Effects of root");
-  cectso.foreach(function(i, e) {print(e)});
+  cectso.forEach(function(i, e) {print(e)});
   print("\n");
 
   var ects = sbx.effectsOf(root);
   print(";;; All Effects of root");
-  ects.foreach(function(i, e) {print(e)});
+  ects.forEach(function(i, e) {print(e)});
   print("\n");
 
   // Note:
@@ -197,25 +197,25 @@ var sbx = new Sandbox(this, params);
 
   var ects = sbx.readeffects;
   print(";;; All Read Effects ");
-  ects.foreach(function(i, e) {print(e)});
+  ects.forEach(function(i, e) {print(e)});
   print("\n");
 
   var ects = sbx.writeeffects;
   print(";;; All Write Effects");
-  ects.foreach(function(i, e) {print(e)});
+  ects.forEach(function(i, e) {print(e)});
   print("\n");
 
   var ects = sbx.calleffects;
   print(";;; All Call Effects");
-  ects.foreach(function(i, e) {print(e)});
+  ects.forEach(function(i, e) {print(e)});
   print("\n");
 
   var ects = sbx.effects;
   print(";;; All Effects");
-  ects.foreach(function(i, e) {print(e)});
+  ects.forEach(function(i, e) {print(e)});
   print("\n");
 
-});
+})();
 
 //    _ _  __  __                            
 // __| (_)/ _|/ _|___ _ _ ___ _ _  __ ___ ___
@@ -239,7 +239,7 @@ var sbx = new Sandbox(this, params);
   difs.foreach(function(i, e) {print(e)});
   print("\n");
 
-});
+})();
 
 //    _                          
 // __| |_  __ _ _ _  __ _ ___ ___

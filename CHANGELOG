@@ -1,7 +1,14 @@
-*** DeentJS 1.0.3 (PoC)
+*** DeentJS 1.0.5 (PoC)
+
+
+*** DeentJS 1.0.4 (PoC)
 
 - [New] Load function
 - [New] Eval function
+
+*** DeentJS 1.0.3 (PoC)
+
+- [Bugfix] Strict Mode Set-Handler Return
 
 *** DeentJS 1.0.2 (PoC)
 

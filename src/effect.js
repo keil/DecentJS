@@ -15,6 +15,21 @@
 
 var Effect = (function() {
 
+  // TODO
+  var id = 0;
+  var ids = new WeakMap();
+
+  // TODO, amke hasCode and toString
+
+  function registerObject(target) {
+
+  }
+
+  function getObjectID(target) {
+    if(!ids.has(target)) ids.set(target, id++);
+    return ids.get(target);
+  }
+
   // ___  __  __        _   
   //| __|/ _|/ _|___ __| |_ 
   //| _||  _|  _/ -_) _|  _|
@@ -25,7 +40,14 @@ var Effect = (function() {
 
     Object.defineProperties(this, {
       "date": {
-        value: Date.now() 
+        value: Date.now()
+//                  getObjectID(target)
+//      "Effect" getObjectID(target)// TODO
+//      this.constructor.name
+//      Date.now() 
+      }, // TODO
+      "targetId" : {
+        value: getObjectID(target)
       },
       "target": {
         value: target
@@ -35,6 +57,9 @@ var Effect = (function() {
   Effect.prototype = {};
   Effect.prototype.toString = function() {
     return "[[DecentJS/Effect]]";
+  }
+  Effect.prototype.hashCode = function() {
+    return this;
   }
 
   // ___             _   ___  __  __        _   
@@ -76,7 +101,7 @@ var Effect = (function() {
   }
   Call.prototype = Object.create(Effect.prototype);
   Call.prototype.toString = function() {
-    return "[[TreatJS/CallEffect]]";
+    return "[[DecentJS/CallEffect]]";
   }
 
   // ___             _   ___  __  __        _      
@@ -93,7 +118,10 @@ var Effect = (function() {
   }
   GetPrototypeOf.prototype = Object.create(Read.prototype);
   GetPrototypeOf.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"getPrototypeOf"; 
+    return "(#" + this.targetId+") "+"getPrototypeOf"; 
+  }
+  GetPrototypeOf.prototype.hashCode = function() {
+    return "#"+this.targetId+"/"+"getPrototypeOf"; 
   }
 
   /**
@@ -105,7 +133,10 @@ var Effect = (function() {
   }
   IsExtensible.prototype = Object.create(Read.prototype);
   IsExtensible.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"isExtensible";
+    return "(#" + this.targetId+") "+"isExtensible";
+  }
+  IsExtensible.prototype.hashCode = function() {
+    return "#"+this.targetId+"/"+"isExtensible";
   }
 
   /** 
@@ -123,7 +154,10 @@ var Effect = (function() {
   }
   GetOwnPropertyDescriptor.prototype = Object.create(Read.prototype);
   GetOwnPropertyDescriptor.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"getOwnPropertyDescriptor [name="+this.name+"]"; 
+    return "(#" + this.targetId+") "+"getOwnPropertyDescriptor [name="+this.name+"]"; 
+  }
+  GetOwnPropertyDescriptor.prototype.hashCode = function() {
+    return "#"+this.targetId+"/"+"getOwnPropertyDescriptor"+"/"+this.name; 
   }
 
   /** 
@@ -141,7 +175,10 @@ var Effect = (function() {
   }
   Has.prototype = Object.create(Read.prototype);
   Has.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"has [name="+this.name+"]"; 
+    return "(#" + this.targetId+") "+"has [name="+this.name+"]"; 
+  }
+  Has.prototype.hashCode = function() {
+    return "#"+this.targetId+"/"+"has"+"/"+this.name; 
   }
 
   /**
@@ -159,7 +196,10 @@ var Effect = (function() {
   }
   Get.prototype = Object.create(Read.prototype);
   Get.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"get [name="+this.name+"]"; 
+    return "(#" + this.targetId+") "+"get [name="+this.name+"]"; 
+  }
+  Get.prototype.hashCode = function() {
+    return "#"+this.targetId+"/"+"get"+"/"+this.name; 
   }
 
   /** 
@@ -171,7 +211,10 @@ var Effect = (function() {
   }
   Enumerate.prototype = Object.create(Read.prototype);
   Enumerate.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"enumerate"; 
+    return "(#" + this.targetId+") "+"enumerate"; 
+  }
+  Enumerate.prototype.hashCode = function() {
+    return "#"+this.targetId+"/"+"enumerate"; 
   }
 
   /**
@@ -183,7 +226,10 @@ var Effect = (function() {
   }
   OwnKeys.prototype = Object.create(Read.prototype);
   OwnKeys.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"ownKeys"; 
+    return "(#" + this.targetId+") "+"ownKeys"; 
+  }
+  OwnKeys.prototype.hashCode = function() {
+    return "#"+this.targetId+"/"+"ownKeys"; 
   }
 
 
@@ -202,7 +248,10 @@ var Effect = (function() {
   }
   Apply.prototype = Object.create(Call.prototype);
   Apply.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"apply"; 
+    return "(#" + this.targetId+") "+"apply"; 
+  }
+  Apply.prototype.hashCode = function() {
+    return "#"+this.targetId+"/"+"apply"; 
   }
 
   /** 
@@ -214,7 +263,10 @@ var Effect = (function() {
   }
   Construct.prototype = Object.create(Call.prototype);
   Construct.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"construct"; 
+    return "(#" + this.targetId+") "+"construct"; 
+  }
+  Construct.prototype.hashCode = function() {
+    return "#"+this.targetId+"/"+"construct"; 
   }
 
   //__      __   _ _         ___  __  __        _      
@@ -231,7 +283,10 @@ var Effect = (function() {
   }
   SetPrototypeOf.prototype = Object.create(Write.prototype);
   SetPrototypeOf.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"setPrototypeOf"; 
+    return "(#" + this.targetId+") "+"setPrototypeOf"; 
+  }
+  SetPrototypeOf.prototype.hashCode = function() {
+    return "#"+this.targetId+"/"+"setPrototypeOf"; 
   }
 
   /** 
@@ -243,7 +298,10 @@ var Effect = (function() {
   }
   PreventExtensions.prototype = Object.create(Write.prototype);
   PreventExtensions.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"preventExtensions";
+    return "(#" + this.targetId+") "+"preventExtensions";
+  }
+  PreventExtensions.prototype.hashCode = function() {
+    return "#"+this.targetId+"/"+"preventExtensions";
   }
 
   /** 
@@ -261,7 +319,10 @@ var Effect = (function() {
   }
   DefineProperty.prototype = Object.create(Write.prototype);
   DefineProperty.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"defineProperty [name="+this.name+"]";
+    return "(#" + this.targetId+") "+"defineProperty [name="+this.name+"]";
+  }
+  DefineProperty.prototype.hashCode = function() {
+    return "#"+this.targetId+"/"+"defineProperty"+"/"+this.name;
   }
 
   /** 
@@ -279,7 +340,10 @@ var Effect = (function() {
   }
   Set.prototype = Object.create(Write.prototype);
   Set.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"set [name="+this.name+"]";
+    return "(#" + this.targetId+") "+"set [name="+this.name+"]";
+  }
+  Set.prototype.hashCode = function() {
+    return "#"+this.targetId+"/"+"set"+"/"+this.name;
   }
 
   /**
@@ -297,7 +361,10 @@ var Effect = (function() {
   }
   DeleteProperty.prototype = Object.create(Write.prototype);
   DeleteProperty.prototype.toString = function() {
-    return "(" + this.date + ")"+" "+"deleteProperty [name="+this.name+"]";
+    return "(#" + this.targetId+") "+"deleteProperty [name="+this.name+"]";
+  }
+  DeleteProperty.prototype.hashCode = function() {
+    return "#"+this.targetId+"/"+"deleteProperty"+"/"+this.name;
   }
 
   //  ___           __ _ _    _   

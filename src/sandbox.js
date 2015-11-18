@@ -977,21 +977,31 @@ function Sandbox(global = {}, params = [], prestate = []) {
       throw new TypeError("No effect object.");
 
     if(effect instanceof Effect.Read) {
-      if(!readeffects.has(effect.target)) readeffects.set(effect.target, []);
-
-      readeffects.get(effect.target).push(effect);
+      // Move this to the initialization point // XXX
+      if(!readeffects.has(effect.target)) readeffects.set(effect.target, new Map());
+ 
+      //print(effect.toString());
+      //readeffects.get(effect.target)[effect.toString()] = effect;
+      // TODO
+      readeffects.get(effect.target).set(effect.hashCode(), effect);
+      //readeffects.get(effect.target).push(effect);
       readtargets.add(effect.target);
 
     } else if(effect instanceof Effect.Write) {
-      if(!writeeffects.has(effect.target)) writeeffects.set(effect.target, []);
+      if(!writeeffects.has(effect.target)) writeeffects.set(effect.target, new Map());
 
-      writeeffects.get(effect.target).push(effect);
+      //writeeffects.get(effect.target)[effect.toString()] = effect;
+      // TODO
+      writeeffects.get(effect.target).set(effect.hashCode(), effect);
+      //writeeffects.get(effect.target).push(effect);
       writetargets.add(effect.target);
 
     } else if(effect instanceof Effect.Call) {
-      if(!calleffects.has(effect.target)) calleffects.set(effect.target, []);
+      if(!calleffects.has(effect.target)) calleffects.set(effect.target, new Map());
 
-      calleffects.get(effect.target).push(effect);
+      //calleffects.get(effect.target)[effect.toString()] = effect;
+      // TODO
+      calleffects.get(effect.target).set(effect.hashCode(), effect);
       calltargets.add(effect.target);
     }
   }
@@ -1001,8 +1011,8 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @return JavaScript Array [Effect]
    */
   define("readeffectsOf", function(target) {
-    if(readeffects.has(target)) return readeffects.get(target);
-    else return [];
+    if(readeffects.has(target)) return new Set(readeffects.get(target).values());
+    else return new Set();
   }, this);
 
   /** Get Write Effects
@@ -1010,8 +1020,8 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @return JavaScript Array [Effect]
    */
   define("writeeffectsOf", function(target) {
-    if(writeeffects.has(target)) return writeeffects.get(target);
-    else return [];
+    if(writeeffects.has(target)) return new Set(writeeffects.get(target).values());
+    else return new Set();
   }, this);
 
   /** Get Call Effects
@@ -1019,8 +1029,8 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @return JavaScript Array [Effect]
    */
   define("calleffectsOf", function(target) {
-    if(calleffects.has(target)) return calleffects.get(target);
-    else return [];
+    if(calleffects.has(target)) return new Set(calleffects.get(target).values());
+    else return new Set();
   }, this);
 
   /** Get Effects
@@ -1028,9 +1038,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @return JavaScript Array [Effect]
    */
   define("effectsOf", function(target) {  
-    var effectsOfTarget = this.readeffectsOf(target).concat(this.writeeffectsOf(target)).concat(this.calleffectsOf(target));
-    effectsOfTarget.sort();
-    return effectsOfTarget;
+    var effectsOfTarget = [...this.readeffectsOf(target), ...this.writeeffectsOf(target), ...this.calleffectsOf(target)];
+    //var effectsOfTarget = this.readeffectsOf(target).concat(this.writeeffectsOf(target)).concat(this.calleffectsOf(target));
+    //effectsOfTarget.sort();
+    return new Set(effectsOfTarget);
   }, this);
 
   /** Get All Read Effects
@@ -1040,10 +1051,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
     var readEffects = [];
 
     for(var target of readtargets) {
-      readEffects = readEffects.concat(this.readeffectsOf(target));
+      readEffects = readEffects.concat([...this.readeffectsOf(target)]);
     }
-    readEffects.sort();
-    return readEffects;
+    //readEffects.sort();
+    return new Set(readEffects);
   }, this);
 
   /** Get All Write Effects
@@ -1053,10 +1064,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
     var writeEffects = [];
 
     for(var target of writetargets) {
-      writeEffects = writeEffects.concat(this.writeeffectsOf(target));
+      writeEffects = writeEffects.concat([...this.writeeffectsOf(target)]);
     }
-    writeEffects.sort();
-    return writeEffects;
+    //writeEffects.sort();
+    return new Set(writeEffects);
 
   }, this);
 
@@ -1067,19 +1078,20 @@ function Sandbox(global = {}, params = [], prestate = []) {
     var callEffects = [];
 
     for(var target of calltargets) {
-      callEffects = callEffects.concat(this.calleffectsOf(target));
+      callEffects = callEffects.concat([...this.calleffectsOf(target)]);
     }
-    callEffects.sort()
-    return callEffects;
+    //callEffects.sort()
+    return new Set(callEffects);
   }, this);
 
   /** Get All Effects
    * @return JavaScript Array [Effect]
    */
   getter("effects", function() {
-    var effects = this.readeffects.concat(this.writeeffects).concat(this.calleffects);
-    effects.sort();
-    return effects;
+    var effects = [...this.readeffects, ...this.writeeffects, ...this.calleffects];
+    //var effects = [this.readeffects.concat(this.writeeffects).concat(this.calleffects);
+    //effects.sort();
+    return new Set(effects);
   }, this);
 
   // _____  _  __  __                                  
@@ -1590,7 +1602,7 @@ Object.defineProperty(Sandbox.prototype, "toString", {
 // \_/\___|_| /__/_\___/_||_|
 
 Object.defineProperty(Sandbox, "version", {
-  value: "DecentJS 1.0.3 (PoC)"
+  value: "DecentJS 1.0.5 (PoC)"
 });
 
 Object.defineProperty(Sandbox.prototype, "version", {

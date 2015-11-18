@@ -1,3 +1,6 @@
+load("demo/storyline.js");
+quit();
+
 
 
 (function() {
