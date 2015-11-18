@@ -1,0 +1,28 @@
+
+
+
+*** Include benchmark/octane/pdfjs.js ***
+out of memory
+
+
+undefined
+[[--end-of-text--]]
+
+Process 22681 terminated (ok).
+Task completed after 18 min, 24 sec.
+Charging 1253s processor usage (44.72 Euro).
+
+Resource usage:
+Average processor load: 114%
+
+Processor idle time: 107986 sec
+Total execution time: 1103 sec
+Total processing time: 1253 sec
+Kernel mode time: 9 sec
+User mode time: 1244 sec
+
+Virtual memory size: 5820 MByte
+Resident set size: 5441 MByte
+Text/Data segment size: 5795 MByte
+Shared memory segment: 6 MByte
+

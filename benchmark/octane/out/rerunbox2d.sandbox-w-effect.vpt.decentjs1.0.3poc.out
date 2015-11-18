@@ -1,0 +1,54 @@
+
+
+
+*** Include benchmark/octane/box2d.js ***
+out of memory
+
+
+undefined
+[[--end-of-text--]]
+
+Process 19122 terminated (ok).
+Task completed after 14 min, 4 sec.
+Charging 869s processor usage (31.03 Euro).
+
+Resource usage:
+Average processor load: 103%
+
+Processor idle time: 82649 sec
+Total execution time: 844 sec
+Total processing time: 869 sec
+Kernel mode time: 8 sec
+User mode time: 861 sec
+
+Virtual memory size: 5889 MByte
+Resident set size: 5484 MByte
+Text/Data segment size: 5865 MByte
+Shared memory segment: 6 MByte
+
+
+
+
+*** Include benchmark/octane/pdfjs.js ***
+PdfJS: out of memory
+Statistic: 
+[[--end-of-text--]]
+
+Process 19789 terminated (ok).
+Task completed after 20 min, 3 sec.
+Charging 1301s processor usage (46.44 Euro).
+
+Resource usage:
+Average processor load: 108%
+
+Processor idle time: 117739 sec
+Total execution time: 1202 sec
+Total processing time: 1301 sec
+Kernel mode time: 9 sec
+User mode time: 1292 sec
+
+Virtual memory size: 5818 MByte
+Resident set size: 5432 MByte
+Text/Data segment size: 5793 MByte
+Shared memory segment: 6 MByte
+
