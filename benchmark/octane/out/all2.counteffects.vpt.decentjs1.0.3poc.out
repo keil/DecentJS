@@ -1,0 +1,82 @@
+
+
+
+*** Include benchmark/octane/mandreel.js ***
+Mandreel: 116
+MandreelLatency: 585
+----
+Score (version 9): 260
+Statistic: 
+#ffects undefined
+#readeffects undefined
+#writeeffects undefined
+#calleffects undefined
+
+
+
+*** Include benchmark/octane/gbemu-part1.js,benchmark/octane/gbemu-part2.js ***
+65538
+Gameboy: 4381
+----
+Score (version 9): 4381
+Statistic: 
+#ffects undefined
+#readeffects undefined
+#writeeffects undefined
+#calleffects undefined
+
+
+
+*** Include benchmark/octane/code-load.js ***
+CodeLoad: 6000
+----
+Score (version 9): 6000
+Statistic: 
+#ffects undefined
+#readeffects undefined
+#writeeffects undefined
+#calleffects undefined
+
+
+
+*** Include benchmark/octane/box2d.js ***
+Box2D: 51.5
+----
+Score (version 9): 51.5
+Statistic: 
+#ffects undefined
+#readeffects undefined
+#writeeffects undefined
+#calleffects undefined
+
+
+
+*** Include benchmark/octane/typescript-input.js,benchmark/octane/typescript-compiler.js,benchmark/octane/typescript.js ***
+Typescript: 862
+----
+Score (version 9): 862
+Statistic: 
+#ffects undefined
+#readeffects undefined
+#writeeffects undefined
+#calleffects undefined
+[[--end-of-text--]]
+
+Process 19261 terminated (ok).
+Task completed after 33 min, 59 sec.
+Charging 2104s processor usage (75.11 Euro).
+
+Resource usage:
+Average processor load: 103%
+
+Processor idle time: 199729 sec
+Total execution time: 2039 sec
+Total processing time: 2104 sec
+Kernel mode time: 10 sec
+User mode time: 2094 sec
+
+Virtual memory size: 664 MByte
+Resident set size: 534 MByte
+Text/Data segment size: 639 MByte
+Shared memory segment: 6 MByte
+

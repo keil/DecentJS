@@ -1,0 +1,140 @@
+[[--end-of-text--]]
+
+Process 15541 terminated (error 003).
+Task completed after 0 sec.
+Charging 0.020s processor usage (0.00 Euro).
+
+Resource usage:
+Average processor load: 24.4%
+
+Processor idle time: 8.1 sec
+Total execution time: 0.1 sec
+Total processing time: 0.0 sec
+Kernel mode time: 0.0 sec
+User mode time: 0.0 sec
+
+Virtual memory size: 120 MByte
+Resident set size: 5 MByte
+Text/Data segment size: 96 MByte
+Shared memory segment: 2 MByte
+
+
+
+
+*** Include benchmark/octane/richards.js ***
+Richards: 4135
+----
+Score (version 9): 4135
+Statistic: 
+#ffects 492075
+#readeffects 328064
+#writeeffects 2
+#calleffects 164009
+
+
+
+*** Include benchmark/octane/crypto.js ***
+Crypto: 1122
+----
+Score (version 9): 1122
+Statistic: 
+#ffects 4961174
+#readeffects 3678090
+#writeeffects 2
+#calleffects 1283082
+
+
+
+*** Include benchmark/octane/raytrace.js ***
+RayTrace: 109
+----
+Score (version 9): 109
+Statistic: 
+#ffects 51043284
+#readeffects 38282472
+#writeeffects 3
+#calleffects 12760809
+
+
+
+*** Include benchmark/octane/earley-boyer.js ***
+EarleyBoyer: 634
+----
+Score (version 9): 634
+Statistic: 
+#ffects 4740379
+#readeffects 4194955
+#writeeffects 8
+#calleffects 545416
+
+
+
+*** Include benchmark/octane/regexp.js ***
+RegExp: 1139
+----
+Score (version 9): 1139
+Statistic: 
+#ffects 296997
+#readeffects 247449
+#writeeffects 2
+#calleffects 49546
+
+
+
+*** Include benchmark/octane/splay.js ***
+Splay: 761
+SplayLatency: 1023
+----
+Score (version 9): 882
+Statistic: 
+#ffects 1635723
+#readeffects 1397705
+#writeeffects 2
+#calleffects 238016
+
+
+
+*** Include benchmark/octane/navier-stokes.js ***
+NavierStokes: 954
+----
+Score (version 9): 954
+Statistic: 
+#ffects 4091
+#readeffects 2982
+#writeeffects 2
+#calleffects 1107
+
+
+
+*** Include benchmark/octane/pdfjs.js ***
+PdfJS: out of memory
+Statistic: 
+out of memory
+
+
+undefined
+
+
+
+*** Include benchmark/octane/mandreel.js ***
+(Unable to print stack trace)
+[[--end-of-text--]]
+
+Process 15592 terminated (error 003).
+Task completed after 1 hour, 23 min, 5 sec.
+Charging 5511s processor usage (196.74 Euro).
+
+Resource usage:
+Average processor load: 111%
+
+Processor idle time: 487971 sec
+Total execution time: 4985 sec
+Total processing time: 5511 sec
+Kernel mode time: 87 sec
+User mode time: 5424 sec
+
+Virtual memory size: 12429 MByte
+Resident set size: 8632 MByte
+Text/Data segment size: 12404 MByte
+Shared memory segment: 6 MByte
+
