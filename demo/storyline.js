@@ -388,7 +388,14 @@ var sbx = new Sandbox(this, params);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
-})();
+  sbx.clean();
+
+  var effects = sbx.effects;
+  print(";;; Effects");
+  effects.forEach(function(i, e) {print(e)});
+  print("\n");
+
+});
 
 //              __ _ _       _   
 // __ ___ _ _  / _| (_)__ __| |_ 
@@ -405,12 +412,12 @@ var sbx2 = new Sandbox(this, params);
   }
 
   sbx2.call(appendRight, this, root);
-
+  print(sbx2.statistic);
 
   /**
    * Note: Matthias Keil
    * No Conflicts, because sbx reads before sbx2 writes
-   * to root.right.
+   * to root.right. 
    */
 
   print("InClonflictWith(root): " + (sbx.inConflictWith(sbx2, root)));
@@ -443,7 +450,7 @@ var sbx2 = new Sandbox(this, params);
 
   var cofts = sbx.conflicts(sbx2);
   print(";;; All Conflicts");
-  cofts.foreach(function(i, e) {print(e)});
+  cofts.forEach(function(i, e) {print(e)});
   print("\n");
 
   /**
@@ -453,14 +460,14 @@ var sbx2 = new Sandbox(this, params);
 
   sbx.call(setValue, this, root);
 
-  var cofts = sbx.conflicts(sbx2);
+  var cofts2 = sbx.conflicts(sbx2);
   print(";;; All Conflicts");
-  cofts.foreach(function(i, e) {print(e)});
+  cofts2.forEach(function(i, e) {print(e)});
   print("\n");
-
+  
   var coftso = sbx.conflictsOf(sbx2, root);
   print(";;; Conflicts of root");
-  coftso.foreach(function(i, e) {print(e)});
+  coftso.forEach(function(i, e) {print(e)});
   print("\n"); 
 
 });
@@ -515,6 +522,7 @@ var tsbx = new Sandbox(this, params2);
   print("deptOf: " + depthOf(root));
 
   tsbx.call(setValue, this, root);
+  print(tsbx.statistic);
 
   print(";;; outside sandbox");
   print("tree: " + root);
@@ -555,6 +563,7 @@ var tsbx = new Sandbox(this, params2);
   print("deptOf: " + sbx3.call(depthOf, this, root));
 
   sbx3.call(setValue, this, root);
+  print(sbx3.statistic);
 
   print(";;; outside sandbox");
   print("tree: " + root);
@@ -584,6 +593,11 @@ var tsbx = new Sandbox(this, params2);
 
   sbx3.rollback();
 
+  /** 
+   * Note: Matthias Keil
+   * Only root is in snapshot mode
+   */
+
   print(";;; outside sandbox");
   print("tree: " + root);
   print("sumOf: " + sumOf(root));
@@ -593,6 +607,8 @@ var tsbx = new Sandbox(this, params2);
   print("tree: " + sbx3.call(Node.prototype.toString, root));
   print("sumOf: " + sbx3.call(sumOf, this, root));
   print("deptOf: " + sbx3.call(depthOf, this, root));
+
+  // TODO, changes
 
 });
 
@@ -655,4 +671,4 @@ var sbx4 = new Sandbox(this, params);
   print("sumOf: " + sbx4.call(sumOf, this, root));
   print("deptOf: " + sbx4.call(depthOf, this, root));
 
-});
+})();

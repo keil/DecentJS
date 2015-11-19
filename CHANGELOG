@@ -3,6 +3,7 @@
 - [Change] Optimizing effect logging 
 - [New] Cleanup effects
 - [Change] Conflict calculation
+- [Bugfix] Conflict detection
 
 
 *** DeentJS 1.0.4 (PoC)

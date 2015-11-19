@@ -311,21 +311,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
     return clone;
   }
 
-  //                 _        _                              _        _   
-  // _ __ _ _ ___ __| |_ __ _| |_ ___   ____ _  __ _ _ __ __| |_  ___| |_ 
-  //| '_ \ '_/ -_|_-<  _/ _` |  _/ -_) (_-< ' \/ _` | '_ (_-< ' \/ _ \  _|
-  //| .__/_| \___/__/\__\__,_|\__\___| /__/_||_\__,_| .__/__/_||_\___/\__|
-  //|_|                                             |_|                   
-
-  // make this recursive
-  for(var object of prestate) {
-    var clone = Object.create(Object.getPrototypeOf(object));
-    for (var property of Object.getOwnPropertyNames(object)) {
-      Object.defineProperty(clone, property, Object.getOwnPropertyDescriptor(object, property));
-    }
-    proxies.set(object, wrap(clone));
-  }
-
   // __  __           _                      
   //|  \/  |___ _ __ | |__ _ _ __ _ _ _  ___ 
   //| |\/| / -_) '  \| '_ \ '_/ _` | ' \/ -_)
@@ -973,10 +958,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
     if(!calleffects.has(target)) calleffects.set(target, new Map());
   }
 
-  /** cleanup effect cache
+  /** cleap effect cache
    * @param target Object
    */
-  function cleanup(target) {
+  function clean(target) {
     // removes target obejcts
     readtargets.delete(target);
     writetargets.delete(target);
@@ -1009,10 +994,15 @@ function Sandbox(global = {}, params = [], prestate = []) {
       throw new TypeError("No effect object.");
 
     if(effect instanceof Effect.Read) {
+      // Read-Write Conflict detection requires 
+      // the LAST read effect 
       readeffects.get(effect.target).set(effect.hashCode(), effect);
       readtargets.add(effect.target);
     } else if(effect instanceof Effect.Write) {
-      writeeffects.get(effect.target).set(effect.hashCode(), effect);
+      // Read-Write Conflict detection requires 
+      // the FIRST write effect 
+      if(!writeeffects.get(effect.target).has(effect.hashCode()))  
+        writeeffects.get(effect.target).set(effect.hashCode(), effect);
       writetargets.add(effect.target);
     } else if(effect instanceof Effect.Call) {
       calleffects.get(effect.target).set(effect.hashCode(), effect);
@@ -1106,8 +1096,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
     return new Set(effects);
   }, this);
 
-  // TODO, clear effect list
-  // clear after rollback
   /** Get All Effects
    * @return JavaScript Array [Effect]
    */
@@ -1123,7 +1111,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
      * re-inizialization process.
      */
     for(var target of targets) {
-      this.clean(target)
+      this.cleanOf(target)
     }
   }, this);
 
@@ -1344,7 +1332,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
     if(!(write instanceof Effect.Write))
       throw new TypeError("No Write Effect.");
 
-    if((read.target!==write.target) || (read.name!==write.name))
+    if((read.target!==write.target) || (read.name!==write.name) || (read.date<write.date))
       return false;
     else 
       return true;
@@ -1413,7 +1401,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
     if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
 
     var targets = new Set([...readtargets, ...writetargets]);
-    //for(var target of readtargets.concat(writetargets)) {
     for(var target of targets) {
       for(var e of this.effectsOf(target)) {
         for(var f of sbx.effectsOf(target)) {
@@ -1441,7 +1428,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
       }
     }
     conflicts.sort();
-    return conflicts;
+    return new Set(conflicts);
   }, this);
 
   /** Conflicts
@@ -1453,7 +1440,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
     var conflicts = [];
     var targets = new Set([...readtargets, ...writetargets]);
-    //for(var target of readtargets.concat(writetargets)) {
     for(var target of targets) {
       for(var e of this.effectsOf(target)) {
         for(var f of sbx.effectsOf(target)) {
@@ -1463,7 +1449,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
       }
     }
     conflicts.sort();
-    return conflicts;
+    return new Set(conflicts);
   }, this);
 
   //  _____                          _ _   
@@ -1500,7 +1486,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
     for(var effect of effects) {
       commit(effect, shadows.get(target), target); 
     }
-    // cleanup effects of commited target
+    // clean effects of commited target
     reset(target);
   }, this);
 
@@ -1527,7 +1513,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
   define("rollbackOf", function(target) {
     if(proxies.has(target) && handlers.has(proxies.get(target))) handlers.get(proxies.get(target)).touchedPropertyNames.clear();
 
-    // cleanup effects of rolled back target
+    // clean effects of rolled back target
     reset(target);
   }, this);
 
@@ -1553,13 +1539,13 @@ function Sandbox(global = {}, params = [], prestate = []) {
   define("revertOf", function(target) {
     var proxy = proxies.get(target);
 
-    // cleanup proxies, handler, shadow objects
+    // clean proxies, handler, shadow objects
     proxies.delete(target);
     handlers.delete(proxy);
     shadows.delete(target);
 
-    // cleanup effects 
-    cleanup(target);
+    // clean effects 
+    clean(target);
   }, this);
 
   /** Revert
@@ -1568,10 +1554,33 @@ function Sandbox(global = {}, params = [], prestate = []) {
     for(var target of writetargets) {
       this.revertOf(target);
     }
-
-    // cleanup all effects 
-    cleanAll();
   }, this);
+
+  // _____                     _        _       
+  //|  __ \                   | |      | |      
+  //| |__) | __ ___ ______ ___| |_ __ _| |_ ___ 
+  //|  ___/ '__/ _ \______/ __| __/ _` | __/ _ \
+  //| |   | | |  __/      \__ \ || (_| | ||  __/
+  //|_|   |_|  \___|      |___/\__\__,_|\__\___|
+  //                                            
+  //                                            
+  //  _____                       _           _   
+  // / ____|                     | |         | |  
+  //| (___  _ __   __ _ _ __  ___| |__   ___ | |_ 
+  // \___ \| '_ \ / _` | '_ \/ __| '_ \ / _ \| __|
+  // ____) | | | | (_| | |_) \__ \ | | | (_) | |_ 
+  //|_____/|_| |_|\__,_| .__/|___/_| |_|\___/ \__|
+  //                   | |                        
+  //                   |_|                        
+
+  // make this recursive
+  for(var object of prestate) {
+    var clone = Object.create(Object.getPrototypeOf(object));
+    for (var property of Object.getOwnPropertyNames(object)) {
+      Object.defineProperty(clone, property, Object.getOwnPropertyDescriptor(object, property));
+    }
+    proxies.set(object, wrap(clone));
+  }
 
   //  _____ _        _   _     _   _      
   // / ____| |      | | (_)   | | (_)     
