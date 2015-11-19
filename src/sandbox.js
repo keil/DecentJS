@@ -898,6 +898,27 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
 
 
+  define("xeval", function(source) {
+    if(typeof source === "string") {
+      var env = wrap(global);
+      
+      try {
+        // or nested eval
+        var sbxed = eval("with(env) {  " + body + " }");
+        return sbxed;
+      } catch(error) {
+        throw new SyntaxError("Incompatible body." + "\n" + body + "\n" + error);
+      } 
+ 
+     // run(source);
+    }
+    else throw new TypeError("Invalid source string.");
+  }, this);
+
+
+
+
+
   // TODO
   define("request", function(url) {
     if(typeof filename !== "string") throw new TypeError("Invalid url.");
@@ -928,6 +949,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
     } else throw new TypeError("Function read is not supported.");
   }, this);
+
 
 
 
@@ -1587,7 +1609,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
   // stores prestate referencex
   var snapshots = new WeakMap();
 
-  // TODO, make this recursive
   for(var object of prestate) {
     var clone = Object.create(Object.getPrototypeOf(object));
     for (var property of Object.getOwnPropertyNames(object)) {
@@ -1595,9 +1616,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
     }
     proxies.set(object, wrap(clone));
     snapshots.set(object, clone);
-
-    // TODO
-    print("@@@@@@@@@@@@@", object, snapshots.has(object));
   }
 
   //  _____ _        _   _     _   _      

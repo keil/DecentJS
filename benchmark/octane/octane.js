@@ -124,10 +124,10 @@ function runBenchmark(inSandbox) {
       if(inSandbox) { 
         sbx.apply(fun);
         print(sbx.statistic);
-        print("#ffects", sbx.effects.size);
-        print("#readeffects", sbx.readeffects.size);
-        print("#writeeffects", sbx.writeeffects.size);
-        print("#calleffects", sbx.calleffects.size);
+        //print("#ffects", sbx.effects.size);
+        //print("#readeffects", sbx.readeffects.size);
+        //print("#writeeffects", sbx.writeeffects.size);
+        //print("#calleffects", sbx.calleffects.size);
         //print(";;; read effects")
         //for(var effect of sbx.readeffects)
         //  print(effect);
