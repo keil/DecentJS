@@ -462,29 +462,6 @@ var Effect = (function() {
       + this.effect.toString() + "@" + this.sbx.id;
   };
 
-  // _____                          _   _          
-  //|_   _| _ __ _ _ _  ___ __ _ __| |_(_)___ _ _  
-  //  | || '_/ _` | ' \(_-</ _` / _|  _| / _ \ ' \ 
-  //  |_||_| \__,_|_||_/__/\__,_\__|\__|_\___/_||_|
-
-  /**
-   * Note: Matthias Keil
-   * Transactions are still in draft mode.
-   */
-  function Transaction(effects) {
-    if(!(this instanceof Transaction)) return new Transaction(effects);
-
-    Object.defineProperties(this, {
-      "effects": {
-        value: effects
-      }  
-    });
-  }
-  Transaction.prototype = {};
-  Transaction.prototype.toString = function() {
-    return "[[DecentJS/Transaction]]";
-  };
-
   // ___  __  __        _      
   //| __|/ _|/ _|___ __| |_ ___
   //| _||  _|  _/ -_) _|  _(_-<
@@ -518,9 +495,6 @@ var Effect = (function() {
   Package.export("Conflict", Conflict, Effects);
   Package.export("Difference", Difference, Effects);
   Package.export("Change", Change, Effects);
-
-  // Transaction
-  Package.export("Transaction", Transaction, Effects);
 
   return Effects;
 

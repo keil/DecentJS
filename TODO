@@ -7,17 +7,12 @@ Tests
 Major Features
 ==============
 
-*** Reduce amount of effects
-
 *** Make load as external package
 
 *** Make an OPT version
 
 *** Unwrap 
 - unwrap values when commiting
-
-*** Changes
-- reimplement changes on snapshot elements 
 
 *** Pre-State snapshot
 - commit will not work in the current implementation
@@ -36,9 +31,3 @@ Minor Features
 - only pre-state snapshot, re-clones the target if changes exist
 - (different semantics to revert) reset only the snapshot values
 - (requires that the clone is a target --> revert/rebase do the same)
-
-*** Transaction Handling
-
-*** Clear Effects
-- clear effects/Tragets when revert
-- If a sandbox commits, read effects have to be removed or considered when calculating conflicts.
