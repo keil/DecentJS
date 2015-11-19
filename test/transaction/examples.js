@@ -81,7 +81,7 @@ function setValue (node) {
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
-});
+})();
 
 //                  _ _             
 // ___ __ _ _ _  __| | |__  _____ __
@@ -151,42 +151,42 @@ var sbx = new Sandbox(this, params);
 
   var rects = sbx.readeffectsOf(this);
   print(";;; Read Effects");
-  rects.foreach(function(i, e) {print(e)});
+  rects.forEach(function(i, e) {print(e)});
   print("\n");
 
   var wects = sbx.writeeffectsOf(this);
   print(";;; Write Effects");
-  wects.foreach(function(i, e) {print(e)});
+  wects.forEach(function(i, e) {print(e)});
   print("\n");
 
   var cects = sbx.calleffectsOf(this);
   print(";;; Call Effects");
-  cects.foreach(function(i, e) {print(e)});
+  cects.forEach(function(i, e) {print(e)});
   print("\n");
 
   var ects = sbx.effectsOf(this);
   print(";;; All Effects");
-  ects.foreach(function(i, e) {print(e)});
+  ects.forEach(function(i, e) {print(e)});
   print("\n");
 
   var rectso = sbx.readeffectsOf(root);
   print(";;; Read Effects of root");
-  rectso.foreach(function(i, e) {print(e)});
+  rectso.forEach(function(i, e) {print(e)});
   print("\n");
 
   var wectso = sbx.writeeffectsOf(root);
   print(";;; Write Effects of root");
-  wectso.foreach(function(i, e) {print(e)});
+  wectso.forEach(function(i, e) {print(e)});
   print("\n");
 
   var cectso = sbx.calleffectsOf(root);
   print(";;; Call Effects of root");
-  cectso.foreach(function(i, e) {print(e)});
+  cectso.forEach(function(i, e) {print(e)});
   print("\n");
 
   var ects = sbx.effectsOf(root);
   print(";;; All Effects of root");
-  ects.foreach(function(i, e) {print(e)});
+  ects.forEach(function(i, e) {print(e)});
   print("\n");
 
   // Note:
@@ -197,22 +197,22 @@ var sbx = new Sandbox(this, params);
 
   var ects = sbx.readeffects;
   print(";;; All Read Effects ");
-  ects.foreach(function(i, e) {print(e)});
+  ects.forEach(function(i, e) {print(e)});
   print("\n");
 
   var ects = sbx.writeeffects;
   print(";;; All Write Effects");
-  ects.foreach(function(i, e) {print(e)});
+  ects.forEach(function(i, e) {print(e)});
   print("\n");
 
   var ects = sbx.calleffects;
   print(";;; All Call Effects");
-  ects.foreach(function(i, e) {print(e)});
+  ects.forEach(function(i, e) {print(e)});
   print("\n");
 
   var ects = sbx.effects;
   print(";;; All Effects");
-  ects.foreach(function(i, e) {print(e)});
+  ects.forEach(function(i, e) {print(e)});
   print("\n");
 
 })();
@@ -229,14 +229,14 @@ var sbx = new Sandbox(this, params);
 
   var difso = sbx.differencesOf(root);
   print(";;; Differences of root");
-  difso.foreach(function(i, e) {print(e)});
+  difso.forEach(function(i, e) {print(e)});
   print("\n");
 
   print("HasDifference: " + (sbx.hasDifference));
 
   var difs = sbx.differences;
   print(";;; All Differences");
-  difs.foreach(function(i, e) {print(e)});
+  difs.forEach(function(i, e) {print(e)});
   print("\n");
 
 })();
@@ -250,8 +250,8 @@ var sbx = new Sandbox(this, params);
 
   var wects = sbx.writeeffects;
 
-  print(";;; Read Effects");
-  wects.foreach(function(i, e) {print(e)});
+  print(";;; Write Effects");
+  wects.forEach(function(i, e) {print(e)});
   print("\n");
 
   print(";;; outside sandbox");
@@ -259,13 +259,26 @@ var sbx = new Sandbox(this, params);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
-  //sbx.commitOf(root);
-  //sbx.commit();
+  sbx.commitOf(root);
 
+  var wects = sbx.writeeffects;
+
+  print(";;; Write Effects");
+  wects.forEach(function(i, e) {print(e)});
+  print("\n");
+
+  sbx.commit();
+  
   print(";;; outside sandbox");
   print("tree: " + root);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
+
+  var wects = sbx.writeeffects;
+
+  print(";;; Write Effects");
+  wects.forEach(function(i, e) {print(e)});
+  print("\n");
 
 })();
 
@@ -279,8 +292,8 @@ var sbx = new Sandbox(this, params);
   root.value = -1;
 
   var effects = sbx.writeeffects;
-  print(";;; Read Effects");
-  effects.foreach(function(i, e) {print(e)});
+  print(";;; Write Effects");
+  effects.forEach(function(i, e) {print(e)});
   print("\n");
 
   print(";;; outside sandbox");
@@ -294,6 +307,11 @@ var sbx = new Sandbox(this, params);
   print("deptOf: " + sbx.call(depthOf, this, root));
 
   sbx.rollbackOf(root);
+  
+  var effects = sbx.writeeffects;
+  print(";;; Write Effects");
+  effects.forEach(function(i, e) {print(e)});
+  print("\n");
 
   print(";;; inside sandbox");
   print("tree: " + sbx.call(Node.prototype.toString, root));
@@ -301,6 +319,11 @@ var sbx = new Sandbox(this, params);
   print("deptOf: " + sbx.call(depthOf, this, root));
 
   sbx.rollback();
+
+  var effects = sbx.writeeffects;
+  print(";;; Write Effects");
+  effects.forEach(function(i, e) {print(e)});
+  print("\n");
 
   print(";;; inside sandbox");
   print("tree: " + sbx.call(Node.prototype.toString, root));
@@ -321,6 +344,11 @@ var sbx = new Sandbox(this, params);
 
 (function() {
 
+  var effects = sbx.effects;
+  print(";;; Effects");
+  effects.forEach(function(i, e) {print(e)});
+  print("\n");
+
   print(";;; outside sandbox");
   print("tree: " + root);
   print("sumOf: " + sumOf(root));
@@ -333,12 +361,22 @@ var sbx = new Sandbox(this, params);
 
   sbx.revertOf(root);
 
+  var effects = sbx.effects;
+  print(";;; Effects");
+  effects.forEach(function(i, e) {print(e)});
+  print("\n");
+
   print(";;; inside sandbox");
   print("tree: " + sbx.call(Node.prototype.toString, root));
   print("sumOf: " + sbx.call(sumOf, this, root));
   print("deptOf: " + sbx.call(depthOf, this, root));
 
   sbx.revert();
+
+  var effects = sbx.effects;
+  print(";;; Effects");
+  effects.forEach(function(i, e) {print(e)});
+  print("\n");
 
   print(";;; inside sandbox");
   print("tree: " + sbx.call(Node.prototype.toString, root));
@@ -349,6 +387,13 @@ var sbx = new Sandbox(this, params);
   print("tree: " + root);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
+
+  sbx.clean();
+
+  var effects = sbx.effects;
+  print(";;; Effects");
+  effects.forEach(function(i, e) {print(e)});
+  print("\n");
 
 })();
 
@@ -367,12 +412,12 @@ var sbx2 = new Sandbox(this, params);
   }
 
   sbx2.call(appendRight, this, root);
-
+  print(sbx2.statistic);
 
   /**
    * Note: Matthias Keil
    * No Conflicts, because sbx reads before sbx2 writes
-   * to root.right.
+   * to root.right. 
    */
 
   print("InClonflictWith(root): " + (sbx.inConflictWith(sbx2, root)));
@@ -405,7 +450,7 @@ var sbx2 = new Sandbox(this, params);
 
   var cofts = sbx.conflicts(sbx2);
   print(";;; All Conflicts");
-  cofts.foreach(function(i, e) {print(e)});
+  cofts.forEach(function(i, e) {print(e)});
   print("\n");
 
   /**
@@ -415,14 +460,14 @@ var sbx2 = new Sandbox(this, params);
 
   sbx.call(setValue, this, root);
 
-  var cofts = sbx.conflicts(sbx2);
+  var cofts2 = sbx.conflicts(sbx2);
   print(";;; All Conflicts");
-  cofts.foreach(function(i, e) {print(e)});
+  cofts2.forEach(function(i, e) {print(e)});
   print("\n");
-
+  
   var coftso = sbx.conflictsOf(sbx2, root);
   print(";;; Conflicts of root");
-  coftso.foreach(function(i, e) {print(e)});
+  coftso.forEach(function(i, e) {print(e)});
   print("\n"); 
 
 })();
@@ -477,6 +522,7 @@ var tsbx = new Sandbox(this, params2);
   print("deptOf: " + depthOf(root));
 
   tsbx.call(setValue, this, root);
+  print(tsbx.statistic);
 
   print(";;; outside sandbox");
   print("tree: " + root);
@@ -504,7 +550,8 @@ var tsbx = new Sandbox(this, params2);
 //|_|                               
 
 (function() {
-  var sbx3 = new Sandbox(this, params, [root]);
+
+  var sbx3 = new Sandbox(this, params, [root, root.right]);
 
   print(";;; outside sandbox");
   print("tree: " + root);
@@ -517,6 +564,7 @@ var tsbx = new Sandbox(this, params2);
   print("deptOf: " + sbx3.call(depthOf, this, root));
 
   sbx3.call(setValue, this, root);
+  print(sbx3.statistic);
 
   print(";;; outside sandbox");
   print("tree: " + root);
@@ -528,11 +576,27 @@ var tsbx = new Sandbox(this, params2);
   print("sumOf: " + sbx3.call(sumOf, this, root));
   print("deptOf: " + sbx3.call(depthOf, this, root));
 
+  print("HasChangesOn(root): " + (sbx3.hasChangesOn(root)));
+
   root.value = -1;
   root.left.value = -1;
   root.right.value = -1;
   root.left.left.value = -1;
   root.left.right.value = -1;
+
+  print("HasChangesOn(root): " + (sbx3.hasChangesOn(root)));
+
+  var chges = sbx3.changesOf(root);
+  print(";;; Changes of root");
+  chges.forEach(function(i, e) {print(e)});
+  print("\n");
+
+  print("HasChanges: " + (sbx3.hasChanges));
+  
+  var chges = sbx3.changes;
+  print(";;; All Changes");
+  chges.forEach(function(i, e) {print(e)});
+  print("\n");
 
   print(";;; outside sandbox");
   print("tree: " + root);
@@ -545,6 +609,11 @@ var tsbx = new Sandbox(this, params2);
   print("deptOf: " + sbx3.call(depthOf, this, root));
 
   sbx3.rollback();
+
+  /** 
+   * Note: Matthias Keil
+   * Only root is in snapshot mode
+   */
 
   print(";;; outside sandbox");
   print("tree: " + root);

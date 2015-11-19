@@ -30,7 +30,10 @@ Minor Features
 
 *** Recursive Rollback
 
+*** Recursice Pre-state Snapshot
+
 *** Rebase
+- only pre-state snapshot, re-clones the target if changes exist
 - (different semantics to revert) reset only the snapshot values
 - (requires that the clone is a target --> revert/rebase do the same)
 

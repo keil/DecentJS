@@ -1200,7 +1200,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
       else continue;
     }
     differences.sort();
-    return differences;
+    return new Set(differences);
   }, this);
 
   /** Differences 
@@ -1209,10 +1209,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
   getter("differences", function() {
     var differences = [];
     for(var target of writetargets) {
-      differences = differences.concat(this.differencesOf(target));
+      differences = differences.concat([...this.differencesOf(target)]);
     }
     differences.sort();
-    return differences;
+    return new Set(differences);
   }, this);
 
   //  _____ _                                 
@@ -1224,93 +1224,104 @@ function Sandbox(global = {}, params = [], prestate = []) {
   //                           __/ |          
   //                          |___/           
 
-  // TODO, deprecated
-  // it may work when reimplementing the snapshot mode
-  /*function hasChanges(effect, shadow, origin) {
-
+  function hasChanges(effect, shadow, snapshot, origin) {
     if(effect instanceof Effect.GetPrototypeOf) {
-      return Object.getPrototypeOf(shadow) !== Object.getPrototypeOf(origin);
+      return Object.getPrototypeOf(snapshot) !== Object.getPrototypeOf(origin);
 
     } else if(effect instanceof Effect.IsExtensible) {
-      return Object.isExtensible(shadow) !== Object.isExtensible(origin)
+      return Object.isExtensible(snapshot) !== Object.isExtensible(origin)
 
     } else if(effect instanceof Effect.GetOwnPropertyDescriptor) {
-      return comparePropertyDescriptor(Object.getOwnPropertyDescriptor(shadow, effect.name), Object.getOwnPropertyDescriptor(origin, effect.name));
+      return !comparePropertyDescriptor(
+          Object.getOwnPropertyDescriptor(snapshot, effect.name),
+          Object.getOwnPropertyDescriptor(origin, effect.name));
 
     } else if(effect instanceof Effect.Has) {
-      return (effect.name in shadow) === (effect.name in origin);
+      return (effect.name in snapshot) === (effect.name in origin);
 
     } else if(effect instanceof Effect.Get) {
+      return !comparePropertyDescriptor(
+          Object.getOwnPropertyDescriptor(snapshot, effect.name),
+          Object.getOwnPropertyDescriptor(origin, effect.name));
 
     } else if(effect instanceof Effect.Enumerate) {
+      for(var property in origin) {
+        if(!(proeprty in snapshot)) return true;
+      }
+      return false;
 
     } else if(effect instanceof Effect.OwnKeys) {
+      for(var property of Object.getOwnPropertyNames(origin)) {
+        if(!snapshot.hasOwnProperty(property)) return true;
+      } 
+      return false;
 
+    } else {
+      throw new TypeError("Invalid Effect");
     }
-
-  }*/
+  }
 
   /** Has Changes With
    * @param target JavaScript Object
    * return true|false
    */
-  /*define("hasChangesOn", function(target) {
-    var es = this.writeeffectsOf(target);
+  define("hasChangesOn", function(origin) {
+    if(!snapshots.has(origin)) throw new TypeError("No pre-state snapshot target");
+    else {var target = snapshots.get(origin);
+      var readeffects = this.readeffectsOf(target);
 
-    var changes = false;
-    for(var e in es) {
-  // TODO, unroll needed
-  var result =  es[e].stat;
-  log("check " + es[e] + " = " + result);
-  changes = (result) ? true : changes;
-  }
-  return changes;
-  }, this);*/
+      for(var effect of readeffects) {
+        if(hasChanges(effect, shadows.get(target), origin, target)) return true
+        else continue;
+      }
+      return false;
+    }
+  }, this);
 
   /** Has Changes
    * return true|false
    */
-  /*getter("hasChanges", function() {
-    var changes = false;
-    for(var i in writetargets) {
-    changes = (this.hasChangesOn(writetargets[i])) ? true : changes;
+  getter("hasChanges", function() {
+    for(var target of prestate) {
+      if(this.hasChangesOn(target)) return true
+      else continue;
     }
-    return changes;
-
-    }, this);*/ // TODO
+    return false;
+  }, this);
 
   /** Changes Of
    * @param target JavaScript Object
    * return [Differences]
    */
-  /*define("changesOf", function(target) {
-    var sbxA = this;
-    var es = this.effectsOf(target);
+  define("changesOf", function(origin) {
+    if(!snapshots.has(origin)) throw new TypeError("No pre-state snapshot target");
+    else {
+      var target = snapshots.get(origin);
+      var readeffects = this.readeffectsOf(target);
 
-    var changes = [];
-    for(var e in es) {
-    var result =  es[e].stat;
-    log("check " + es[e] + " = " + result);
-    if(result) changes.push(new Effect.Change(sbxA, es[e]));
+      var changes = [];
+      for(var effect of readeffects) {
+        if(hasChanges(effect, shadows.get(target), origin, target)) {
+          changes.push(new Effect.Change(this, effect));
+        }
+        else continue;
+      }
+      changes.sort();
+      return new Set(changes);
     }
-    return changes;
-    }, this);*/ // TODO
+  }, this);
 
   /** Changes 
    * return [Changes]
    */
-  /*getter("changes", function() {
-    var sbxA = this;
-    var es = writeeffects;
-
+  getter("changes", function() {
     var changes = [];
-    for(var e in es) {
-    var result =  es[e].stat;
-    log("check " + es[e] + " = " + result);
-    if(result) changes.push(new Effect.Change(sbxA, es[e]));
+    for(var target of prestate) {
+      changes = changes.concat([...this.changesOf(target)]);
     }
-    return changes;
-    }, this);*/ // TODO
+    changes.sort();
+    return new Set(changes);
+  }, this);
 
   //  _____             __ _ _      _       
   // / ____|           / _| (_)    | |      
@@ -1573,13 +1584,20 @@ function Sandbox(global = {}, params = [], prestate = []) {
   //                   | |                        
   //                   |_|                        
 
-  // make this recursive
+  // stores prestate referencex
+  var snapshots = new WeakMap();
+
+  // TODO, make this recursive
   for(var object of prestate) {
     var clone = Object.create(Object.getPrototypeOf(object));
     for (var property of Object.getOwnPropertyNames(object)) {
       Object.defineProperty(clone, property, Object.getOwnPropertyDescriptor(object, property));
     }
     proxies.set(object, wrap(clone));
+    snapshots.set(object, clone);
+
+    // TODO
+    print("@@@@@@@@@@@@@", object, snapshots.has(object));
   }
 
   //  _____ _        _   _     _   _      

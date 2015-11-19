@@ -229,14 +229,14 @@ var sbx = new Sandbox(this, params);
 
   var difso = sbx.differencesOf(root);
   print(";;; Differences of root");
-  difso.foreach(function(i, e) {print(e)});
+  difso.forEach(function(i, e) {print(e)});
   print("\n");
 
   print("HasDifference: " + (sbx.hasDifference));
 
   var difs = sbx.differences;
   print(";;; All Differences");
-  difs.foreach(function(i, e) {print(e)});
+  difs.forEach(function(i, e) {print(e)});
   print("\n");
 
 });
@@ -550,7 +550,8 @@ var tsbx = new Sandbox(this, params2);
 //|_|                               
 
 (function() {
-  var sbx3 = new Sandbox(this, params, [root]);
+
+  var sbx3 = new Sandbox(this, params, [root, root.right]);
 
   print(";;; outside sandbox");
   print("tree: " + root);
@@ -575,11 +576,27 @@ var tsbx = new Sandbox(this, params2);
   print("sumOf: " + sbx3.call(sumOf, this, root));
   print("deptOf: " + sbx3.call(depthOf, this, root));
 
+  print("HasChangesOn(root): " + (sbx3.hasChangesOn(root)));
+
   root.value = -1;
   root.left.value = -1;
   root.right.value = -1;
   root.left.left.value = -1;
   root.left.right.value = -1;
+
+  print("HasChangesOn(root): " + (sbx3.hasChangesOn(root)));
+
+  var chges = sbx3.changesOf(root);
+  print(";;; Changes of root");
+  chges.forEach(function(i, e) {print(e)});
+  print("\n");
+
+  print("HasChanges: " + (sbx3.hasChanges));
+  
+  var chges = sbx3.changes;
+  print(";;; All Changes");
+  chges.forEach(function(i, e) {print(e)});
+  print("\n");
 
   print(";;; outside sandbox");
   print("tree: " + root);
@@ -608,9 +625,7 @@ var tsbx = new Sandbox(this, params2);
   print("sumOf: " + sbx3.call(sumOf, this, root));
   print("deptOf: " + sbx3.call(depthOf, this, root));
 
-  // TODO, changes
-
-});
+})();
 
 // _ _ _____ _____ _ _ ___ ___ 
 //| '_/ -_) V / -_) '_(_-</ -_)

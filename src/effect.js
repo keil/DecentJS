@@ -15,15 +15,14 @@
 
 var Effect = (function() {
 
-  // TODO
+  //     _     _        _   ___ ___  
+  // ___| |__ (_)___ __| |_|_ _|   \ 
+  /// _ \ '_ \| / -_) _|  _|| || |) |
+  //\___/_.__// \___\__|\__|___|___/ 
+  //        |__/                     
+  //
   var id = 0;
   var ids = new WeakMap();
-
-  // TODO, amke hasCode and toString
-
-  function registerObject(target) {
-
-  }
 
   function getObjectID(target) {
     if(!ids.has(target)) ids.set(target, id++);
@@ -41,11 +40,7 @@ var Effect = (function() {
     Object.defineProperties(this, {
       "date": {
         value: Date.now()
-//                  getObjectID(target)
-//      "Effect" getObjectID(target)// TODO
-//      this.constructor.name
-//      Date.now() 
-      }, // TODO
+      },
       "targetId" : {
         value: getObjectID(target)
       },
@@ -443,10 +438,6 @@ var Effect = (function() {
   // \___|_||_\__,_|_||_\__, \___/__/
   //                    |___/        
 
-  /**
-   * Note: Matthias Keil
-   * Changes are deprecated since DecentJS 1.0.0 PoC
-   */
   function Change(sbx, effect) {
     if(!(this instanceof Change)) return new Change(sbx, effect);
 
