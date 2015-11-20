@@ -739,7 +739,25 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param bosy The source body.
    * @param env The current Global Object
    */
+
+/*
+  function closure(source) {
+    return eval(source);
+  }
+
   function sbxeval(source, env) {
+    try {
+     return eval("with(env) { closure.call(env, source); }");    
+      //scoper.call(env, source, env);
+     //(function(env) {
+     //  return eval("with(env) { scoper.call(env, source) }");
+     //}).call(env, env);
+    } catch(error) {
+      throw new SyntaxError("Incompatible source." + "\n" + source + "\n" + error);
+    }
+  }*/
+
+  function xsbxeval(source, env) {
     try {
       (function(env) {
         return eval("with(env) {  " + source + " }");
@@ -755,12 +773,12 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param env The current Global Object
    * Note: Deprecated
    */
-  function ceval(body, env) {
+  function sbxeval(body, env) {
     try {
       var sbxed = eval("with(env) { (function(){'use strict'; " + body + " })()}");
       return sbxed;
     } catch(error) {
-      throw new SyntaxError("Incompatible body." + "\n" + body + "\n" + error);
+      throw new SyntaxError("Incompatible body." + "\n" + body + "\n" + error + "\n" + error.stack);
     } 
   }
 
@@ -828,7 +846,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param body JavaScript source code
    */
   function run(body) {
-    __verbose__ && logc("run", fun);
+    __verbose__ && logc("run", body);
     // evaluates body
     sbxeval(body, wrap(global));
   }
@@ -898,7 +916,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
           } else throw new TypeError("Invalid source file.");
         } else throw new TypeError("Invalid filename.");
       }
-      run(body);
     } else throw new TypeError("Function read is not supported.");
   }, this);
 
