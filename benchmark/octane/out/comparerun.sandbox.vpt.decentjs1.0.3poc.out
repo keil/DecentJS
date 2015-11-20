@@ -1,0 +1,147 @@
+[[--end-of-text--]]
+
+Process 51461 terminated (ok).
+Task completed after 0 sec.
+Charging 0.040s processor usage (0.00 Euro).
+
+Resource usage:
+Average processor load: 24.5%
+
+Processor idle time: 16.1 sec
+Total execution time: 0.2 sec
+Total processing time: 0.0 sec
+Kernel mode time: 0.0 sec
+User mode time: 0.0 sec
+
+Virtual memory size: 122 MByte
+Resident set size: 7 MByte
+Text/Data segment size: 98 MByte
+Shared memory segment: 3 MByte
+
+
+
+
+*** Include benchmark/octane/richards.js ***
+Richards: 4825
+----
+Score (version 9): 4825
+Statistic: 
+
+
+
+*** Include benchmark/octane/crypto.js ***
+Crypto: 2330
+----
+Score (version 9): 2330
+Statistic: 
+
+
+
+*** Include benchmark/octane/raytrace.js ***
+RayTrace: 1306
+----
+Score (version 9): 1306
+Statistic: 
+
+
+
+*** Include benchmark/octane/earley-boyer.js ***
+EarleyBoyer: 987
+----
+Score (version 9): 987
+Statistic: 
+
+
+
+*** Include benchmark/octane/regexp.js ***
+RegExp: 1139
+----
+Score (version 9): 1139
+Statistic: 
+
+
+
+*** Include benchmark/octane/splay.js ***
+Splay: 1268
+SplayLatency: 3391
+----
+Score (version 9): 2073
+Statistic: 
+
+
+
+*** Include benchmark/octane/navier-stokes.js ***
+NavierStokes: 989
+----
+Score (version 9): 989
+Statistic: 
+
+
+
+*** Include benchmark/octane/pdfjs.js ***
+PdfJS: 392
+----
+Score (version 9): 392
+Statistic: 
+
+
+
+*** Include benchmark/octane/mandreel.js ***
+Mandreel: 346
+MandreelLatency: 2369
+----
+Score (version 9): 905
+Statistic: 
+
+
+
+*** Include benchmark/octane/gbemu-part1.js,benchmark/octane/gbemu-part2.js ***
+65538
+Gameboy: 6572
+----
+Score (version 9): 6572
+Statistic: 
+
+
+
+*** Include benchmark/octane/code-load.js ***
+CodeLoad: 6000
+----
+Score (version 9): 6000
+Statistic: 
+
+
+
+*** Include benchmark/octane/box2d.js ***
+Box2D: 423
+----
+Score (version 9): 423
+Statistic: 
+
+
+
+*** Include benchmark/octane/typescript-input.js,benchmark/octane/typescript-compiler.js,benchmark/octane/typescript.js ***
+Typescript: 4250
+----
+Score (version 9): 4250
+Statistic: 
+[[--end-of-text--]]
+
+Process 51519 terminated (ok).
+Task completed after 15 min, 22 sec.
+Charging 964s processor usage (34.43 Euro).
+
+Resource usage:
+Average processor load: 105%
+
+Processor idle time: 90298 sec
+Total execution time: 922 sec
+Total processing time: 964 sec
+Kernel mode time: 5 sec
+User mode time: 960 sec
+
+Virtual memory size: 635 MByte
+Resident set size: 506 MByte
+Text/Data segment size: 611 MByte
+Shared memory segment: 6 MByte
+

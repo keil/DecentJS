@@ -1,0 +1,205 @@
+
+
+
+*** Include benchmark/octane/richards.js ***
+Richards: 4135
+----
+Score (version 9): 4135
+Statistic: 
+TypeError: sbx.effects.size is not a function
+
+
+runBenchmark@benchmark/octane/octane.js:127:26
+@benchmark/octane/octane.js:147:1
+
+
+
+
+*** Include benchmark/octane/crypto.js ***
+Crypto: 1221
+----
+Score (version 9): 1221
+Statistic: 
+TypeError: sbx.effects.size is not a function
+
+
+runBenchmark@benchmark/octane/octane.js:127:26
+@benchmark/octane/octane.js:147:1
+
+
+
+
+*** Include benchmark/octane/raytrace.js ***
+RayTrace: 204
+----
+Score (version 9): 204
+Statistic: 
+TypeError: sbx.effects.size is not a function
+
+
+runBenchmark@benchmark/octane/octane.js:127:26
+@benchmark/octane/octane.js:147:1
+
+
+
+
+*** Include benchmark/octane/earley-boyer.js ***
+EarleyBoyer: 820
+----
+Score (version 9): 820
+Statistic: 
+TypeError: sbx.effects.size is not a function
+
+
+runBenchmark@benchmark/octane/octane.js:127:26
+@benchmark/octane/octane.js:147:1
+
+
+
+
+*** Include benchmark/octane/regexp.js ***
+RegExp: 1139
+----
+Score (version 9): 1139
+Statistic: 
+TypeError: sbx.effects.size is not a function
+
+
+runBenchmark@benchmark/octane/octane.js:127:26
+@benchmark/octane/octane.js:147:1
+
+
+
+
+*** Include benchmark/octane/splay.js ***
+Splay: 761
+SplayLatency: 1645
+----
+Score (version 9): 1119
+Statistic: 
+TypeError: sbx.effects.size is not a function
+
+
+runBenchmark@benchmark/octane/octane.js:127:26
+@benchmark/octane/octane.js:147:1
+
+
+
+
+*** Include benchmark/octane/navier-stokes.js ***
+NavierStokes: 954
+----
+Score (version 9): 954
+Statistic: 
+TypeError: sbx.effects.size is not a function
+
+
+runBenchmark@benchmark/octane/octane.js:127:26
+@benchmark/octane/octane.js:147:1
+
+
+
+
+*** Include benchmark/octane/pdfjs.js ***
+PdfJS: 69.6
+----
+Score (version 9): 69.6
+Statistic: 
+TypeError: sbx.effects.size is not a function
+
+
+runBenchmark@benchmark/octane/octane.js:127:26
+@benchmark/octane/octane.js:147:1
+
+
+
+
+*** Include benchmark/octane/mandreel.js ***
+Mandreel: 117
+MandreelLatency: 597
+----
+Score (version 9): 265
+Statistic: 
+TypeError: sbx.effects.size is not a function
+
+
+runBenchmark@benchmark/octane/octane.js:127:26
+@benchmark/octane/octane.js:147:1
+
+
+
+
+*** Include benchmark/octane/gbemu-part1.js,benchmark/octane/gbemu-part2.js ***
+65538
+Gameboy: 4381
+----
+Score (version 9): 4381
+Statistic: 
+TypeError: sbx.effects.size is not a function
+
+
+runBenchmark@benchmark/octane/octane.js:127:26
+@benchmark/octane/octane.js:147:1
+
+
+
+
+*** Include benchmark/octane/code-load.js ***
+CodeLoad: 5196
+----
+Score (version 9): 5196
+Statistic: 
+TypeError: sbx.effects.size is not a function
+
+
+runBenchmark@benchmark/octane/octane.js:127:26
+@benchmark/octane/octane.js:147:1
+
+
+
+
+*** Include benchmark/octane/box2d.js ***
+Box2D: 54.7
+----
+Score (version 9): 54.7
+Statistic: 
+TypeError: sbx.effects.size is not a function
+
+
+runBenchmark@benchmark/octane/octane.js:127:26
+@benchmark/octane/octane.js:147:1
+
+
+
+
+*** Include benchmark/octane/typescript-input.js,benchmark/octane/typescript-compiler.js,benchmark/octane/typescript.js ***
+Typescript: 904
+----
+Score (version 9): 904
+Statistic: 
+TypeError: sbx.effects.size is not a function
+
+
+runBenchmark@benchmark/octane/octane.js:127:26
+@benchmark/octane/octane.js:147:1
+
+[[--end-of-text--]]
+
+Process 55704 terminated (ok).
+Task completed after 58 min, 38 sec.
+Charging 3605s processor usage (128.71 Euro).
+
+Resource usage:
+Average processor load: 102%
+
+Processor idle time: 344665 sec
+Total execution time: 3518 sec
+Total processing time: 3605 sec
+Kernel mode time: 9 sec
+User mode time: 3596 sec
+
+Virtual memory size: 787 MByte
+Resident set size: 644 MByte
+Text/Data segment size: 763 MByte
+Shared memory segment: 6 MByte
+

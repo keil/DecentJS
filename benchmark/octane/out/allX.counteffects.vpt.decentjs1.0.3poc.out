@@ -1,0 +1,179 @@
+
+
+
+*** Include benchmark/octane/richards.js ***
+Richards: 4135
+----
+Score (version 9): 4135
+Statistic: 
+#ffects undefined
+#readeffects undefined
+#writeeffects undefined
+#calleffects undefined
+
+
+
+*** Include benchmark/octane/crypto.js ***
+Crypto: 1247
+----
+Score (version 9): 1247
+Statistic: 
+#ffects undefined
+#readeffects undefined
+#writeeffects undefined
+#calleffects undefined
+
+
+
+*** Include benchmark/octane/raytrace.js ***
+RayTrace: 206
+----
+Score (version 9): 206
+Statistic: 
+#ffects undefined
+#readeffects undefined
+#writeeffects undefined
+#calleffects undefined
+
+
+
+*** Include benchmark/octane/earley-boyer.js ***
+EarleyBoyer: 793
+----
+Score (version 9): 793
+Statistic: 
+#ffects undefined
+#readeffects undefined
+#writeeffects undefined
+#calleffects undefined
+
+
+
+*** Include benchmark/octane/regexp.js ***
+RegExp: 1139
+----
+Score (version 9): 1139
+Statistic: 
+#ffects undefined
+#readeffects undefined
+#writeeffects undefined
+#calleffects undefined
+
+
+
+*** Include benchmark/octane/splay.js ***
+Splay: 761
+SplayLatency: 1877
+----
+Score (version 9): 1195
+Statistic: 
+#ffects undefined
+#readeffects undefined
+#writeeffects undefined
+#calleffects undefined
+
+
+
+*** Include benchmark/octane/navier-stokes.js ***
+NavierStokes: 1027
+----
+Score (version 9): 1027
+Statistic: 
+#ffects undefined
+#readeffects undefined
+#writeeffects undefined
+#calleffects undefined
+
+
+
+*** Include benchmark/octane/pdfjs.js ***
+PdfJS: 70.6
+----
+Score (version 9): 70.6
+Statistic: 
+#ffects undefined
+#readeffects undefined
+#writeeffects undefined
+#calleffects undefined
+
+
+
+*** Include benchmark/octane/mandreel.js ***
+Mandreel: 119
+MandreelLatency: 598
+----
+Score (version 9): 266
+Statistic: 
+#ffects undefined
+#readeffects undefined
+#writeeffects undefined
+#calleffects undefined
+
+
+
+*** Include benchmark/octane/gbemu-part1.js,benchmark/octane/gbemu-part2.js ***
+65538
+Gameboy: 4780
+----
+Score (version 9): 4780
+Statistic: 
+#ffects undefined
+#readeffects undefined
+#writeeffects undefined
+#calleffects undefined
+
+
+
+*** Include benchmark/octane/code-load.js ***
+CodeLoad: 5196
+----
+Score (version 9): 5196
+Statistic: 
+#ffects undefined
+#readeffects undefined
+#writeeffects undefined
+#calleffects undefined
+
+
+
+*** Include benchmark/octane/box2d.js ***
+Box2D: 54.2
+----
+Score (version 9): 54.2
+Statistic: 
+#ffects undefined
+#readeffects undefined
+#writeeffects undefined
+#calleffects undefined
+
+
+
+*** Include benchmark/octane/typescript-input.js,benchmark/octane/typescript-compiler.js,benchmark/octane/typescript.js ***
+Typescript: 917
+----
+Score (version 9): 917
+Statistic: 
+#ffects undefined
+#readeffects undefined
+#writeeffects undefined
+#calleffects undefined
+[[--end-of-text--]]
+
+Process 22678 terminated (ok).
+Task completed after 58 min, 27 sec.
+Charging 3595s processor usage (128.35 Euro).
+
+Resource usage:
+Average processor load: 103%
+
+Processor idle time: 343557 sec
+Total execution time: 3507 sec
+Total processing time: 3595 sec
+Kernel mode time: 10 sec
+User mode time: 3586 sec
+
+Virtual memory size: 784 MByte
+Resident set size: 643 MByte
+Text/Data segment size: 760 MByte
+Shared memory segment: 6 MByte
+

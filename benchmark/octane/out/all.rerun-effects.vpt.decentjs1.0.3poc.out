@@ -1,0 +1,127 @@
+
+
+
+*** Include benchmark/octane/richards.js ***
+Richards: 4135
+----
+Score (version 9): 4135
+Statistic: 
+
+
+
+*** Include benchmark/octane/crypto.js ***
+Crypto: 1247
+----
+Score (version 9): 1247
+Statistic: 
+
+
+
+*** Include benchmark/octane/raytrace.js ***
+RayTrace: 207
+----
+Score (version 9): 207
+Statistic: 
+
+
+
+*** Include benchmark/octane/earley-boyer.js ***
+EarleyBoyer: 806
+----
+Score (version 9): 806
+Statistic: 
+
+
+
+*** Include benchmark/octane/regexp.js ***
+RegExp: 1139
+----
+Score (version 9): 1139
+Statistic: 
+
+
+
+*** Include benchmark/octane/splay.js ***
+Splay: 761
+SplayLatency: 1897
+----
+Score (version 9): 1201
+Statistic: 
+
+
+
+*** Include benchmark/octane/navier-stokes.js ***
+NavierStokes: 921
+----
+Score (version 9): 921
+Statistic: 
+
+
+
+*** Include benchmark/octane/pdfjs.js ***
+PdfJS: 69.6
+----
+Score (version 9): 69.6
+Statistic: 
+
+
+
+*** Include benchmark/octane/mandreel.js ***
+Mandreel: 120
+MandreelLatency: 606
+----
+Score (version 9): 269
+Statistic: 
+
+
+
+*** Include benchmark/octane/gbemu-part1.js,benchmark/octane/gbemu-part2.js ***
+65538
+Gameboy: 4780
+----
+Score (version 9): 4780
+Statistic: 
+
+
+
+*** Include benchmark/octane/code-load.js ***
+CodeLoad: 7348
+----
+Score (version 9): 7348
+Statistic: 
+
+
+
+*** Include benchmark/octane/box2d.js ***
+Box2D: 55.9
+----
+Score (version 9): 55.9
+Statistic: 
+
+
+
+*** Include benchmark/octane/typescript-input.js,benchmark/octane/typescript-compiler.js,benchmark/octane/typescript.js ***
+Typescript: 911
+----
+Score (version 9): 911
+Statistic: 
+[[--end-of-text--]]
+
+Process 13308 terminated (ok).
+Task completed after 57 min, 54 sec.
+Charging 3560s processor usage (127.10 Euro).
+
+Resource usage:
+Average processor load: 102%
+
+Processor idle time: 340387 sec
+Total execution time: 3474 sec
+Total processing time: 3560 sec
+Kernel mode time: 10 sec
+User mode time: 3551 sec
+
+Virtual memory size: 724 MByte
+Resident set size: 609 MByte
+Text/Data segment size: 700 MByte
+Shared memory segment: 6 MByte
+
