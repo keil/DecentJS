@@ -1,0 +1,20 @@
+Modes
+=====
+
+All normal runs with:
+- Decompile enabled
+- Statistic disabled
+
+
+
+*** sandbox 
+- Sandbox without effect logging
+
+*** effect 
+- Sandbox with effect logging
+
+*** system 
+- Transparent without effect logging
+
+*** transparent 
+- Transparent with effect logging
