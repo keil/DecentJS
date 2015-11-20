@@ -739,6 +739,17 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param bosy The source body.
    * @param env The current Global Object
    */
+/*
+  var __sbxeval__ = (function(env) {
+
+    return  eval("with(env) { (function(){'use strict'; return function(source) { return eval(source); }; })()}");
+
+
+
+  })(wrap(global));
+
+  print(__sbxeval__);
+*/
 
 /*
   function closure(source) {
@@ -848,8 +859,12 @@ function Sandbox(global = {}, params = [], prestate = []) {
   function run(body) {
     __verbose__ && logc("run", body);
     // evaluates body
-    sbxeval(body, wrap(global));
+    //sbxeval(body, wrap(global));// TODO
+    return __sbxeval__(body);
   }
+
+  // TODO
+
 
   //   _             _      
   //  /_\  _ __ _ __| |_  _ 
@@ -951,7 +966,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
     else throw new TypeError("Invalid source string.");
   }, this);
 
-  //                            _   
+  //                          _   
   // _ _ ___ __ _ _  _ ___ __| |_ 
   //| '_/ -_) _` | || / -_|_-<  _|
   //|_| \___\__, |\_,_\___/__/\__|
@@ -1650,6 +1665,15 @@ function Sandbox(global = {}, params = [], prestate = []) {
     snapshots.set(object, clone);
   }
 
+  /// XXX
+  var __sbxeval__ = (function(env) {
+    return eval("with(env) { (function(){'use strict'; return function(source) {'use strict'; print('#####'); return eval(source); }; })()}");
+  })(wrap(global));
+
+  print(__sbxeval__);
+
+
+
   //  _____ _        _   _     _   _      
   // / ____| |      | | (_)   | | (_)     
   //| (___ | |_ __ _| |_ _ ___| |_ _  ___ 
@@ -1817,7 +1841,7 @@ Object.defineProperty(Sandbox, "DEBUG", {
      */ passthrough:dumpGlobal(), 
     /** Allow Strict Mode Eval
      * (default: false)
-     */ eval:true,
+     */ eval:false,
     /** Output handler
      * (default: ShellOut)
      */ out:ShellOut()
