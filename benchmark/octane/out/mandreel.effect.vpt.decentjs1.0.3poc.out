@@ -1,6 +1,3 @@
-
-
-
 *** Include benchmark/octane/mandreel.js ***
 Mandreel: 114
 MandreelLatency: 583
@@ -26,4 +23,3 @@ Virtual memory size: 341 MByte
 Resident set size: 157 MByte
 Text/Data segment size: 317 MByte
 Shared memory segment: 6 MByte
-

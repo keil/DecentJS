@@ -1,6 +1,3 @@
-
-
-
 *** Include benchmark/octane/raytrace.js ***
 RayTrace: 210
 ----
@@ -25,4 +22,3 @@ Virtual memory size: 177 MByte
 Resident set size: 58 MByte
 Text/Data segment size: 153 MByte
 Shared memory segment: 6 MByte
-

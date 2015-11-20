@@ -1,6 +1,3 @@
-
-
-
 *** Include benchmark/octane/crypto.js ***
 Crypto: 1186
 ----
@@ -25,4 +22,3 @@ Virtual memory size: 204 MByte
 Resident set size: 88 MByte
 Text/Data segment size: 180 MByte
 Shared memory segment: 6 MByte
-
