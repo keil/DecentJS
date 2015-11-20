@@ -1,6 +1,11 @@
 *** DeentJS 1.1.0 (PoC)
 
-- [Change] Code Cleanup 
+- [Change] Code Cleanup
+- [Change] Load function
+- [Change] Eval function
+- [New] Request function
+- [New] Load function
+- [New] Eval function
 
 *** DeentJS 1.0.5 (PoC)
 

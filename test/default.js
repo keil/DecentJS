@@ -1,4 +1,67 @@
-load("demo/storyline.js");
+
+//(function() {
+
+var x = 4711;
+// var y = 4711; // created in g
+// var z = 4711 // shoudl be created in sandbox
+
+var f = function() {
+  x = 4712;
+}
+
+var g = function() {
+  z = 4712;
+}
+
+var h = function() {
+  f(); g();
+}
+
+var i = function() {
+  this.x = 4714;
+}
+
+var sbx = new Sandbox(this, Sandbox.DEFAULT);
+
+//sbx.eval("var x = 4712;");
+//sbx.eval("x = 4712;");
+
+//sbx.eval("var y = 4712;");
+//sbx.eval("y = 4712;");
+
+sbx.eval("f();");
+sbx.eval("g();");
+sbx.eval("h();");
+
+// PROBLEM
+sbx.eval("this.x=4713;");
+//sbx.eval("print('@this', this);");
+
+sbx.eval("i();");
+
+
+//sbx.eval("var z = 4711;");
+//sbx.eval("global = 4712;");
+
+sbx.eval("print('\\nSandbox');");
+//sbx.eval("print('@x', x);");
+
+sbx.eval("print('@x', x, this.x);");
+sbx.eval("print('@y', y, this.y);");
+sbx.eval("print('@z', z, this.z);");
+
+//f();
+//g();
+//h();
+
+print("\nGlobal");
+print("@x", x, this.x);
+//print("@y", y);
+//print("@z", z);
+
+//})();
+
+//load("demo/storyline.js");
 quit();
 
 

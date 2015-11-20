@@ -739,7 +739,23 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param bosy The source body.
    * @param env The current Global Object
    */
-  function sbxeval(body, env) {
+  function sbxeval(source, env) {
+    try {
+      (function(env) {
+        return eval("with(env) {  " + source + " }");
+      }).call(env, env);
+    } catch(error) {
+      throw new SyntaxError("Incompatible source." + "\n" + source + "\n" + error);
+    }
+  }
+
+  /** ceval
+   * Sandbox eval.
+   * @param bosy The source body.
+   * @param env The current Global Object
+   * Note: Deprecated
+   */
+  function ceval(body, env) {
     try {
       var sbxed = eval("with(env) { (function(){'use strict'; " + body + " })()}");
       return sbxed;
@@ -873,6 +889,22 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
   define("load", function() {
     if(read) {
+      for(var i in arguments) {
+        var filename = arguments[i];
+        if(typeof filename === "string") {
+          var source = read(filename);
+          if(typeof source === "string") {
+            run(source);
+          } else throw new TypeError("Invalid source file.");
+        } else throw new TypeError("Invalid filename.");
+      }
+      run(body);
+    } else throw new TypeError("Function read is not supported.");
+  }, this);
+
+  // TODO, deprecated
+  define("cload", function() {
+    if(read) {
       var body = "";
       for(var i in arguments) {
         var filename = arguments[i];
@@ -896,28 +928,17 @@ function Sandbox(global = {}, params = [], prestate = []) {
     else throw new TypeError("Invalid source string.");
   }, this);
 
-
-
-  define("xeval", function(source) {
-    if(typeof source === "string") {
-      var env = wrap(global);
-      
-      try {
-        // or nested eval
-        var sbxed = eval("with(env) {  " + body + " }");
-        return sbxed;
-      } catch(error) {
-        throw new SyntaxError("Incompatible body." + "\n" + body + "\n" + error);
-      } 
- 
-     // run(source);
-    }
+  // TODO, deprecated
+  define("ceval", function(source) {
+    if(typeof source === "string") ceval(source);
     else throw new TypeError("Invalid source string.");
   }, this);
 
-
-
-
+  //                            _   
+  // _ _ ___ __ _ _  _ ___ __| |_ 
+  //| '_/ -_) _` | || / -_|_-<  _|
+  //|_| \___\__, |\_,_\___/__/\__|
+  //           |_|                
 
   // TODO
   define("request", function(url) {
@@ -949,12 +970,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
     } else throw new TypeError("Function read is not supported.");
   }, this);
-
-
-
-
-
-
 
   // ______  __  __          _       
   //|  ____|/ _|/ _|        | |      
@@ -1712,7 +1727,7 @@ Object.defineProperty(Sandbox, "DEFAULT", {
      */ debug:false,
     /** Function pass-through
      * (default: [])
-     */ passthrough:new Set(),
+     */ passthrough:dumpGlobal(),
     /** Allow Strict Mode Eval
      * (default: false)
      */ eval:false,
@@ -1747,7 +1762,7 @@ Object.defineProperty(Sandbox, "TRANSPARENT", {
      */ debug:false,
     /** Function pass-through
      * (default: [])
-     */ passthrough:new Set(),
+     */ passthrough:dumpGlobal(),
     /** Allow Strict Mode Eval
      * (default: false)
      */ eval:false,
