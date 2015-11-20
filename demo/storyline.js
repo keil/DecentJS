@@ -139,7 +139,7 @@ var sbx = new Sandbox(this, params);
 
   print(sbx.statistic);
 
-})();
+});
 
 //      __  __        _      
 // ___ / _|/ _|___ __| |_ ___
@@ -625,7 +625,7 @@ var tsbx = new Sandbox(this, params2);
   print("sumOf: " + sbx3.call(sumOf, this, root));
   print("deptOf: " + sbx3.call(depthOf, this, root));
 
-})();
+});
 
 // _ _ _____ _____ _ _ ___ ___ 
 //| '_/ -_) V / -_) '_(_-</ -_)
@@ -686,4 +686,4 @@ var sbx4 = new Sandbox(this, params);
   print("sumOf: " + sbx4.call(sumOf, this, root));
   print("deptOf: " + sbx4.call(depthOf, this, root));
 
-})();
+});
