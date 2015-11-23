@@ -1562,12 +1562,14 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @return JavaScript Array [Effect]
    */
   define("commitOf", function(effect) {
-    if(!writeeffects.has(effect)) throw new TypeError("Invalid Effect.");
-    commit(effect, shadows.get(target), target); 
+    //if(!writeeffects.get(effect.target).has(effect)) throw new TypeError("Invalid Effect.");
+    
+    commit(effect, shadows.get(effect.target), effect.target); 
     
     // TODO, clean target
     // clean effects of commited target
     reset(target);
+    writeeffects
   }, this);
 
   /** Commit On Target
@@ -1628,9 +1630,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * Rollback Of Effect 
    * @param target JavaScript Object
    */
-  define("rollbackOf", function(target) {
-    if(proxies.has(target) && handlers.has(proxies.get(target))) handlers.get(proxies.get(target)).touchedPropertyNames.clear();
-
+  define("rollbackOf", function(effect) {
+    //if(proxies.has(target) && handlers.has(proxies.get(target))) handlers.get(proxies.get(target)).touchedPropertyNames.clear();
+rollback(effect, shadows.get(effect.target), effect.target); 
     // clean effects of rolled back target
     reset(target);
   }, this);
@@ -1662,10 +1664,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
   //| | \ \  __/\ V /  __/ |  | |_ 
   //|_|  \_\___| \_/ \___|_|   \__|
 
-  /** Revert Of
+  /** Revert On Target
    * @param target JavaScript Object
    */
-  define("revertOf", function(target) {
+  define("revertOn", function(target) {
     var proxy = proxies.get(target);
 
     // clean proxies, handler, shadow objects
