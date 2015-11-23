@@ -1,0 +1,23 @@
+*** Include benchmark/octane/deltablue.js ***
+DeltaBlue: 6982
+----
+Score (version 9): 6982
+[[--end-of-text--]]
+
+Process 24549 terminated (ok).
+Task completed after 9 sec.
+Charging 8.580s processor usage (0.31 Euro).
+
+Resource usage:
+Average processor load: 101%
+
+Processor idle time: 828 sec
+Total execution time: 8 sec
+Total processing time: 9 sec
+Kernel mode time: 0 sec
+User mode time: 8 sec
+
+Virtual memory size: 172 MByte
+Resident set size: 56 MByte
+Text/Data segment size: 148 MByte
+Shared memory segment: 6 MByte

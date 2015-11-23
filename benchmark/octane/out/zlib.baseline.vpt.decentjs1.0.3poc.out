@@ -1,0 +1,24 @@
+*** Include benchmark/octane/zlib.js,benchmark/octane/zlib-data.js ***
+function (source) {'use strict'; print('#####'); return eval(source); }
+zlib: 42543
+----
+Score (version 9): 42543
+[[--end-of-text--]]
+
+Process 23393 terminated (ok).
+Task completed after 7 sec.
+Charging 7.700s processor usage (0.27 Euro).
+
+Resource usage:
+Average processor load: 99.7%
+
+Processor idle time: 757.2 sec
+Total execution time: 7.7 sec
+Total processing time: 7.7 sec
+Kernel mode time: 0.1 sec
+User mode time: 7.6 sec
+
+Virtual memory size: 6445 MByte
+Resident set size: 140 MByte
+Text/Data segment size: 6420 MByte
+Shared memory segment: 5 MByte
