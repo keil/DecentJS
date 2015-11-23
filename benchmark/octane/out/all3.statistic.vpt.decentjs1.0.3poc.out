@@ -1,0 +1,179 @@
+
+
+
+*** Include benchmark/octane/richards.js ***
+Richards: 3618
+----
+Score (version 9): 3618
+Statistic: #wrap:164032 #cache miss:12 #decompile:1 #cache hit:164012 #trace:492075 #touched:2 
+#effects 29
+#readeffects 22
+#writeeffects 2
+#calleffects 5
+
+
+
+*** Include benchmark/octane/crypto.js ***
+Crypto: 1162
+----
+Score (version 9): 1162
+Statistic: #wrap:2378490 #cache miss:19 #decompile:1 #cache hit:2378460 #trace:4961166 #touched:2 
+#effects 44
+#readeffects 31
+#writeeffects 2
+#calleffects 11
+
+
+
+*** Include benchmark/octane/raytrace.js ***
+RayTrace: 180
+----
+Score (version 9): 180
+Statistic: #wrap:25519236 #cache miss:16 #decompile:1 #cache hit:25519211 #trace:51043284 #touched:3 
+#effects 39
+#readeffects 28
+#writeeffects 3
+#calleffects 8
+
+
+
+*** Include benchmark/octane/earley-boyer.js ***
+EarleyBoyer: 767
+----
+Score (version 9): 767
+Statistic: #wrap:5491 #cache miss:31 #decompile:1 #cache hit:5443 #trace:4740379 #touched:8 
+#effects 58
+#readeffects 44
+#writeeffects 8
+#calleffects 6
+
+
+
+*** Include benchmark/octane/regexp.js ***
+RegExp: 1139
+----
+Score (version 9): 1139
+Statistic: #wrap:131964 #cache miss:14 #decompile:1 #cache hit:131942 #trace:296997 #touched:2 
+#effects 33
+#readeffects 25
+#writeeffects 2
+#calleffects 6
+
+
+
+*** Include benchmark/octane/splay.js ***
+Splay: 713
+SplayLatency: 1834
+----
+Score (version 9): 1144
+Statistic: #wrap:466852 #cache miss:14 #decompile:1 #cache hit:466829 #trace:1635723 #touched:2 
+#effects 35
+#readeffects 25
+#writeeffects 2
+#calleffects 8
+
+
+
+*** Include benchmark/octane/navier-stokes.js ***
+NavierStokes: 989
+----
+Score (version 9): 989
+Statistic: #wrap:1850 #cache miss:13 #decompile:1 #cache hit:1829 #trace:4091 #touched:2 
+#effects 31
+#readeffects 23
+#writeeffects 2
+#calleffects 6
+
+
+
+*** Include benchmark/octane/pdfjs.js ***
+PdfJS: 62.6
+----
+Score (version 9): 62.6
+Statistic: #wrap:35364298 #cache miss:33 #decompile:1 #cache hit:35364250 #trace:77665491 #touched:8 
+#effects 90
+#readeffects 61
+#writeeffects 8
+#calleffects 21
+
+
+
+*** Include benchmark/octane/mandreel.js ***
+Mandreel: 105
+MandreelLatency: 520
+----
+Score (version 9): 234
+Statistic: #wrap:19958253 #cache miss:27 #decompile:1 #cache hit:19958215 #trace:39948600 #touched:3 
+#effects 75
+#readeffects 52
+#writeeffects 2
+#calleffects 21
+
+
+
+*** Include benchmark/octane/gbemu-part1.js,benchmark/octane/gbemu-part2.js ***
+65538
+Gameboy: 4044
+----
+Score (version 9): 4044
+Statistic: #wrap:533175 #cache miss:24 #decompile:1 #cache hit:533102 #trace:1225937 #touched:2 
+#effects 62
+#readeffects 44
+#writeeffects 2
+#calleffects 16
+
+
+
+*** Include benchmark/octane/code-load.js ***
+CodeLoad: 6000
+----
+Score (version 9): 6000
+Statistic: #wrap:50821 #cache miss:231 #decompile:1 #cache hit:50179 #trace:107483 #touched:2 
+#effects 67
+#readeffects 52
+#writeeffects 2
+#calleffects 13
+
+
+
+*** Include benchmark/octane/box2d.js ***
+Box2D: 49.2
+----
+Score (version 9): 49.2
+Statistic: #wrap:27014006 #cache miss:23 #decompile:1 #cache hit:24876414 #trace:132722200 #touched:2 
+#effects 56
+#readeffects 40
+#writeeffects 2
+#calleffects 14
+
+
+
+*** Include benchmark/octane/typescript-input.js,benchmark/octane/typescript-compiler.js,benchmark/octane/typescript.js ***
+Typescript: 839
+----
+Score (version 9): 839
+Statistic: #wrap:1114215 #cache miss:18 #decompile:1 #cache hit:1114186 #trace:27518483 #touched:2 
+#effects 47
+#readeffects 36
+#writeeffects 2
+#calleffects 9
+[[--end-of-text--]]
+
+Process 30143 terminated (ok).
+Task completed after 1 hour, 4 min, 51 sec.
+Charging 3980s processor usage (142.07 Euro).
+
+Resource usage:
+Average processor load: 102%
+
+Processor idle time: 381170 sec
+Total execution time: 3890 sec
+Total processing time: 3980 sec
+Kernel mode time: 10 sec
+User mode time: 3970 sec
+
+Virtual memory size: 735 MByte
+Resident set size: 602 MByte
+Text/Data segment size: 711 MByte
+Shared memory segment: 6 MByte
+
