@@ -34,10 +34,13 @@ var Effect = (function() {
   //| _||  _|  _/ -_) _|  _|
   //|___|_| |_| \___\__|\__|  
 
-  function Effect(target) {
-    if(!(this instanceof Effect)) return new Effect(target);
+  function Effect(sandbox, target) {
+    if(!(this instanceof Effect)) return new Effect(sandbox, target);
 
     Object.defineProperties(this, {
+      "sandbox": {
+        value: sandbox
+      },
       "date": {
         value: Date.now()
       },
@@ -62,9 +65,9 @@ var Effect = (function() {
   //|   / -_) _` / _` | | _||  _|  _/ -_) _|  _|
   //|_|_\___\__,_\__,_| |___|_| |_| \___\__|\__|
 
-  function Read(target) {
-    if(!(this instanceof Read)) return new Read(target);
-    else Effect.call(this, target);
+  function Read(sandbox, target) {
+    if(!(this instanceof Read)) return new Read(sandbox, target);
+    else Effect.call(this, sandbox, target);
   }
   Read.prototype = Object.create(Effect.prototype);
   Read.prototype.toString = function() {
@@ -76,13 +79,19 @@ var Effect = (function() {
   // \ \/\/ / '_| |  _/ -_) | _||  _|  _/ -_) _|  _|
   //  \_/\_/|_| |_|\__\___| |___|_| |_| \___\__|\__|
 
-  function Write(target) {
-    if(!(this instanceof Write)) return new Write(target);
-    else Effect.call(this, target);
+  function Write(sandbox, target) {
+    if(!(this instanceof Write)) return new Write(sandbox, target);
+    else Effect.call(this, sandbox, target);
   }
   Write.prototype = Object.create(Effect.prototype);
   Write.prototype.toString = function() {
     return "[[DecentJS/WriteEffect]]";
+  }
+  Write.prototype.commit = function() {
+    return this.sandbox.commit;
+  }
+  Write.prototype.rollback = function() {
+    return this.sandbox.rollback;
   }
 
   //  ___      _ _   ___  __  __        _   
@@ -90,9 +99,9 @@ var Effect = (function() {
   //| (__/ _` | | | | _||  _|  _/ -_) _|  _|
   // \___\__,_|_|_| |___|_| |_| \___\__|\__|
 
-  function Call(target) {
-    if(!(this instanceof Call)) return new Call(target);
-    else Effect.call(this, target);
+  function Call(sandbox, target) {
+    if(!(this instanceof Call)) return new Call(sandbox, target);
+    else Effect.call(this, sandbox, target);
   }
   Call.prototype = Object.create(Effect.prototype);
   Call.prototype.toString = function() {
@@ -107,9 +116,9 @@ var Effect = (function() {
   /**
    * An effect for Object.getPrototypeOf.
    */
-  function GetPrototypeOf(target) {
-    if(!(this instanceof Get)) return new GetPrototypeOf(target);
-    else Read.call(this, target);
+  function GetPrototypeOf(sandbox, target) {
+    if(!(this instanceof Get)) return new GetPrototypeOf(sandbox, target);
+    else Read.call(this, sandbox, target);
   }
   GetPrototypeOf.prototype = Object.create(Read.prototype);
   GetPrototypeOf.prototype.toString = function() {
@@ -122,9 +131,9 @@ var Effect = (function() {
   /**
    * An effect for Object.isExtensible
    */
-  function IsExtensible(target) {
-    if(!(this instanceof IsExtensible)) return new IsExtensible(target);
-    else Read.call(this, target);
+  function IsExtensible(sandbox, target) {
+    if(!(this instanceof IsExtensible)) return new IsExtensible(sandbox, target);
+    else Read.call(this, sandbox, target);
   }
   IsExtensible.prototype = Object.create(Read.prototype);
   IsExtensible.prototype.toString = function() {
@@ -137,9 +146,9 @@ var Effect = (function() {
   /** 
    * An effect for Object.getOwnPropertyDescriptor.
    */
-  function GetOwnPropertyDescriptor(target, name) {
-    if(!(this instanceof GetOwnPropertyDescriptor)) return new GetOwnPropertyDescriptor(target, name);
-    else Read.call(this, target);
+  function GetOwnPropertyDescriptor(sandbox, target, name) {
+    if(!(this instanceof GetOwnPropertyDescriptor)) return new GetOwnPropertyDescriptor(sandbox, target, name);
+    else Read.call(this, sandbox, target);
 
     Object.defineProperties(this, {
       "name": {
@@ -158,9 +167,9 @@ var Effect = (function() {
   /** 
    * An effect for the in operator.
    */
-  function Has(target, name) {
-    if(!(this instanceof Has)) return new Has(target, name);
-    else Read.call(this, target);
+  function Has(sandbox, target, name) {
+    if(!(this instanceof Has)) return new Has(sandbox, target, name);
+    else Read.call(this, sandbox, target);
 
     Object.defineProperties(this, {
       "name": {
@@ -179,9 +188,9 @@ var Effect = (function() {
   /**
    * An effect for getting property values.
    */
-  function Get(target, name) {
-    if(!(this instanceof Get)) return new Get(target, name);
-    else Read.call(this, target);
+  function Get(sandbox, target, name) {
+    if(!(this instanceof Get)) return new Get(sandbox, target, name);
+    else Read.call(this, sandbox, target);
 
     Object.defineProperties(this, {
       "name": {
@@ -200,9 +209,9 @@ var Effect = (function() {
   /** 
    * An effect for for...in statements.
    */
-  function Enumerate(target) {
-    if(!(this instanceof Enumerate)) return new Enumerate(target);
-    else Read.call(this, target);
+  function Enumerate(sandbox, target) {
+    if(!(this instanceof Enumerate)) return new Enumerate(sandbox, target);
+    else Read.call(this, sandbox, target);
   }
   Enumerate.prototype = Object.create(Read.prototype);
   Enumerate.prototype.toString = function() {
@@ -215,9 +224,9 @@ var Effect = (function() {
   /**
    * An effect for Object.getOwnPropertyNames.
    */
-  function OwnKeys(target) {
-    if(!(this instanceof OwnKeys)) return new OwnKeys(target);
-    else Read.call(this, target);
+  function OwnKeys(sandbox, target) {
+    if(!(this instanceof OwnKeys)) return new OwnKeys(sandbox, target);
+    else Read.call(this, sandbox, target);
   }
   OwnKeys.prototype = Object.create(Read.prototype);
   OwnKeys.prototype.toString = function() {
@@ -237,9 +246,9 @@ var Effect = (function() {
   /** 
    * An effect for a function call.
    */
-  function Apply(target) {
-    if(!(this instanceof Apply)) return new Apply(target);
-    else Call.call(this, target);
+  function Apply(sandbox, target) {
+    if(!(this instanceof Apply)) return new Apply(sandbox, target);
+    else Call.call(this, sandbox, target);
   }
   Apply.prototype = Object.create(Call.prototype);
   Apply.prototype.toString = function() {
@@ -252,9 +261,9 @@ var Effect = (function() {
   /** 
    * An effect for the new operator. 
    */
-  function Construct(target) {
-    if(!(this instanceof Construct)) return new Construct(target);
-    else Call.call(this, target);
+  function Construct(sandbox, target) {
+    if(!(this instanceof Construct)) return new Construct(sandbox, target);
+    else Call.call(this, sandbox, target);
   }
   Construct.prototype = Object.create(Call.prototype);
   Construct.prototype.toString = function() {
@@ -272,9 +281,9 @@ var Effect = (function() {
   /**
    * An effect for Object.setPrototypeOf.
    */
-  function SetPrototypeOf(target) {
-    if(!(this instanceof Get)) return new SetPrototypeOf(target);
-    else Write.call(this, target);
+  function SetPrototypeOf(sandbox, target) {
+    if(!(this instanceof Get)) return new SetPrototypeOf(sandbox, target);
+    else Write.call(this, sandbox, target);
   }
   SetPrototypeOf.prototype = Object.create(Write.prototype);
   SetPrototypeOf.prototype.toString = function() {
@@ -287,9 +296,9 @@ var Effect = (function() {
   /** 
    * An effect for Object.preventExtensions.
    */
-  function PreventExtensions(target) {
-    if(!(this instanceof PreventExtensions)) return new PreventExtensions(target);
-    else Write.call(this, target);
+  function PreventExtensions(sandbox, target) {
+    if(!(this instanceof PreventExtensions)) return new PreventExtensions(sandbox, target);
+    else Write.call(this, sandbox, target);
   }
   PreventExtensions.prototype = Object.create(Write.prototype);
   PreventExtensions.prototype.toString = function() {
@@ -302,9 +311,9 @@ var Effect = (function() {
   /** 
    * An effect for Object.defineProperty.
    */
-  function DefineProperty(target, name) {
-    if(!(this instanceof DefineProperty)) return new DefineProperty(target, name);
-    else Write.call(this, target);
+  function DefineProperty(sandbox, target, name) {
+    if(!(this instanceof DefineProperty)) return new DefineProperty(sandbox, target, name);
+    else Write.call(this, sandbox, target);
 
     Object.defineProperties(this, {
       "name": {
@@ -323,9 +332,9 @@ var Effect = (function() {
   /** 
    * An effect for setting property values.
    */
-  function Set(target, name) {
-    if(!(this instanceof Set)) return new Set(target, name);
-    else Write.call(this, target);
+  function Set(sandbox, target, name) {
+    if(!(this instanceof Set)) return new Set(sandbox, target, name);
+    else Write.call(this, sandbox, target);
 
     Object.defineProperties(this, {
       "name": {
@@ -344,9 +353,9 @@ var Effect = (function() {
   /**
    * An effect for the delete operator.
    */
-  function DeleteProperty(target, name) {
-    if(!(this instanceof DeleteProperty)) return new DeleteProperty(target, name);
-    else Write.call(this, target);
+  function DeleteProperty(sandbox, target, name) {
+    if(!(this instanceof DeleteProperty)) return new DeleteProperty(sandbox, target, name);
+    else Write.call(this, sandbox, target);
 
     Object.defineProperties(this, {
       "name": {

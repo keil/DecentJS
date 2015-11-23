@@ -1,4 +1,4 @@
-
+/*
 
 var handler = {
   has:function(target, name){
@@ -100,7 +100,7 @@ print("@x", x, this.x);
 
 
 
-
+*/
 
 /*
 
@@ -118,8 +118,8 @@ sbx.eval("print(__a__ , __b__, __b__ instanceof __A__)");
 //print(__a__, __b__);
 //print(__A__, __B__, __a__, __b__);
 */
-quit();
 
+//quit();
 //load("demo/storyline.js");
 //quit();
 
@@ -131,5 +131,5 @@ quit();
 
 
 //quit();
-//load("demo/storyline/host.js");
+load("demo/storyline/host.js");
 //quit();

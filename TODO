@@ -7,6 +7,9 @@ Tests
 Major Features
 ==============
 
+*** effect specific rollback, make curret roobal to revert
+and revert to rebase
+
 *** Make load as external package
 
 *** Make an OPT version
