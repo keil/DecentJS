@@ -30,6 +30,8 @@ var benchmarks = [];
  * benchmarks.push(base_dir + 'deltablue.js');
  */
 
+benchmarks.push(base_dir + 'deltablue.js');
+
 //benchmarks.push(base_dir + 'crypto.js');
 //benchmarks.push(base_dir + 'raytrace.js');
 //benchmarks.push(base_dir + 'earley-boyer.js'); 
@@ -50,8 +52,9 @@ var benchmarks = [];
  * not further supported in ES6
  * benchmarks.push([base_dir + 'zlib.js', base_dir + 'zlib-data.js']); //Error: eval not supported
  */
+//benchmarks.push([base_dir + 'zlib.js', base_dir + 'zlib-data.js']);
 
-benchmarks.push([base_dir + 'typescript-input.js', base_dir + 'typescript-compiler.js', base_dir + 'typescript.js']);
+//benchmarks.push([base_dir + 'typescript-input.js', base_dir + 'typescript-compiler.js', base_dir + 'typescript.js']);
 
 var global = dumpGlobal();
 
@@ -144,4 +147,4 @@ function runBenchmark(inSandbox) {
   }
 }
 
-runBenchmark(true);
+runBenchmark(false);
