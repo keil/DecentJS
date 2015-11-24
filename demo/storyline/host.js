@@ -14,12 +14,17 @@ Node.prototype.toString = function () {
   return (this.left?this.left + ", ":"") + this.value +(this.right?", "+this.right:"");
 }
 
+function heightOf(node) {
+  return node ? Math.max(heightOf(node.left), heightOf(node.right)) +1 : -1;
+}
+
 //              _   
 // _ _ ___  ___| |_ 
 //| '_/ _ \/ _ \  _|
 //|_| \___/\___/\__|
 
 var root = Node(0, Node(0, Node(0), Node(0)), Node(0));
+//var root = Node(0, Node(0), Node(0));
 
 // _      _ _   _      _      _        _       
 //(_)_ _ (_) |_(_)__ _| |  __| |_ __ _| |_ ___ 
@@ -83,12 +88,12 @@ var sbx = new Sandbox(this, Sandbox.DEFAULT);
 
 (function() {
 
-  var effects = sbx.effectsOf(this);
+  var effects = sbx.effectsOn(this);
   print(";;; All Effects of this");
   effects.forEach(function(i, e) {print(e)});
   print("\n");
 
-  var effects = sbx.writeeffectsOf(root);
+  var effects = sbx.writeeffectsOn(root);
   print(";;; Write Effects of root");
   effects.forEach(function(i, e) {print(e)});
   print("\n");
@@ -156,12 +161,37 @@ var sbx = new Sandbox(this, Sandbox.DEFAULT);
   print(";;; All Call Effects");
   ects.forEach(function(i, e) {print(e)});
   print("\n");
-
+*/
+  /*
   var ects = sbx.effects;
   print(";;; All Effects");
   ects.forEach(function(i, e) {print(e)});
   print("\n");
   */
+})();
+
+//    _ _  __  __                            
+// __| (_)/ _|/ _|___ _ _ ___ _ _  __ ___ ___
+/// _` | |  _|  _/ -_) '_/ -_) ' \/ _/ -_|_-<
+//\__,_|_|_| |_| \___|_| \___|_||_\__\___/__/
+
+
+(function() {
+
+  print("HasDifferenceWith(root): " + (sbx.hasDifferenceOn(root)));
+
+  var difso = sbx.differencesOn(root);
+  print(";;; Differences of root");
+  difso.forEach(function(i, e) {print(e)});
+  print("\n");
+
+  print("HasDifference: " + (sbx.hasDifferences));
+
+  var difs = sbx.differences;
+  print(";;; All Differences");
+  difs.forEach(function(i, e) {print(e)});
+  print("\n");
+
 })();
 
 // _ _  ___ _ _ _ __  __ _| |
@@ -221,6 +251,7 @@ var sbx2 = new Sandbox(this, Sandbox.DEFAULT);
 
   print(";;; inside sandbox 1");
   print("tree: " + sbx.call(Node.prototype.toString, root));
+  sbx.call(heightOf, root, root);
   //print("sumOf: " + sbx.call(sumOf, this, root));
   //print("deptOf: " + sbx.call(depthOf, this, root));
 
@@ -263,7 +294,9 @@ var sbx2 = new Sandbox(this, Sandbox.DEFAULT);
   coftso.forEach(function(i, e) {print(e)});
   print("\n"); 
 */
-});
+})();
+
+
 
 //                    _ _   
 // __ ___ _ __  _ __ (_) |_ 
@@ -272,7 +305,7 @@ var sbx2 = new Sandbox(this, Sandbox.DEFAULT);
 
 (function() {
 
-  /*var wects = sbx.writeeffects;
+  var wects = sbx.writeeffects;
 
   print(";;; Write Effects");
   wects.forEach(function(i, e) {print(e)});
@@ -280,17 +313,22 @@ var sbx2 = new Sandbox(this, Sandbox.DEFAULT);
 
   print(";;; outside sandbox");
   print("tree: " + root);
-  print("sumOf: " + sumOf(root));
-  print("deptOf: " + depthOf(root));
+  //print("sumOf: " + sumOf(root));
+  //print("deptOf: " + depthOf(root));
 
-  sbx.commitOf(root);
+  sbx.commitOn(root);
 
   var wects = sbx.writeeffects;
 
   print(";;; Write Effects");
   wects.forEach(function(i, e) {print(e)});
-  print("\n");*/
+  print("\n");
 
+ print(";;; outside sandbox");
+  print("tree: " + root);
+
+  
+  /*
   sbx.commit();
   
   print(";;; outside sandbox");
@@ -303,7 +341,7 @@ var sbx2 = new Sandbox(this, Sandbox.DEFAULT);
   //print(";;; Write Effects");
   //wects.forEach(function(i, e) {print(e)});
   //print("\n");
-
+*/
 })();
 
 //         _ _ _             _   

@@ -1,3 +1,25 @@
+//quit();
+load("demo/storyline/host.js");
+quit();
+
+
+
+
+var x,y = 1;
+
+var handler = {has:function() {return true;}, get:function(target, name) {print("@", name)}};
+
+with(new Proxy({}, handler)) { 
+  x+y+z;
+
+}
+
+
+
+
+
+quit();
+
 // Storyline Test
 // ==============
 load("demo/storyline.js");

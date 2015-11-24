@@ -1236,10 +1236,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
     return false;
   }, this);
 
-  /** Has Difference
+  /** Has Differences
    * return true|false
    */
-  getter("hasDifference", function() {
+  getter("hasDifferences", function() {
     for(var target of writetargets) {
       if(this.hasDifferenceOn(target)) return true
       else continue;
@@ -1555,6 +1555,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @return JavaScript Array [Effect]
    */
   define("commitOf", function(effect) {
+    // XXX tst for effect
     if(!writeeffects.get(effect.target).has(effect.hashCode())) throw new TypeError("Invalid Effect."+effect);
     // commit effect
     commit(effect, shadows.get(effect.target), effect.target); 
