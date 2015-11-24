@@ -1,3 +1,9 @@
+// Storyline Test
+// ==============
+load("demo/storyline.js");
+quit();
+
+
 /*
 
 var handler = {

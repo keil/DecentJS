@@ -1083,7 +1083,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param target JavaScript Obejct
    * @return JavaScript Array [Effect]
    */
-  define("readeffectsOf", function(target) {
+  define("readeffectsOn", function(target) {
     if(readeffects.has(target)) return new Set(readeffects.get(target).values());
     else return new Set();
   }, this);
@@ -1092,7 +1092,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param target JavaScript Obejct
    * @return JavaScript Array [Effect]
    */
-  define("writeeffectsOf", function(target) {
+  define("writeeffectsOn", function(target) {
     if(writeeffects.has(target)) return new Set(writeeffects.get(target).values());
     else return new Set();
   }, this);
@@ -1101,7 +1101,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param target JavaScript Obejct
    * @return JavaScript Array [Effect]
    */
-  define("calleffectsOf", function(target) {
+  define("calleffectsOn", function(target) {
     if(calleffects.has(target)) return new Set(calleffects.get(target).values());
     else return new Set();
   }, this);
@@ -1110,10 +1110,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param target JavaScript Obejct
    * @return JavaScript Array [Effect]
    */
-  define("effectsOf", function(target) {  
-    var effectsOfTarget = [...this.readeffectsOf(target), ...this.writeeffectsOf(target), ...this.calleffectsOf(target)];
-    effectsOfTarget.sort();
-    return new Set(effectsOfTarget);
+  define("effectsOn", function(target) {  
+    var effectsOnTarget = [...this.readeffectsOn(target), ...this.writeeffectsOn(target), ...this.calleffectsOn(target)];
+    effectsOnTarget.sort();
+    return new Set(effectsOnTarget);
   }, this);
 
   /** Get All Read Effects
@@ -1123,7 +1123,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
     var readEffects = [];
 
     for(var target of readtargets) {
-      readEffects = readEffects.concat([...this.readeffectsOf(target)]);
+      readEffects = readEffects.concat([...this.readeffectsOn(target)]);
     }
     readEffects.sort();
     return new Set(readEffects);
@@ -1136,7 +1136,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
     var writeEffects = [];
 
     for(var target of writetargets) {
-      writeEffects = writeEffects.concat([...this.writeeffectsOf(target)]);
+      writeEffects = writeEffects.concat([...this.writeeffectsOn(target)]);
     }
     writeEffects.sort();
     return new Set(writeEffects);
@@ -1150,7 +1150,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
     var callEffects = [];
 
     for(var target of calltargets) {
-      callEffects = callEffects.concat([...this.calleffectsOf(target)]);
+      callEffects = callEffects.concat([...this.calleffectsOn(target)]);
     }
     callEffects.sort()
     return new Set(callEffects);
@@ -1168,11 +1168,11 @@ function Sandbox(global = {}, params = [], prestate = []) {
   /** Get All Effects
    * @return JavaScript Array [Effect]
    */
-  define("cleanOf", function(target) {
+  define("cleanupOn", function(target) {
     clean(target);
   }, this);
 
-  define("clean", function() {
+  define("cleanup", function() {
     var targets = new Set([...readtargets, ...writetargets, ...calltargets]);
     /**
      * Note: Matthias Keil
@@ -1180,7 +1180,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
      * re-inizialization process.
      */
     for(var target of targets) {
-      this.cleanOf(target)
+      this.cleanupOn(target)
     }
   }, this);
 
@@ -1233,8 +1233,8 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param target JavaScript Object
    * return true|false
    */
-  define("hasDifferenceWith", function(target) {
-    var writeeffects = this.writeeffectsOf(target);
+  define("hasDifferenceOn", function(target) {
+    var writeeffects = this.writeeffectsOn(target);
 
     for(var effect of writeeffects) {
       if(hasDifferences(effect, shadows.get(target), target)) return true
@@ -1248,7 +1248,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   getter("hasDifference", function() {
     for(var target of writetargets) {
-      if(this.hasDifferenceWith(target)) return true
+      if(this.hasDifferenceOn(target)) return true
       else continue;
     }
     return false;
@@ -1258,8 +1258,8 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param target JavaScript Object
    * return [Differences]
    */
-  define("differencesOf", function(target) {
-    var writeeffects = this.writeeffectsOf(target);
+  define("differencesOn", function(target) {
+    var writeeffects = this.writeeffectsOn(target);
 
     var differences = [];
     for(var effect of writeeffects) {
@@ -1278,7 +1278,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
   getter("differences", function() {
     var differences = [];
     for(var target of writetargets) {
-      differences = differences.concat([...this.differencesOf(target)]);
+      differences = differences.concat([...this.differencesOn(target)]);
     }
     differences.sort();
     return new Set(differences);
@@ -1337,7 +1337,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
   define("hasChangesOn", function(origin) {
     if(!snapshots.has(origin)) throw new TypeError("No pre-state snapshot target");
     else {var target = snapshots.get(origin);
-      var readeffects = this.readeffectsOf(target);
+      var readeffects = this.readeffectsOn(target);
 
       for(var effect of readeffects) {
         if(hasChanges(effect, shadows.get(target), origin, target)) return true
@@ -1362,11 +1362,11 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param target JavaScript Object
    * return [Differences]
    */
-  define("changesOf", function(origin) {
+  define("changesOn", function(origin) {
     if(!snapshots.has(origin)) throw new TypeError("No pre-state snapshot target");
     else {
       var target = snapshots.get(origin);
-      var readeffects = this.readeffectsOf(target);
+      var readeffects = this.readeffectsOn(target);
 
       var changes = [];
       for(var effect of readeffects) {
@@ -1386,7 +1386,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
   getter("changes", function() {
     var changes = [];
     for(var target of prestate) {
-      changes = changes.concat([...this.changesOf(target)]);
+      changes = changes.concat([...this.changesOn(target)]);
     }
     changes.sort();
     return new Set(changes);
@@ -1463,8 +1463,8 @@ function Sandbox(global = {}, params = [], prestate = []) {
   define("inConflictWith", function(sbx, target) {
     if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
 
-    for(var e of this.effectsOf(target)) {
-      for(var f of sbx.effectsOf(target)) {
+    for(var e of this.effectsOn(target)) {
+      for(var f of sbx.effectsOn(target)) {
         if(inConflict(e, f)) return true;
         else continue;
       }
@@ -1482,8 +1482,8 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
     var targets = new Set([...readtargets, ...writetargets]);
     for(var target of targets) {
-      for(var e of this.effectsOf(target)) {
-        for(var f of sbx.effectsOf(target)) {
+      for(var e of this.effectsOn(target)) {
+        for(var f of sbx.effectsOn(target)) {
           if(inConflict(e, f)) return true;
           else continue;
         }
@@ -1497,12 +1497,12 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param target JavaScript Object
    * return [Conflict]
    */
-  define("conflictsOf", function(sbx, target) {
+  define("conflictsOn", function(sbx, target) {
     if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
 
     var conflicts = [];
-    for(var e of this.effectsOf(target)) {
-      for(var f of sbx.effectsOf(target)) {
+    for(var e of this.effectsOn(target)) {
+      for(var f of sbx.effectsOn(target)) {
         if(inConflict(e, f)) conflicts.push(Effect.Conflict(this, e, sbx, f));
         else continue;
       }
@@ -1521,8 +1521,8 @@ function Sandbox(global = {}, params = [], prestate = []) {
     var conflicts = [];
     var targets = new Set([...readtargets, ...writetargets]);
     for(var target of targets) {
-      for(var e of this.effectsOf(target)) {
-        for(var f of sbx.effectsOf(target)) {
+      for(var e of this.effectsOn(target)) {
+        for(var f of sbx.effectsOn(target)) {
           if(inConflict(e, f)) conflicts.push(Effect.Conflict(this, e, sbx, f));
           else continue;
         }
@@ -1563,9 +1563,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   define("commitOf", function(effect) {
     //if(!writeeffects.get(effect.target).has(effect)) throw new TypeError("Invalid Effect.");
-    
+
     commit(effect, shadows.get(effect.target), effect.target); 
-    
+
     // TODO, clean target
     // clean effects of commited target
     reset(target);
@@ -1576,9 +1576,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @return JavaScript Array [Effect]
    */
   define("commitOn", function(target) {
-    if(!targets.has(target)) throw new TypeError("Invalid Traget.");
+//    if(!targets.has(target)) throw new TypeError("Invalid Traget.");
 
-    var effects = this.writeeffectsOf(target);
+    var effects = this.writeeffectsOn(target);
     for(var effect of effects) {
       commit(effect, shadows.get(target), target); 
     }
@@ -1591,7 +1591,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   define("commit", function() {
     for(var target of writetargets) {
-      this.commitOf(target);
+      this.commitOn(target);
     }
   }, this);
 
@@ -1632,7 +1632,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   define("rollbackOf", function(effect) {
     //if(proxies.has(target) && handlers.has(proxies.get(target))) handlers.get(proxies.get(target)).touchedPropertyNames.clear();
-rollback(effect, shadows.get(effect.target), effect.target); 
+    rollback(effect, shadows.get(effect.target), effect.target); 
     // clean effects of rolled back target
     reset(target);
   }, this);
@@ -1653,7 +1653,7 @@ rollback(effect, shadows.get(effect.target), effect.target);
    */
   define("rollback", function() {
     for(var target of writetargets) {
-      this.rollbackOf(target);
+      this.rollbackOn(target);
     }
   }, this);
 
@@ -1781,7 +1781,7 @@ Object.defineProperty(Sandbox.prototype, "toString", {
 // \_/\___|_| /__/_\___/_||_|
 
 Object.defineProperty(Sandbox, "version", {
-  value: "DecentJS 1.1.0 (PoC)"
+  value: "DecentJS 1.2.0 (PoC)"
 });
 
 Object.defineProperty(Sandbox.prototype, "version", {
