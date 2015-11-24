@@ -10,6 +10,8 @@ Major Features
 *** effect specific rollback, make curret roobal to revert
 and revert to rebase
 
+*** rebase as a renew of the snapshot object
+
 *** Make load as external package
 
 *** Make an OPT version

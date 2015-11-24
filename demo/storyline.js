@@ -215,7 +215,7 @@ var sbx = new Sandbox(this, params);
   ects.forEach(function(i, e) {print(e)});
   print("\n");
 
-})();
+});
 
 //    _ _  __  __                            
 // __| (_)/ _|/ _|___ _ _ ___ _ _  __ ___ ___
@@ -239,7 +239,7 @@ var sbx = new Sandbox(this, params);
   difs.forEach(function(i, e) {print(e)});
   print("\n");
 
-})();
+});
 
 //                    _ _   
 // __ ___ _ __  _ __ (_) |_ 
@@ -259,7 +259,27 @@ var sbx = new Sandbox(this, params);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
+  var effect = wects.values().next().value; 
+  sbx.commitOf(effect);
+  effect.commit();
+
+  var wects = sbx.writeeffects;
+
+  print(";;; Write Effects");
+  wects.forEach(function(i, e) {print(e)});
+  print("\n"); 
+
+  print(";;; outside sandbox");
+  print("tree: " + root);
+  print("sumOf: " + sumOf(root));
+  print("deptOf: " + depthOf(root));
+
   sbx.commitOn(root);
+
+  print(";;; outside sandbox");
+  print("tree: " + root);
+  print("sumOf: " + sumOf(root));
+  print("deptOf: " + depthOf(root));
 
   var wects = sbx.writeeffects;
 
@@ -280,7 +300,7 @@ var sbx = new Sandbox(this, params);
   wects.forEach(function(i, e) {print(e)});
   print("\n");
 
-})();
+});
 
 //         _ _ _             _   
 // _ _ ___| | | |__  __ _ __| |__
@@ -305,6 +325,21 @@ var sbx = new Sandbox(this, params);
   print("tree: " + sbx.call(Node.prototype.toString, root));
   print("sumOf: " + sbx.call(sumOf, this, root));
   print("deptOf: " + sbx.call(depthOf, this, root));
+
+  var effect = effects.values().next().value;
+  //sbx.rollbackOf(effect);
+  //effect.rollback();
+
+  print(";;; inside sandbox");
+  print("tree: " + sbx.call(Node.prototype.toString, root));
+  print("sumOf: " + sbx.call(sumOf, this, root));
+  print("deptOf: " + sbx.call(depthOf, this, root));
+
+  var wects = sbx.writeeffects;
+
+  print(";;; Write Effects");
+  wects.forEach(function(i, e) {print(e)});
+  print("\n");
 
   sbx.rollbackOn(root);
   
@@ -335,7 +370,7 @@ var sbx = new Sandbox(this, params);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
-})();
+});
 
 //                     _   
 // _ _ _____ _____ _ _| |_ 
@@ -470,7 +505,7 @@ var sbx2 = new Sandbox(this, params);
   coftso.forEach(function(i, e) {print(e)});
   print("\n"); 
 
-})();
+});
 
 // _                                           _   
 //| |_ _ _ __ _ _ _  ____ __  __ _ _ _ ___ _ _| |_ 
@@ -540,7 +575,7 @@ var tsbx = new Sandbox(this, params2);
   print("sumOf: " + sumOf(root));
   print("deptOf: " + depthOf(root));
 
-})();
+});
 
 //               _        _       
 // __ _ _ ___ __| |_ __ _| |_ ___ 
@@ -624,7 +659,7 @@ var tsbx = new Sandbox(this, params2);
   print("sumOf: " + sbx3.call(sumOf, this, root));
   print("deptOf: " + sbx3.call(depthOf, this, root));
 
-})();
+});
 
 // _ _ _____ _____ _ _ ___ ___ 
 //| '_/ -_) V / -_) '_(_-</ -_)
@@ -685,4 +720,4 @@ var sbx4 = new Sandbox(this, params);
   print("sumOf: " + sbx4.call(sumOf, this, root));
   print("deptOf: " + sbx4.call(depthOf, this, root));
 
-})();
+});

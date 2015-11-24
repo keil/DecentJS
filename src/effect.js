@@ -88,10 +88,10 @@ var Effect = (function() {
     return "[[DecentJS/WriteEffect]]";
   }
   Write.prototype.commit = function() {
-    return this.sandbox.commit;
+    return this.sandbox.commitOf(this);
   }
   Write.prototype.rollback = function() {
-    return this.sandbox.rollback;
+    return this.sandbox.rollbackOf(this);
   }
 
   //  ___      _ _   ___  __  __        _   

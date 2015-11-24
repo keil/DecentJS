@@ -49,6 +49,9 @@
 function Sandbox(global = {}, params = [], prestate = []) {
   if(!(this instanceof Sandbox)) return new Sandbox(global, params, prestate);
 
+  // self reference
+  var self = this;
+
   if(!(global instanceof Object))
     throw new TypeError("No Global Object.");
 
@@ -369,7 +372,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
      */
     this.getPrototypeOf = function(shadow) {
       __verbose__ && logc("getPrototypeOf");
-      __effect__  && trace(new Effect.GetPrototypeOf(this, origin));
+      __effect__  && trace(new Effect.GetPrototypeOf(self, origin));
 
       /**
        * Note: Matthias Keil
@@ -385,7 +388,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
      */
     this.setPrototypeOf = function(shadow, prototype) {
       __verbose__ && logc("setPrototypeOf");
-      __effect__  && trace(new Effect.SetPrototypeOf(this, origin));
+      __effect__  && trace(new Effect.SetPrototypeOf(self, origin));
 
       /**
        * Note: Matthias Keil
@@ -401,7 +404,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
      */
     this.isExtensible = function(shadow) {
       __verbose__ && logc("isExtensible");
-      __effect__  && trace(new Effect.IsExtensible(this, origin));
+      __effect__  && trace(new Effect.IsExtensible(self, origin));
 
       return Object.isExtensible(shadow);
     };
@@ -411,7 +414,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
      */
     this.preventExtensions = function(shadow) {
       __verbose__ && logc("preventExtensions");
-      __effect__  && trace(new Effect.PreventExtensions(this, origin));
+      __effect__  && trace(new Effect.PreventExtensions(self, origin));
 
       /**
        * Copies all properties (property names) from the target object
@@ -423,7 +426,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
        */
       for (var property in origin) {
         if (!touched(property) && origin.hasOwnProperty(property)) {
-          Object.defineProperty(shadow, property, wrap(Object.getOwnPropertyDescriptor(this, origin, property)));
+          Object.defineProperty(shadow, property, wrap(Object.getOwnPropertyDescriptor(origin, property)));
         }
       }
 
@@ -435,7 +438,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
      */
     this.getOwnPropertyDescriptor = function(shadow, name) {
       __verbose__ && logc("getOwnPropertyDescriptor", (typeof name === 'string') ? name : name.toString());
-      __effect__  && trace(new Effect.GetOwnPropertyDescriptor(this, origin, (typeof name === 'string') ? name : name.toString()));
+      __effect__  && trace(new Effect.GetOwnPropertyDescriptor(self, origin, (typeof name === 'string') ? name : name.toString()));
 
       return (touched(name)) ? 
         Object.getOwnPropertyDescriptor(shadow, name) :
@@ -447,7 +450,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
      */
     this.defineProperty = function(shadow, name, desc) {
       __verbose__ && logc("defineProperty", (typeof name === 'string') ? name : name.toString());
-      __effect__ &&  trace(new Effect.DefineProperty(this, origin, (typeof name === 'string') ? name : name.toString()));
+      __effect__ &&  trace(new Effect.DefineProperty(self, origin, (typeof name === 'string') ? name : name.toString()));
 
       var current = touched(name) ? 
         Object.getOwnPropertyDescriptor(shadow, name) : 
@@ -498,7 +501,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
      */
     this.has = function(shadow, name) {
       __verbose__ && logc("has", (typeof name === 'string') ? name : name.toString());
-      __effect__  && trace(new Effect.Has(this, origin, (typeof name === 'string') ? name : name.toString()));
+      __effect__  && trace(new Effect.Has(self, origin, (typeof name === 'string') ? name : name.toString()));
 
       if(origin===global) return true;
       else return (touched(name)) ? (name in shadow) : (name in origin);
@@ -509,7 +512,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
      */
     this.get = function(shadow, name, receiver) {
       __verbose__ && logc("get", (typeof name === 'string') ? name : name.toString());
-      __effect__  && trace(new Effect.Get(this, origin, (typeof name === 'string') ? name : name.toString()));
+      __effect__  && trace(new Effect.Get(self, origin, (typeof name === 'string') ? name : name.toString()));
 
       // TODO
       /** Handles the Symbol.toPrimitive property
@@ -532,7 +535,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
      */
     this.set = function(shadow, name, value, receiver) {
       __verbose__ && logc("set", name);
-      __effect__  && trace(new Effect.Set(this, origin, name));
+      __effect__  && trace(new Effect.Set(self, origin, name));
 
       var desc = touched(name) ? 
         Object.getOwnPropertyDescriptor(shadow, name) : 
@@ -567,7 +570,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
      */
     this.deleteProperty = function(shadow, name) {
       __verbose__ && logc("deleteProperty", (typeof name === 'string') ? name : name.toString());
-      __effect__  && trace(new Effect.DeleteProperty(this, origin, (typeof name === 'string') ? name : name.toString()));
+      __effect__  && trace(new Effect.DeleteProperty(self, origin, (typeof name === 'string') ? name : name.toString()));
 
       var desc = touched(name) ? 
         Object.getOwnPropertyDescriptor(shadow, name) : 
@@ -594,7 +597,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
      */
     this.enumerate = function(shadow) {
       __verbose__ && logc("enumerate");
-      __effect__  && trace(new Effect.Enumerate(this, origin));
+      __effect__  && trace(new Effect.Enumerate(self, origin));
 
       var properties = new Set();
       if(Object.isExtensible(shadow)) for(var property in origin) {
@@ -611,7 +614,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
      */
     this.ownKeys = function(shadow) {
       __verbose__ && logc("ownKeys");
-      __effect__  && trace(new Effect.OwnKeys(this, origin));
+      __effect__  && trace(new Effect.OwnKeys(self, origin));
 
       var properties = new Set();
       if(Object.isExtensible(shadow)) for(var property of Object.getOwnPropertyNames(origin)) {
@@ -628,7 +631,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
      */
     this.apply = function(shadow, thisArg, argumentsList) {
       __verbose__ && logc("apply");
-      __effect__  && trace(new Effect.Apply(this, origin));
+      __effect__  && trace(new Effect.Apply(self, origin));
 
       /* Special treatment for calling native functions
       */
@@ -645,7 +648,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
      */
     this.construct = function(shadow, argumentsList) {
       __verbose__ && logc("construct");
-      __effect__  && trace(new Effect.Construct(this, origin));
+      __effect__  && trace(new Effect.Construct(self, origin));
 
       /* Special treatment for constructing new date objects
       */
@@ -1040,16 +1043,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
     readeffects.set(target, new Map());
     writeeffects.set(target, new Map());
     calleffects.set(target, new Map());
-  }
-
-  /** reset write effects 
-   * @param target Object
-   */
-  function reset(target) {
-    // removes target obejcts
-    writetargets.delete(target);
-    // initializes new effect cache
-    writeeffects.set(target, new Map());
   }
 
   /** saves an sandbox effect
@@ -1562,28 +1555,24 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @return JavaScript Array [Effect]
    */
   define("commitOf", function(effect) {
-    //if(!writeeffects.get(effect.target).has(effect)) throw new TypeError("Invalid Effect.");
-
+    if(!writeeffects.get(effect.target).has(effect.hashCode())) throw new TypeError("Invalid Effect."+effect);
+    // commit effect
     commit(effect, shadows.get(effect.target), effect.target); 
-
-    // TODO, clean target
-    // clean effects of commited target
-    reset(target);
-    writeeffects
+    // delete commited effect
+    writeeffects.get(effect.target).delete(effect.hashCode());
   }, this);
 
   /** Commit On Target
    * @return JavaScript Array [Effect]
    */
   define("commitOn", function(target) {
-//    if(!targets.has(target)) throw new TypeError("Invalid Traget.");
-
     var effects = this.writeeffectsOn(target);
     for(var effect of effects) {
       commit(effect, shadows.get(target), target); 
     }
     // clean effects of commited target
-    reset(target);
+    writetargets.delete(target);
+    writeeffects.set(target, new Map());
   }, this);
 
   /** Commit All Targets
@@ -1615,13 +1604,13 @@ function Sandbox(global = {}, params = [], prestate = []) {
        */
 
     } else if(effect instanceof Effect.DefineProperty) {
-      handlers.get(proxies.get(target)).touchedPropertyNames.delete(effect.name);
+      handlers.get(proxies.get(origin)).touchedPropertyNames.delete(effect.name);
 
     } else if(effect instanceof Effect.Set) {
-      handlers.get(proxies.get(target)).touchedPropertyNames.delete(effect.name);
+      handlers.get(proxies.get(origin)).touchedPropertyNames.delete(effect.name);
 
     } else if(effect instanceof Effect.DeleteProperty) {
-      handlers.get(proxies.get(target)).touchedPropertyNames.delete(effect.name);
+      handlers.get(proxies.get(origin)).touchedPropertyNames.delete(effect.name);
 
     } else throw new TypeError("Invalid Effect" + effect);
   }
@@ -1631,10 +1620,11 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param target JavaScript Object
    */
   define("rollbackOf", function(effect) {
-    //if(proxies.has(target) && handlers.has(proxies.get(target))) handlers.get(proxies.get(target)).touchedPropertyNames.clear();
+    if(!writeeffects.get(effect.target).has(effect.hashCode())) throw new TypeError("Invalid Effect.");
+    // rollback effect
     rollback(effect, shadows.get(effect.target), effect.target); 
-    // clean effects of rolled back target
-    reset(target);
+    // delete rolled back ffect
+    writeeffects.get(effect.target).delete(effect.hashCode());
   }, this);
 
   /** 
@@ -1642,10 +1632,13 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param target JavaScript Object
    */
   define("rollbackOn", function(target) {
-    if(proxies.has(target) && handlers.has(proxies.get(target))) handlers.get(proxies.get(target)).touchedPropertyNames.clear();
-
+    var effects = this.writeeffectsOn(target);
+    for(var effect of effects) {
+      rollback(effect, shadows.get(target), target); 
+    }
     // clean effects of rolled back target
-    reset(target);
+    writetargets.delete(target);
+    writeeffects.set(target, new Map());
   }, this);
 
   /** 
@@ -1669,7 +1662,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   define("revertOn", function(target) {
     var proxy = proxies.get(target);
-
+ 
+    // TODO
+    //if(proxies.has(target) && handlers.has(proxies.get(target))) handlers.get(proxies.get(target)).touchedPropertyNames.clear();
+ 
     // clean proxies, handler, shadow objects
     proxies.delete(target);
     handlers.delete(proxy);
@@ -1683,7 +1679,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
   */
   define("revert", function() {
     for(var target of writetargets) {
-      this.revertOf(target);
+      this.revertOn(target);
     }
   }, this);
 
