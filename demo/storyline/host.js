@@ -459,3 +459,90 @@ var sbx2 = new Sandbox(this, Sandbox.DEFAULT);
 
 });
 
+//               _        _       
+// __ _ _ ___ __| |_ __ _| |_ ___ 
+//| '_ \ '_/ -_|_-<  _/ _` |  _/ -_)
+//| .__/_| \___/__/\__\__,_|\__\___|
+//|_|                               
+
+(function() {
+
+  var sbx3 = new Sandbox(this, Sandbox.DEFAULT, [root]);
+  sbx3.load("demo/storyline/guest.js");
+
+  print(";;; outside sandbox");
+  print("tree: " + root);
+  //print("sumOf: " + sumOf(root));
+  //print("deptOf: " + depthOf(root));
+
+  print(";;; inside sandbox");
+  print("tree: " + sbx3.call(Node.prototype.toString, root));
+  //print("sumOf: " + sbx3.call(sumOf, this, root));
+  //print("deptOf: " + sbx3.call(depthOf, this, root));
+
+
+  print(sbx3.statistic);
+
+  print(";;; outside sandbox");
+  print("tree: " + root);
+  //print("sumOf: " + sumOf(root));
+  //print("deptOf: " + depthOf(root));
+
+  print(";;; inside sandbox");
+  print("tree: " + sbx3.call(Node.prototype.toString, root));
+  //print("sumOf: " + sbx3.call(sumOf, this, root));
+  //print("deptOf: " + sbx3.call(depthOf, this, root));
+
+  print("HasChangesOn(root): " + (sbx3.hasChangesOn(root)));
+
+  /*root.value = -1;
+  root.left.value = -1;
+  root.right.value = -1;
+  root.left.left.value = -1;
+  root.left.right.value = -1;*/
+  root.left = new Node('x', new Node('y'), new Node('z'));
+
+  print("HasChangesOn(root): " + (sbx3.hasChangesOn(root)));
+
+
+  var chges = sbx3.changesOn(root);
+  print(";;; Changes of root");
+  chges.forEach(function(i, e) {print(e)});
+  print("\n");
+
+  return -1;
+  print("HasChanges: " + (sbx3.hasChanges));
+  
+  var chges = sbx3.changes;
+  print(";;; All Changes");
+  chges.forEach(function(i, e) {print(e)});
+  print("\n");
+
+  print(";;; outside sandbox");
+  print("tree: " + root);
+  print("sumOf: " + sumOf(root));
+  print("deptOf: " + depthOf(root));
+
+  print(";;; inside sandbox");
+  print("tree: " + sbx3.call(Node.prototype.toString, root));
+  print("sumOf: " + sbx3.call(sumOf, this, root));
+  print("deptOf: " + sbx3.call(depthOf, this, root));
+
+  sbx3.rollback();
+
+  /** 
+   * Note: Matthias Keil
+   * Only root is in snapshot mode
+   */
+
+  print(";;; outside sandbox");
+  print("tree: " + root);
+  print("sumOf: " + sumOf(root));
+  print("deptOf: " + depthOf(root));
+
+  print(";;; inside sandbox");
+  print("tree: " + sbx3.call(Node.prototype.toString, root));
+  print("sumOf: " + sbx3.call(sumOf, this, root));
+  print("deptOf: " + sbx3.call(depthOf, this, root));
+
+})();
