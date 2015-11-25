@@ -1,20 +1,75 @@
 //quit();
-load("demo/storyline/host.js");
+//load("demo/storyline/host.js");
+//quit();
+
+var x,y,z = 1;
+
+
+var handler = {has:function() {return true;}, get:function(target, name) {print("@get", name); return (name==='eval') ? eval : target[name];}, set:function(target, name) {print("@set", name); return target[name]=value}};
+var env = new Proxy({}, handler);
+
+var sbxeval = (function() {
+  with(env) {
+    return eval.bind({});
+    function x(source) {
+      //"use strict";
+      return eval(source);
+    }
+  }
+})();
+
+print(sbxeval);
+
+sbxeval("x+z+z");
+sbxeval("var a=4711");
+sbxeval("function f() {}");
+print(sbxeval("f"));
+
+//print(f);
+
+
+//var sbxeval =  eval("with(env) {  }");
+
+
+
+
+
+
 quit();
-
-
-
 
 var x,y = 1;
 
-var handler = {has:function() {return true;}, get:function(target, name) {print("@", name)}};
+var handler = {has:function() {return true;}, get:function(target, name) {print("@get", name)}, set:function(target, name) {print("@set", name)}};
+
+with(new Proxy({}, handler)) {
+  (function(){
+    x+y+z;
+    a=4711;
+    function f () {};
+    var g = function() {}
+    var h = 11;
+  })();
+}
+
+//print(f);
+
+
+
+quit();
+
+var x,y = 1;
+
+var handler = {has:function() {return true;}, get:function(target, name) {print("@get", name)}, set:function(target, name) {print("@set", name)}};
 
 with(new Proxy({}, handler)) { 
   x+y+z;
-
+  a=4711;
+  function f () {};
+  var g = function() {}
+  var h = '';
 }
 
-
+print(h);
 
 
 
