@@ -15,4 +15,7 @@ function setValue (node) {
 //| ' \/ _ \ '_| '  \/ _` | |
 //|_||_\___/_| |_|_|_\__,_|_|
 
-setValue(root);
+//setValue(root);
+
+var x = 635635;
+d= 2542345;

@@ -1,6 +1,6 @@
 //quit();
-//load("demo/storyline/host.js");
-//quit();
+load("demo/storyline/host.js");
+quit();
 
 var x,y,z = 1;
 

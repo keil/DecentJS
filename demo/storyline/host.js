@@ -60,12 +60,12 @@ var root = Node(0, Node(0, Node(0), Node(0)), Node(0));
 //(_-</ _` | ' \/ _` | '_ \/ _ \ \ /
 ///__/\__,_|_||_\__,_|_.__/\___/_\_\
 
-var sbx = new Sandbox(this, Sandbox.DEFAULT);
+var sbx = new Sandbox(this, Sandbox.DEBUG);
 
 (function() {
 
   sbx.load("demo/storyline/guest.js");
-
+return -1;
   print(";;; outside sandbox");
   print("tree: " + root);
   //print("sumOf: " + sumOf(root));
@@ -92,7 +92,7 @@ var sbx = new Sandbox(this, Sandbox.DEFAULT);
   print(";;; All Effects of this");
   effects.forEach(function(i, e) {print(e)});
   print("\n");
-
+return -1;
   var effects = sbx.writeeffectsOn(root);
   print(";;; Write Effects of root");
   effects.forEach(function(i, e) {print(e)});
@@ -169,7 +169,7 @@ var sbx = new Sandbox(this, Sandbox.DEFAULT);
   print("\n");
   */
 })();
-
+quit();
 //    _ _  __  __                            
 // __| (_)/ _|/ _|___ _ _ ___ _ _  __ ___ ___
 /// _` | |  _|  _/ -_) '_/ -_) ' \/ _/ -_|_-<
@@ -193,6 +193,8 @@ var sbx = new Sandbox(this, Sandbox.DEFAULT);
   print("\n");
 
 })();
+
+quit();
 
 // _ _  ___ _ _ _ __  __ _| |
 //| ' \/ _ \ '_| '  \/ _` | |

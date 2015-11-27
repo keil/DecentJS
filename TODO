@@ -37,3 +37,7 @@ Minor Features
 - only pre-state snapshot, re-clones the target if changes exist
 - (different semantics to revert) reset only the snapshot values
 - (requires that the clone is a target --> revert/rebase do the same)
+
+*** Optimization
+- If a proxy get returns an object/value, then it might replace the shadow value 
+- with this value to increase performance on further accesses
