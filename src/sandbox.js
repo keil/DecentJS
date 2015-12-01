@@ -33,6 +33,9 @@
  * - effect
  *   Enables effect logging. (default: true)
  *
+ * - withdom
+ *   Document Object Model. (default: false)
+ *
  * - transparent
  *   Tells the sandbox to be transparent. (default: false)
  *
@@ -80,6 +83,12 @@ function Sandbox(global = {}, params = [], prestate = []) {
   var __effect__ = configure("effect", true);
 
   /*
+   * With DOM
+   * (default: false)
+   */
+  var __withdom__ = configure("withdom", false);
+
+  /*
    * Transparent
    * (default: false)
    */
@@ -124,10 +133,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
     return (param in (params===undefined ? {} : params)) ? params[param] : value;
   };
 
-  // TODO
-  var dom = makeDOM();
-
-
   // _           
   //| |___  __ _ 
   //| / _ \/ _` |
@@ -160,6 +165,14 @@ function Sandbox(global = {}, params = [], prestate = []) {
   function increment(op) {
     __statistic__ && statistic.increment(op);
   }
+
+  //        _ _   _      ___   ___  __  __ 
+  //__ __ _(_) |_| |_   |   \ / _ \|  \/  |
+  //\ V  V / |  _| ' \  | |) | (_) | |\/| |
+  // \_/\_/|_|\__|_||_| |___/ \___/|_|  |_|
+  //                                       
+
+  var DOM = __withdom__ ? makeDOM() : undefined;
 
   // _    _  _      _   _         ___             _   _          
   //(_)__| \| |__ _| |_(_)_ _____| __|  _ _ _  __| |_(_)___ _ _  
@@ -218,10 +231,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
   function wrap(target) {
     __verbose__   && logc("wrap");
     __statistic__ && increment(Statistic.WRAP);
-
-
-    // TODO
-    if(target===dom) return target;
 
     // If target is a primitive value, then return target
     if (target !== Object(target)) {
@@ -759,60 +768,15 @@ shadows.set(target, shadow);
     } 
   }
 
-  /** sbxeval
+
+  /** eval
    * Sandbox eval.
-   * @param bosy The source body.
-   * @param env The current Global Object
-   */
-  /*
-     var __sbxeval__ = (function(env) {
-
-     return  eval("with(env) { (function(){'use strict'; return function(source) { return eval(source); }; })()}");
-
-
-
-     })(wrap(global));
-
-     print(__sbxeval__);
-     */
-
-  /*
-     function closure(source) {
-     return eval(source);
-     }
-
-     function sbxeval(source, env) {
-     try {
-     return eval("with(env) { closure.call(env, source); }");    
-  //scoper.call(env, source, env);
-  //(function(env) {
-  //  return eval("with(env) { scoper.call(env, source) }");
-  //}).call(env, env);
-  } catch(error) {
-  throw new SyntaxError("Incompatible source." + "\n" + source + "\n" + error);
-  }
-  }*/
-
-  function xsbxeval(source, env) {
-    try {
-      (function(env) {
-        return eval("with(env) {  " + source + " }");
-      }).call(env, env);
-    } catch(error) {
-      throw new SyntaxError("Incompatible source." + "\n" + source + "\n" + error);
-    }
-  }
-
-  /** ceval
-   * Sandbox eval.
-   * @param bosy The source body.
+   * @param body The source body.
    * @param env The current Global Object
    * Note: Deprecated
    */
   function sbxeval(body, env) {
     try {
-      //var sbxed = eval("with(env) { (function(){'use strict'; " + body + " }).apply(env)}");
-      
       var body = "(function() {'use strict'; " + body + "});";
       var sbxed = eval("(function() { with(env) { return " + body + " }})();");
       return sbxed.apply(env);
@@ -880,68 +844,16 @@ shadows.set(target, shadow);
     return bound;
   }
 
-  /** run
+  /** execute
    * Runs the given source in the sandbox.
    * @param body JavaScript source code
    */
-  function run(body) {
-    __verbose__ && logc("run", body);
-    // evaluates body
-    return sbxeval(body, wrap(global));// TODO
-    //return __sbxeval__(body);
+  function execute(body) {
+    __verbose__ && logc("execute", body);
+
+    // return evaluation result
+    return sbxeval(body, wrap(global));
   }
-
-  // TODO
-
-
-  /** run
-   * Runs the given source in the sandbox.
-   * @param body JavaScript source code
-   */
-  function exec(body) {
-    __verbose__ && logc("run", body);
-    // evaluates body
-    return exec_dom(body, wrap(global));// TODO
-    //return __sbxeval__(body);
-  }
-
-  /** ceval
-   * Sandbox eval.
-   * @param bosy The source body.
-   * @param env The current Global Object
-   * Note: Deprecated
-   */
-  // TODO
-  
-  
-  
-  function exec_dom(body, env) {
-    //dom = dom || makeDOM();
-    //env =  wrap(dom);
-    //env = dom;
-    print(dom);
-    try {
-      //var sbxed = eval("with(env) { (function(){'use strict'; " + body + " }).apply(env)}");
-      
-      var body = "(function() {'use strict'; " + body + "});";
-      var sbxed = eval("(function() { with(env) { return " + body + " }})();");
-      return sbxed.apply(env);
-    } catch(error) {
-      throw new SyntaxError("Incompatible body." + "\n" + body + "\n" + error + "\n" + error.stack);
-    } 
-  }
-
-  define("domload", function(url = "about:blank") {
-    dom = dom || makeDOM();
-    dom.window.location = url;
-  }, this);
-
-
-  define("dom", function(fun, thisArg = global, argumentsList = []) {
-    dom = dom || makeDOM();
-    return dom;
-  }, this);
-
 
   //   _             _      
   //  /_\  _ __ _ __| |_  _ 
@@ -997,36 +909,16 @@ shadows.set(target, shadow);
   //| / _ \/ _` / _` |
   //|_\___/\__,_\__,_|
 
-  define("load", function() {
-    var source = "";
-    if(read) {
-      for(var i in arguments) {
-        var filename = arguments[i];
-        if(typeof filename === "string") {
-          var nsource = read(filename);
-          if(typeof nsource === "string") {
-            source += nsource;
-          } else throw new TypeError("Invalid source file.");
-        } else throw new TypeError("Invalid filename.");
-      }
-    } else throw new TypeError("Function read is not supported.");
-    return run(source);
-  }, this);
+  define("load", function(...files) {
+    if(!read) throw new TypeError("Function read is undefined..");
 
-  // TODO, deprecated
-  define("cload", function() {
-    if(read) {
-      var body = "";
-      for(var i in arguments) {
-        var filename = arguments[i];
-        if(typeof filename === "string") {
-          var source = read(filename);
-          if(typeof source === "string") body += source;
-          else throw new TypeError("Invalid source file.");
-        } else throw new TypeError("Invalid filename.");
-      }
-      run(body);
-    } else throw new TypeError("Function read is not supported.");
+    // source
+    var source = "";
+    for(var file of files) {
+      source += read(filename);    
+    }
+
+    return execute(source);
   }, this);
 
   //              _ 
@@ -1035,14 +927,8 @@ shadows.set(target, shadow);
   //\___|\_/\__,_|_|
 
   define("eval", function(source) {
-    if(typeof source === "string") return run(source);
-    else throw new TypeError("Invalid source string.");
-  }, this);
-
-  // TODO, deprecated
-  define("ceval", function(source) {
-    if(typeof source === "string") return ceval(source);
-    else throw new TypeError("Invalid source string.");
+    if(typeof source !== "string") throw new TypeError("Invalid source string.");
+    return execute(source);
   }, this);
 
   //                          _   
@@ -1051,30 +937,48 @@ shadows.set(target, shadow);
   //|_| \___\__, |\_,_\___/__/\__|
   //           |_|                
 
-  // TODO
-  define("request", function(url) {
-    if(typeof url !== "string") throw new TypeError("Invalid url.");
+  define("request", function(...urls) {
+    if(!window || !window.XMLHttpRequest && !window.ActiveXObject) throw new TypeError("HttpRequest is undefined..");
 
-    function processXMLHttpRequest(file, location) {
-      var xmlObj = null;
-      if (window.XMLHttpRequest) {
-        xmlObj = new XMLHttpRequest();
-      } else if (window.ActiveXObject) {
-        xmlObj = new ActiveXObject("Microsoft.XMLHTTP");
-      } else {
-        return true;
-      }
+    // source
+    var source = "";
+
+    // handle open requests
+    var openRequests = new Set();
+    function callback(url, response) {
+      source += response;
+      openRequests.delete(url);
+      if(openRequests.size()===0) exec(source);
+    }
+
+    // requests files
+    for(var url in urls) {
+      var xmlObj = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
       xmlObj.onreadystatechange = function() {
         if(xmlObj.readyState == 4) {
-          exec(xmlObj.responseText); 
+          callback(url, xmlObj.responseText); 
         }
       }
-      xmlObj.open ('GET', file, true);
+      xmlObj.open ('GET', url, true);
       xmlObj.send ('');
-      return false;
     }
-    processXMLHttpRequest(url);
+  }, this);
 
+  // ___   ___  __  __ 
+  //|   \ / _ \|  \/  |
+  //| |) | (_) | |\/| |
+  //|___/ \___/|_|  |_|
+
+  /** sets window.location
+   */
+  define("domload", function(url = "about:blank") {
+    return DOM ? (DOM.window.location = url) : false;
+  }, this);
+
+  /** returns internal DOM
+  */
+  getter("dom", function() {
+    return DOM;
   }, this);
 
   // ______  __  __          _       
@@ -1849,7 +1753,7 @@ Object.defineProperty(Sandbox.prototype, "toString", {
 // \_/\___|_| /__/_\___/_||_|
 
 Object.defineProperty(Sandbox, "version", {
-  value: "DecentJS 1.2.0 (PoC)"
+  value: "DecentJS 1.2.2 (PoC)"
 });
 
 Object.defineProperty(Sandbox.prototype, "version", {
@@ -1876,6 +1780,9 @@ Object.defineProperty(Sandbox, "DEFAULT", {
     /** Effect
      * (default: true)
      */ effect:true,
+    /** With DOM
+     * (default: false)
+     */ withdom:false,
     /** Transparent Mode
      * (default: false)
      */ transparent:false,
@@ -1911,6 +1818,9 @@ Object.defineProperty(Sandbox, "TRANSPARENT", {
     /** Effect
      * (default: true)
      */ effect:true,
+    /** With DOM
+     * (default: false)
+     */ withdom:false,
     /** Transparent Mode
      * (default: false)
      */ transparent:true,
@@ -1932,6 +1842,44 @@ Object.defineProperty(Sandbox, "TRANSPARENT", {
   }
 });
 
+Object.defineProperty(Sandbox, "WEB", {
+  value: {
+    /** Verbose Mode
+     * (default: false)
+     */ verbose:false,
+    /** Enable Statistic
+     * (default: false)
+     */ statistic:false,
+    /** Decompile
+     * (default: true)
+     */ decompile:true,
+    /** Effect
+     * (default: true)
+     */ effect:true,
+    /** With DOM
+     * (default: false)
+     */ withdom:true,
+    /** Transparent Mode
+     * (default: false)
+     */ transparent:false,
+    /** MetaHandler
+     * (default: true)
+     */ metahandler:false,
+    /** Debug Mode
+     * (default: false)
+     */ debug:false,
+    /** Function pass-through
+     * (default: [])
+     */ passthrough:dumpGlobal(),
+    /** Allow Strict Mode Eval
+     * (default: false)
+     */ eval:false,
+    /** Output handler
+     * (default: ShellOut)
+     */ out:null
+  }
+});
+
 Object.defineProperty(Sandbox, "DEBUG", {
   value: {
     /** Verbose Mode
@@ -1946,6 +1894,9 @@ Object.defineProperty(Sandbox, "DEBUG", {
     /** Effect
      * (default: true)
      */ effect:true,
+    /** With DOM
+     * (default: false)
+     */ withdom:false,
     /** Transparent Mode
      * (default: false)
      */ transparent:false,
