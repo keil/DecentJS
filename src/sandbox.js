@@ -124,6 +124,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
     return (param in (params===undefined ? {} : params)) ? params[param] : value;
   };
 
+  // TODO
+  var dom = makeDOM();
+
+
   // _           
   //| |___  __ _ 
   //| / _ \/ _` |
@@ -215,6 +219,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
     __verbose__   && logc("wrap");
     __statistic__ && increment(Statistic.WRAP);
 
+
+    // TODO
+    if(target===dom) return target;
+
     // If target is a primitive value, then return target
     if (target !== Object(target)) {
       return target;
@@ -272,13 +280,15 @@ function Sandbox(global = {}, params = [], prestate = []) {
     // Initializes effect logging
     if(__effect__) initialize(target);
 
+// TODO
+shadows.set(target, shadow);
+
     var handler = new Membrane(target, native);
     var proxy = new Proxy(shadow, __metahandler__ ? new Proxy(handler, metahandler) : handler);
 
     proxies.set(target, proxy);
     handlers.set(proxy, handler);
-    shadows.set(target, shadow);
-    targets.set(shadow, target);
+        targets.set(shadow, target);
 
     return proxy;
   }
@@ -292,6 +302,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   function cloneObject(target) {
     __verbose__ && log("Clone Object.");
+
+    // TODO
+    if(target===global) return dom;
 
     var clone = Object.create(Object.getPrototypeOf(target));
     return clone;
@@ -360,6 +373,15 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
       touchedPropertyNames.add(name);
     }
+
+     // TODO
+    if(origin===global) {
+      print("xxx" + shadows.get(origin));
+      for(var name of Object.getOwnPropertyNames(shadows.get(origin))) {
+        touch(name);
+      }
+    };
+
 
     // _____                 
     //|_   _| _ __ _ _ __ ___
@@ -891,12 +913,12 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   // TODO
   
-  var dom = null;
+  
   
   function exec_dom(body, env) {
-    dom = dom || makeDOM();
+    //dom = dom || makeDOM();
     //env =  wrap(dom);
-    env = dom;
+    //env = dom;
     print(dom);
     try {
       //var sbxed = eval("with(env) { (function(){'use strict'; " + body + " }).apply(env)}");
