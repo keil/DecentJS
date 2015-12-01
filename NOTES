@@ -74,3 +74,10 @@
 
  A value read access is after a value write access.
  --> This makes it necessary to compare sandbox executions
+
+
+ bin
+ cell
+ confine
+ case
+ cellular
