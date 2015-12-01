@@ -174,7 +174,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
   /* List of typed arrays
   */
-  var typedArrays = new WeakSet([ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array]);
+  var typedArrays = new WeakSet([ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array, WeakMap, WeakSet]);
 
   // _    ___          _ 
   //(_)__| __|_ ____ _| |
@@ -789,8 +789,11 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   function sbxeval(body, env) {
     try {
-      var sbxed = eval("with(env) { (function(){'use strict'; " + body + " })()}");
-      return sbxed;
+      //var sbxed = eval("with(env) { (function(){'use strict'; " + body + " }).apply(env)}");
+      
+      var body = "(function() {'use strict'; " + body + "});";
+      var sbxed = eval("(function() { with(env) { return " + body + " }})();");
+      return sbxed.apply(env);
     } catch(error) {
       throw new SyntaxError("Incompatible body." + "\n" + body + "\n" + error + "\n" + error.stack);
     } 
@@ -869,6 +872,55 @@ function Sandbox(global = {}, params = [], prestate = []) {
   // TODO
 
 
+  /** run
+   * Runs the given source in the sandbox.
+   * @param body JavaScript source code
+   */
+  function exec(body) {
+    __verbose__ && logc("run", body);
+    // evaluates body
+    return exec_dom(body, wrap(global));// TODO
+    //return __sbxeval__(body);
+  }
+
+  /** ceval
+   * Sandbox eval.
+   * @param bosy The source body.
+   * @param env The current Global Object
+   * Note: Deprecated
+   */
+  // TODO
+  
+  var dom = null;
+  
+  function exec_dom(body, env) {
+    dom = dom || makeDOM();
+    //env =  wrap(dom);
+    env = dom;
+    print(dom);
+    try {
+      //var sbxed = eval("with(env) { (function(){'use strict'; " + body + " }).apply(env)}");
+      
+      var body = "(function() {'use strict'; " + body + "});";
+      var sbxed = eval("(function() { with(env) { return " + body + " }})();");
+      return sbxed.apply(env);
+    } catch(error) {
+      throw new SyntaxError("Incompatible body." + "\n" + body + "\n" + error + "\n" + error.stack);
+    } 
+  }
+
+  define("domload", function(url = "about:blank") {
+    dom = dom || makeDOM();
+    dom.window.location = url;
+  }, this);
+
+
+  define("dom", function(fun, thisArg = global, argumentsList = []) {
+    dom = dom || makeDOM();
+    return dom;
+  }, this);
+
+
   //   _             _      
   //  /_\  _ __ _ __| |_  _ 
   // / _ \| '_ \ '_ \ | || |
@@ -924,17 +976,19 @@ function Sandbox(global = {}, params = [], prestate = []) {
   //|_\___/\__,_\__,_|
 
   define("load", function() {
+    var source = "";
     if(read) {
       for(var i in arguments) {
         var filename = arguments[i];
         if(typeof filename === "string") {
-          var source = read(filename);
-          if(typeof source === "string") {
-            run(source);
+          var nsource = read(filename);
+          if(typeof nsource === "string") {
+            source += nsource;
           } else throw new TypeError("Invalid source file.");
         } else throw new TypeError("Invalid filename.");
       }
     } else throw new TypeError("Function read is not supported.");
+    return run(source);
   }, this);
 
   // TODO, deprecated
@@ -959,13 +1013,13 @@ function Sandbox(global = {}, params = [], prestate = []) {
   //\___|\_/\__,_|_|
 
   define("eval", function(source) {
-    if(typeof source === "string") run(source);
+    if(typeof source === "string") return run(source);
     else throw new TypeError("Invalid source string.");
   }, this);
 
   // TODO, deprecated
   define("ceval", function(source) {
-    if(typeof source === "string") ceval(source);
+    if(typeof source === "string") return ceval(source);
     else throw new TypeError("Invalid source string.");
   }, this);
 
@@ -977,7 +1031,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
   // TODO
   define("request", function(url) {
-    if(typeof filename !== "string") throw new TypeError("Invalid url.");
+    if(typeof url !== "string") throw new TypeError("Invalid url.");
 
     function processXMLHttpRequest(file, location) {
       var xmlObj = null;
@@ -990,20 +1044,15 @@ function Sandbox(global = {}, params = [], prestate = []) {
       }
       xmlObj.onreadystatechange = function() {
         if(xmlObj.readyState == 4) {
-          processXML(xmlObj.responseXML, location);
+          exec(xmlObj.responseText); 
         }
       }
       xmlObj.open ('GET', file, true);
       xmlObj.send ('');
       return false;
     }
+    processXMLHttpRequest(url);
 
-    if(read) {
-      var source = read(filename);
-      if(typeof source === "string") run(source);
-      else throw new TypeError("Invalid source file.");
-
-    } else throw new TypeError("Function read is not supported.");
   }, this);
 
   // ______  __  __          _       

@@ -1,3 +1,129 @@
+
+var sbx = new Sandbox(this, Sandbox.DEFAULT);
+var self = sbx.request("sbxdom.js", "code.js");
+
+
+
+
+
+
+
+
+/*
+load("lib/sbxdom.js");
+var global = makeDOM();
+print(global.document);
+
+var global2 = makeDOM();
+print(global2.document);
+
+print(global.document === global2.document);
+
+for(var name in global) print(name);
+for(var name of Object.getOwnPropertyNames(global)) print(name);
+
+quit();
+
+load("dom.js");
+
+//var sbx = new Sandbox(this, Sandbox.DEFAULT);
+//var _document = sbx.wrap(document);
+
+//print(_document.location);
+//window.location = "https://rm-keil.de";
+//print(_document.location);
+
+*/
+
+
+(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/de_DE/all.js#xfbml=1";
+  //fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+
+quit();
+/*
+var str = read("sbxdom.js");
+var dx = eval(str);
+for(var p in dx) print(p);
+print("document" in dx);
+*/
+/*
+quit();
+
+(function() {
+
+  var str = read("dom.js");
+  eval(str);
+  print(this.document);
+
+}).call({
+  Function:Function, 
+  String:String,
+  Array:Array,
+  Object:Object,
+  Math:Math,
+  Date:Date,
+  WeakMap:WeakMap,
+  RegExp:RegExp,
+  Boolean:Boolean,
+  Error:Error,
+  TypeError:TypeError, 
+  Number:Number
+}, {});
+
+//print(document);
+
+
+
+//print(document);
+
+quit();
+*/
+
+//load("dom.js");
+
+(function() {
+
+var sbx = new Sandbox(this, Sandbox.DEFAULT);
+var self = sbx.load("sbxdom.js", "code.js");
+
+//print("XXX", self.document);
+
+
+sbx.writeeffectsOn(this).forEach(function(i, e) {print(e)});
+sbx.commitOn(this);
+
+//var d = this.document;
+
+//var document sbx.eval
+//print(document);
+//var document = 654654;
+//print(sbx.eval("return document;"));
+//print(document);
+//print(dx);
+
+//var __document = sbx.wrap(document);
+//__document.getElementById("asdf");
+
+//sbx.eval("var x = 4712;");
+//sbx.eval("x = 4712;");
+
+
+})();
+
+
+
+
+quit();
+
+
+
+
+
 //quit();
 load("demo/storyline/host.js");
 quit();
