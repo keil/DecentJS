@@ -342,6 +342,9 @@ var touched = __withdom__ && (target===global) ? new Set(Object.getOwnPropertyNa
     targets.set(shadow, target);
     shadows.set(target, shadow);
 
+    //var realm = Observer.create(true, false, false, false, log, logc, trace, increment, initialize, self);
+    //return realm(target);
+
     return proxy;
   }
 
@@ -395,7 +398,7 @@ var touched = __withdom__ && (target===global) ? new Set(Object.getOwnPropertyNa
    * @param touchedPropertyNames - List of modified properties 
    */
   function Membrane(origin, native = false, touchedPropertyNames = new Set()) {
-    if(!(this instanceof Membrane)) return new Membrane(origin, native);
+    if(!(this instanceof Membrane)) return new Membrane(origin, native, touchedPropertyNames);
     
     /*
      * List of modified properties

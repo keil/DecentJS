@@ -23,6 +23,7 @@ load("src/shell.js");
 load("src/statistic.js");
 
 load("src/effect.js");
+load("src/observer.js");
 load("src/sandbox.js");
 
 load('test/testcase.js');

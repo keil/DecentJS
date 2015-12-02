@@ -1,7 +1,11 @@
+var object = {z:{x:1, y:2, z:{x:1, y:2}}};
 
 var sbx = new Sandbox(this, Sandbox.DEFAULT);
-//var self = sbx.request("sbxdom.js", "code.js");
-sbx.load("benchmark/octane/base.js", "benchmark/octane/deltablue.js", "benchmark/octane/run.js")
+var wrapped = sbx.wrap(object);
+
+wrapped.x = 4711;
+wrapped.y = wrapped.x+1;
+wrapped.z.z.z = 4711;
 
 
 print(sbx.statistic);
@@ -10,8 +14,30 @@ print("#readeffects", sbx.readeffects.size);
 print("#writeeffects", sbx.writeeffects.size);
 print("#calleffects", sbx.calleffects.size);
 
-print("###" + Object.inheritsFrom);
+//sbx.writeeffects.forEach(function(i, e) {print(e)});
 
+quit();
+
+
+
+
+
+
+//var self = sbx.request("sbxdom.js", "code.js");
+//sbx.load("benchmark/octane/base.js", "benchmark/octane/deltablue.js", "benchmark/octane/run.js")
+
+
+
+
+/*
+print(sbx.statistic);
+print("#effects", sbx.effects.size);
+print("#readeffects", sbx.readeffects.size);
+print("#writeeffects", sbx.writeeffects.size);
+print("#calleffects", sbx.calleffects.size);
+
+print("###" + Object.inheritsFrom);
+*/
 
 
 
