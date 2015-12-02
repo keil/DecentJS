@@ -289,7 +289,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
     // Initializes effect logging
     if(__effect__) initialize(target);
 
-    var handler = new Membrane(target, native, Object.getOwnPropertyNames(shadow));
+    var handler = new Membrane(target, native, new Set(Object.getOwnPropertyNames(shadow)));
     var proxy = new Proxy(shadow, __metahandler__ ? new Proxy(handler, metahandler) : handler);
 
     proxies.set(target, proxy);
@@ -312,7 +312,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
     // use either the DOM or an empty object as sandbox global
     if(target===global) 
-      return __withdom__ ? DOM : Object.create();
+      return __withdom__ ? DOM : {};
 
     // creates an empty clone of the traget object
     var clone = Object.create(Object.getPrototypeOf(target));
@@ -970,18 +970,19 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
     // handle open requests
     var openRequests = new Set();
-    function callback(url, response) {
-      source += response;
-      openRequests.delete(url);
-      if(openRequests.size()===0) exec(source);
+    function callback(xmlObj, responseText) {
+      source += responseText;
+      openRequests.delete(xmlObj);
+      if(openRequests.size===0) execute(source);
     }
 
     // requests files
-    for(var url in urls) {
+    for(var url of urls) {
       var xmlObj = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+      openRequests.add(xmlObj);
       xmlObj.onreadystatechange = function() {
         if(xmlObj.readyState == 4) {
-          callback(url, xmlObj.responseText); 
+          callback(xmlObj, xmlObj.responseText); 
         }
       }
       xmlObj.open ('GET', url, true);
@@ -999,7 +1000,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
   /** sets window.location
   */
   // TODO, setter
-  define("domload", function(url = "about:blank") {
+  define("initialize", function(url = "about:blank") {
     return DOM ? (DOM.window.location = url) : false;
   }, this);
 
