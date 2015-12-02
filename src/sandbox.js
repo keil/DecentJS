@@ -191,7 +191,20 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
   /* List of typed arrays
   */
-  var typedArrays = new WeakSet([ArrayBuffer, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array, WeakMap, WeakSet]);
+  var typedArrays = new WeakSet([
+      ArrayBuffer,
+      Int8Array,
+      Uint8Array,
+      Uint8ClampedArray,
+      Int16Array,
+      Uint16Array,
+      Int32Array,
+      Uint32Array,
+      Float32Array,
+      Float64Array,
+      WeakMap,
+      WeakSet
+      ]);
 
   // _    ___          _ 
   //(_)__| __|_ ____ _| |
@@ -999,7 +1012,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
   /** sets window.location
   */
-  // TODO, setter
   define("initialize", function(url = "about:blank") {
     return DOM ? (DOM.window.location = url) : false;
   }, this);

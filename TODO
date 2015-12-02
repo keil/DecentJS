@@ -8,6 +8,8 @@ Tests
 Major Features
 ==============
 
+*** Wrap initial state when creating a new som
+
 *** effect specific rollback, make curret roobal to revert
 and revert to rebase
 
