@@ -302,7 +302,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
     // Initializes effect logging
     if(__effect__) initialize(target);
 
-    var handler = new Membrane(target, native, __withdom__ ? new Set(Object.getOwnPropertyNames(shadow)) : new Set());
+    var touched = __withdom__ && (target===global) ? new Set(Object.getOwnPropertyNames(shadow)) : new Set();
+
+    var handler = new Membrane(target, native, touched);
     var proxy = new Proxy(shadow, __metahandler__ ? new Proxy(handler, metahandler) : handler);
 
     proxies.set(target, proxy);
@@ -790,7 +792,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
       var sbxed = eval("(function() { with(env) { return " + body + " }})();");
       return sbxed.apply(env);
     } catch(error) {
-      print(error); print(error.stack);
+      print(error); print(error.stack); // TODO
       throw new SyntaxError("Incompatible body." + "\n" + body + "\n" + error + "\n" + error.stack);
     } 
   }
@@ -889,7 +891,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   function execute(body) {
     __verbose__ && logc("execute", body);
-print("XXXXXXXXXXXX"); // TODO
+    
     // return evaluation result
     return sbxeval(body, wrap(global));
   }
@@ -992,7 +994,6 @@ print("XXXXXXXXXXXX"); // TODO
       var xmlObj = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
       xmlObj.onreadystatechange = function(e) {
         if(xmlObj.readyState == 4) {
-          print(url + ":" + xmlObj.readyState + " / " + xmlObj.state);
           source += xmlObj.responseText;
           sendRequest(...urls);
         }
