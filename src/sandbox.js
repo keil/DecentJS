@@ -998,6 +998,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
   /** sets window.location
   */
+  // TODO, setter
   define("domload", function(url = "about:blank") {
     return DOM ? (DOM.window.location = url) : false;
   }, this);
