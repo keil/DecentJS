@@ -1,10 +1,16 @@
 
 var sbx = new Sandbox(this, Sandbox.DEFAULT);
-var self = sbx.request("sbxdom.js", "code.js");
+//var self = sbx.request("sbxdom.js", "code.js");
+sbx.load("benchmark/octane/base.js", "benchmark/octane/deltablue.js", "benchmark/octane/run.js")
 
 
+print(sbx.statistic);
+print("#effects", sbx.effects.size);
+print("#readeffects", sbx.readeffects.size);
+print("#writeeffects", sbx.writeeffects.size);
+print("#calleffects", sbx.calleffects.size);
 
-
+print("###" + Object.inheritsFrom);
 
 
 

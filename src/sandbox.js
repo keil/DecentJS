@@ -172,7 +172,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
   // \_/\_/|_|\__|_||_| |___/ \___/|_|  |_|
   //                                       
 
-  var DOM = __withdom__ ? makeDOM() : undefined;
+  var DOM = __withdom__ ? makeDOM(self) : undefined;
 
   // _    _  _      _   _         ___             _   _          
   //(_)__| \| |__ _| |_(_)_ _____| __|  _ _ _  __| |_(_)___ _ _  
@@ -302,7 +302,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
     // Initializes effect logging
     if(__effect__) initialize(target);
 
-    var handler = new Membrane(target, native, new Set(Object.getOwnPropertyNames(shadow)));
+    var handler = new Membrane(target, native, __withdom__ ? new Set(Object.getOwnPropertyNames(shadow)) : new Set());
     var proxy = new Proxy(shadow, __metahandler__ ? new Proxy(handler, metahandler) : handler);
 
     proxies.set(target, proxy);
@@ -364,7 +364,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   function Membrane(origin, native = false, touchedPropertyNames = new Set()) {
     if(!(this instanceof Membrane)) return new Membrane(origin, native);
-
+    
     /*
      * List of modified properties
      */
@@ -790,6 +790,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
       var sbxed = eval("(function() { with(env) { return " + body + " }})();");
       return sbxed.apply(env);
     } catch(error) {
+      print(error); print(error.stack);
       throw new SyntaxError("Incompatible body." + "\n" + body + "\n" + error + "\n" + error.stack);
     } 
   }
@@ -888,7 +889,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   function execute(body) {
     __verbose__ && logc("execute", body);
-
+print("XXXXXXXXXXXX"); // TODO
     // return evaluation result
     return sbxeval(body, wrap(global));
   }
@@ -953,7 +954,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
     // source
     var source = "";
     for(var file of files) {
-      source += read(filename);    
+      source += read(file);    
     }
 
     return execute(source);
@@ -981,26 +982,27 @@ function Sandbox(global = {}, params = [], prestate = []) {
     // source
     var source = "";
 
-    // handle open requests
-    var openRequests = new Set();
-    function callback(xmlObj, responseText) {
-      source += responseText;
-      openRequests.delete(xmlObj);
-      if(openRequests.size===0) execute(source);
-    }
+    /**
+     * Note: Matthias Keil
+     * Sandbox need to load the given files in the predefined order.
+     */
+    function sendRequest(url, ...urls) {
+      if(url===undefined) return execute(source);
 
-    // requests files
-    for(var url of urls) {
       var xmlObj = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-      openRequests.add(xmlObj);
-      xmlObj.onreadystatechange = function() {
+      xmlObj.onreadystatechange = function(e) {
         if(xmlObj.readyState == 4) {
-          callback(xmlObj, xmlObj.responseText); 
+          print(url + ":" + xmlObj.readyState + " / " + xmlObj.state);
+          source += xmlObj.responseText;
+          sendRequest(...urls);
         }
       }
       xmlObj.open ('GET', url, true);
-      xmlObj.send ('');
+      xmlObj.send (Id=100);
     }
+
+    sendRequest(...urls);
+    return true;
   }, this);
 
   // _____   ____  __  __ 
@@ -1785,7 +1787,7 @@ Object.defineProperty(Sandbox.prototype, "toString", {
 // \_/\___|_| /__/_\___/_||_|
 
 Object.defineProperty(Sandbox, "version", {
-  value: "DecentJS 1.2.2 (PoC)"
+  value: "DecentJS 1.2.3 (PoC)"
 });
 
 Object.defineProperty(Sandbox.prototype, "version", {

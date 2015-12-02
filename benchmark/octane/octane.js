@@ -20,7 +20,7 @@ var runfile  = (base_dir + 'run.js');
 
 var benchmarks = [];
 
-benchmarks.push(base_dir + 'richards.js');
+//benchmarks.push(base_dir + 'richards.js');
 
 /**
  * Note: Matthias Keil
@@ -29,18 +29,19 @@ benchmarks.push(base_dir + 'richards.js');
  * Object.prototype
  * benchmarks.push(base_dir + 'deltablue.js');
  */
+benchmarks.push(base_dir + 'deltablue.js');
 
-benchmarks.push(base_dir + 'crypto.js');
-benchmarks.push(base_dir + 'raytrace.js');
-benchmarks.push(base_dir + 'earley-boyer.js'); 
-benchmarks.push(base_dir + 'regexp.js');
-benchmarks.push(base_dir + 'splay.js'); 
-benchmarks.push(base_dir + 'navier-stokes.js');
-benchmarks.push(base_dir + 'pdfjs.js'); 
-benchmarks.push(base_dir + 'mandreel.js'); 
-benchmarks.push([base_dir + 'gbemu-part1.js', base_dir + 'gbemu-part2.js']);
-benchmarks.push(base_dir + 'code-load.js');
-benchmarks.push(base_dir + 'box2d.js');
+//benchmarks.push(base_dir + 'crypto.js');
+//benchmarks.push(base_dir + 'raytrace.js');
+//benchmarks.push(base_dir + 'earley-boyer.js'); 
+//benchmarks.push(base_dir + 'regexp.js');
+//benchmarks.push(base_dir + 'splay.js'); 
+//benchmarks.push(base_dir + 'navier-stokes.js');
+//benchmarks.push(base_dir + 'pdfjs.js'); 
+//benchmarks.push(base_dir + 'mandreel.js'); 
+//benchmarks.push([base_dir + 'gbemu-part1.js', base_dir + 'gbemu-part2.js']);
+//benchmarks.push(base_dir + 'code-load.js');
+//benchmarks.push(base_dir + 'box2d.js');
 
 /**
  * Note: Matthias Keil
@@ -51,7 +52,7 @@ benchmarks.push(base_dir + 'box2d.js');
  * benchmarks.push([base_dir + 'zlib.js', base_dir + 'zlib-data.js']); //Error: eval not supported
  */
 
-benchmarks.push([base_dir + 'typescript-input.js', base_dir + 'typescript-compiler.js', base_dir + 'typescript.js']);
+//benchmarks.push([base_dir + 'typescript-input.js', base_dir + 'typescript-compiler.js', base_dir + 'typescript.js']);
 
 var global = dumpGlobal();
 
@@ -131,9 +132,9 @@ function runBenchmark(inSandbox) {
         //print(";;; read effects")
         //for(var effect of sbx.readeffects)
         //  print(effect);
-        //print(";;; write effects");
-        //for(var effect of sbx.writeeffects)
-        //  print(effect);
+        print(";;; write effects");
+        for(var effect of sbx.writeeffects)
+          print(effect);
       }
       else fun.apply(this);
     }catch(e){
