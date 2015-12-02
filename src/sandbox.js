@@ -289,15 +289,13 @@ function Sandbox(global = {}, params = [], prestate = []) {
     // Initializes effect logging
     if(__effect__) initialize(target);
 
-// TODO
-shadows.set(target, shadow);
-
-    var handler = new Membrane(target, native);
+    var handler = new Membrane(target, native, Object.getOwnPropertyNames(shadow));
     var proxy = new Proxy(shadow, __metahandler__ ? new Proxy(handler, metahandler) : handler);
 
     proxies.set(target, proxy);
     handlers.set(proxy, handler);
-        targets.set(shadow, target);
+    targets.set(shadow, target);
+    shadows.set(target, shadow);
 
     return proxy;
   }
@@ -312,9 +310,11 @@ shadows.set(target, shadow);
   function cloneObject(target) {
     __verbose__ && log("Clone Object.");
 
-    // TODO
-    if(target===global) return dom;
+    // use either the DOM or an empty object as sandbox global
+    if(target===global) 
+      return __withdom__ ? DOM : Object.create();
 
+    // creates an empty clone of the traget object
     var clone = Object.create(Object.getPrototypeOf(target));
     return clone;
   }
@@ -336,23 +336,21 @@ shadows.set(target, shadow);
     return clone;
   }
 
-  // __  __           _                      
-  //|  \/  |___ _ __ | |__ _ _ __ _ _ _  ___ 
-  //| |\/| / -_) '  \| '_ \ '_/ _` | ' \/ -_)
-  //|_|  |_\___|_|_|_|_.__/_| \__,_|_||_\___|
+  // __  __                _                          
+  //|  \/  |              | |                         
+  //| \  / | ___ _ __ ___ | |__  _ __ __ _ _ __   ___ 
+  //| |\/| |/ _ \ '_ ` _ \| '_ \| '__/ _` | '_ \ / _ \
+  //| |  | |  __/ | | | | | |_) | | | (_| | | | |  __/
+  //|_|  |_|\___|_| |_| |_|_.__/|_|  \__,_|_| |_|\___|
 
   /**
    * Sandbox Handler
    * @param origin - Outside Value
    * @param native - Flag for Native Functions
+   * @param touchedPropertyNames - List of modified properties 
    */
-  function Membrane(origin, native = false) {
+  function Membrane(origin, native = false, touchedPropertyNames = new Set()) {
     if(!(this instanceof Membrane)) return new Membrane(origin, native);
-
-    /*
-     * List of modified properties
-     */
-    var touchedPropertyNames = new Set();
 
     /*
      * List of modified properties
@@ -383,20 +381,14 @@ shadows.set(target, shadow);
       touchedPropertyNames.add(name);
     }
 
-     // TODO
-    if(origin===global) {
-      print("xxx" + shadows.get(origin));
-      for(var name of Object.getOwnPropertyNames(shadows.get(origin))) {
-        touch(name);
-      }
-    };
-
-
-    // _____                 
-    //|_   _| _ __ _ _ __ ___
-    //  | || '_/ _` | '_ (_-<
-    //  |_||_| \__,_| .__/__/
-    //              |_|      
+    // _______                  
+    //|__   __|                 
+    //   | |_ __ __ _ _ __  ___ 
+    //   | | '__/ _` | '_ \/ __|
+    //   | | | | (_| | |_) \__ \
+    //   |_|_|  \__,_| .__/|___/
+    //               | |        
+    //               |_|        
 
     /**
      * A trap for Object.getPrototypeOf.
@@ -545,7 +537,7 @@ shadows.set(target, shadow);
       __verbose__ && logc("get", (typeof name === 'string') ? name : name.toString());
       __effect__  && trace(new Effect.Get(self, origin, (typeof name === 'string') ? name : name.toString()));
 
-      // TODO
+      // TODO, decom
       /** Handles the Symbol.toPrimitive property
       */
       if(name === Symbol.toPrimitive) return origin[name];
@@ -768,6 +760,10 @@ shadows.set(target, shadow);
     } 
   }
 
+  //    _                     _ 
+  // __| |____ _______ ____ _| |
+  //(_-< '_ \ \ / -_) V / _` | |
+  ///__/_.__/_\_\___|\_/\__,_|_|
 
   /** eval
    * Sandbox eval.
@@ -784,6 +780,20 @@ shadows.set(target, shadow);
       throw new SyntaxError("Incompatible body." + "\n" + body + "\n" + error + "\n" + error.stack);
     } 
   }
+
+  //  ____                       _   _                 
+  // / __ \                     | | (_)                
+  //| |  | |_ __   ___ _ __ __ _| |_ _  ___  _ __  ___ 
+  //| |  | | '_ \ / _ \ '__/ _` | __| |/ _ \| '_ \/ __|
+  //| |__| | |_) |  __/ | | (_| | |_| | (_) | | | \__ \
+  // \____/| .__/ \___|_|  \__,_|\__|_|\___/|_| |_|___/
+  //       | |                                         
+  //       |_|                                         
+
+  //              _           _       
+  // _____ ____ _| |_  _ __ _| |_ ___ 
+  /// -_) V / _` | | || / _` |  _/ -_)
+  //\___|\_/\__,_|_|\_,_\__,_|\__\___|
 
   /** evaluate
    * Evaluates the given function.
@@ -803,6 +813,11 @@ shadows.set(target, shadow);
     return result;
   }
 
+  //                _               _   
+  // __ ___ _ _  __| |_ _ _ _  _ __| |_ 
+  /// _/ _ \ ' \(_-<  _| '_| || / _|  _|
+  //\__\___/_||_/__/\__|_|  \_,_\__|\__|
+
   /** Construct
    * Evaluates the given constructor.
    * @param fun JavaScript Function
@@ -821,6 +836,11 @@ shadows.set(target, shadow);
     // return thisArg | val
     return (result instanceof Object) ? result : thisArg;
   }
+
+  // _    _         _ 
+  //| |__(_)_ _  __| |
+  //| '_ \ | ' \/ _` |
+  //|_.__/_|_||_\__,_|
 
   /** bind
    * Binds the given function in the sandbox.
@@ -843,6 +863,11 @@ shadows.set(target, shadow);
     // return bound function
     return bound;
   }
+
+  //                     _       
+  // _____ _____ __ _  _| |_ ___ 
+  /// -_) \ / -_) _| || |  _/ -_)
+  //\___/_\_\___\__|\_,_|\__\___|
 
   /** execute
    * Runs the given source in the sandbox.
@@ -964,13 +989,15 @@ shadows.set(target, shadow);
     }
   }, this);
 
-  // ___   ___  __  __ 
-  //|   \ / _ \|  \/  |
-  //| |) | (_) | |\/| |
-  //|___/ \___/|_|  |_|
+  // _____   ____  __  __ 
+  //|  __ \ / __ \|  \/  |
+  //| |  | | |  | | \  / |
+  //| |  | | |  | | |\/| |
+  //| |__| | |__| | |  | |
+  //|_____/ \____/|_|  |_|
 
   /** sets window.location
-   */
+  */
   define("domload", function(url = "about:blank") {
     return DOM ? (DOM.window.location = url) : false;
   }, this);
@@ -1638,10 +1665,10 @@ shadows.set(target, shadow);
    */
   define("revertOn", function(target) {
     var proxy = proxies.get(target);
- 
+
     // TODO
     //if(proxies.has(target) && handlers.has(proxies.get(target))) handlers.get(proxies.get(target)).touchedPropertyNames.clear();
- 
+
     // clean proxies, handler, shadow objects
     proxies.delete(target);
     handlers.delete(proxy);
@@ -1687,15 +1714,6 @@ shadows.set(target, shadow);
     proxies.set(object, wrap(clone));
     snapshots.set(object, clone);
   }
-
-  /// XXX
-  //var __sbxeval__ = (function(env) {
-  //  return eval("with(env) { (function(){'use strict'; return function(source) {'use strict'; print('#####'); return eval(source); }; })()}");
-  //})(wrap(global));
-
-  //print(__sbxeval__);
-
-
 
   //  _____ _        _   _     _   _      
   // / ____| |      | | (_)   | | (_)     
