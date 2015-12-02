@@ -302,7 +302,37 @@ function Sandbox(global = {}, params = [], prestate = []) {
     // Initializes effect logging
     if(__effect__) initialize(target);
 
-    var touched = __withdom__ && (target===global) ? new Set(Object.getOwnPropertyNames(shadow)) : new Set();
+
+
+
+var touched = __withdom__ && (target===global) ? new Set(Object.getOwnPropertyNames(shadow)) : new Set();
+
+    if(__withdom__ && (target===global)) {
+//      for(var name of Object.getOwnPropertyNames(target)) print("in Target: " + name);
+//      for(var name of Object.getOwnPropertyNames(DOM)) print("in DOM: " + name);
+//      for(var name of Object.getOwnPropertyNames(DOM.window)) print("in window: " + name);
+      //DOM.window = wrap(DOM.window);
+      //DOM = wrap(DOM);
+     
+      /*DOM.window = {};
+      
+      print("@@@" + DOM);
+      print("@@@" + DOM.document);
+      print("@@@" + DOM.window);
+      print("@@@" + DOM.window.document);
+      print("@@@" + (DOM.document === DOM.window.document));
+
+      shadow.window = {}; //wrap(shadow.window);*/
+
+      target.window = DOM.window;
+      touched.delete("window");
+
+      //target.document = DOM.document;
+      //touched.delete("document");
+
+    }
+
+    
 
     var handler = new Membrane(target, native, touched);
     var proxy = new Proxy(shadow, __metahandler__ ? new Proxy(handler, metahandler) : handler);
