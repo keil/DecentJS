@@ -166,13 +166,16 @@ function Sandbox(global = {}, params = [], prestate = []) {
     __statistic__ && statistic.increment(op);
   }
 
+  // TODO
+  var observer = new Observer(true, true, true, true, log, logc, trace, increment, initialize, self);
+
   //        _ _   _      ___   ___  __  __ 
   //__ __ _(_) |_| |_   |   \ / _ \|  \/  |
   //\ V  V / |  _| ' \  | |) | (_) | |\/| |
   // \_/\_/|_|\__|_||_| |___/ \___/|_|  |_|
   //                                       
 
-  var DOM = __withdom__ ? makeDOM(self) : undefined;
+  var DOM = __withdom__ ? makeDOM(self, observer) : undefined;
 
   // _    _  _      _   _         ___             _   _          
   //(_)__| \| |__ _| |_(_)_ _____| __|  _ _ _  __| |_(_)___ _ _  
@@ -304,8 +307,8 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
 
 
-
-var touched = __withdom__ && (target===global) ? new Set(Object.getOwnPropertyNames(shadow)) : new Set();
+// XXX
+  var touched = __withdom__ && (target===global) ? new Set(Object.getOwnPropertyNames(shadow)) : new Set();
 
     if(__withdom__ && (target===global)) {
 //      for(var name of Object.getOwnPropertyNames(target)) print("in Target: " + name);
@@ -323,16 +326,20 @@ var touched = __withdom__ && (target===global) ? new Set(Object.getOwnPropertyNa
       print("@@@" + (DOM.document === DOM.window.document));
 
       shadow.window = {}; //wrap(shadow.window);*/
+   
+      //var realm = Observer.create(true, false, false, false, log, logc, trace, increment, initialize, self);
+      //return realm(target);
+  
+      shadow = observer.wrap(shadow);
 
-      target.window = DOM.window;
-      touched.delete("window");
+      // TODO OLD Code
+      //target.window = DOM.window;
+      //touched.delete("window");
 
       //target.document = DOM.document;
       //touched.delete("document");
 
     }
-
-    
 
     var handler = new Membrane(target, native, touched);
     var proxy = new Proxy(shadow, __metahandler__ ? new Proxy(handler, metahandler) : handler);
