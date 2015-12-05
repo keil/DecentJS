@@ -1,3 +1,130 @@
+
+// _  _         _     
+//| \| |___  __| |___ 
+//| .` / _ \/ _` / -_)
+//|_|\_\___/\__,_\___|
+
+function Node (value, left, right) {
+  if(!(this instanceof Node)) return new Node (value, left, right);
+
+  this.value = value;
+  this.left = left;
+  this.right = right;
+}
+Node.prototype.toString = function () {
+  return (this.left?this.left + ", ":"") + this.value +(this.right?", "+this.right:"");
+}
+
+//               ___   __ 
+// ____  _ _ __ / _ \ / _|
+//(_-< || | '  \ (_) |  _|
+///__/\_,_|_|_|_\___/|_|  
+
+function sumOf (node) {
+  return (node) ? node.value + sumOf(node.left) + sumOf(node.right) : 0;
+}
+
+//    _          _   _    ___   __ 
+// __| |___ _ __| |_| |_ / _ \ / _|
+/// _` / -_) '_ \  _| ' \ (_) |  _|
+//\__,_\___| .__/\__|_||_\___/|_|  
+//         |_|                     
+
+function depthOf (node) {
+  return node ? Math.max(depthOf(node.left), depthOf(node.right))+1 : -1;
+}
+
+//              _   
+// _ _ ___  ___| |_ 
+//| '_/ _ \/ _ \  _|
+//|_| \___/\___/\__|
+
+var root = Node(0, Node(0, Node(0), Node(0)), Node(0));
+
+//         _ __   __    _          
+// ___ ___| |\ \ / /_ _| |_  _ ___ 
+//(_-</ -_)  _\ V / _` | | || / -_)
+///__/\___|\__|\_/\__,_|_|\_,_\___|
+
+function setValue (node) {
+  if (node) {
+    node.value=depthOf(node);
+    setValue(node.left);
+    setValue(node.right);
+  }
+}
+
+var sbx = new Sandbox(this, Sandbox.DEFAULT);
+
+print(";;; outside sandbox");
+print("tree: " + root);
+
+print(";;; inside sandbbox");
+print("tree: " + sbx.call(root.toString, root));
+
+sbx.call(setValue, this, root);
+
+print(";;; outside sandbox");
+print("tree: " + root);
+
+print(";;; inside sandbbox");
+print("tree: " + sbx.call(root.toString, root));
+
+print(sbx.statistic);
+
+var effects = sbx.writeeffects;
+print(";;; All Write Effects ");
+effects.forEach(function(i, e) {print(e)});
+print("\n");
+
+//print(Array.from(effects)[0]);
+//print(Array.from(effects)[0].commit());
+
+
+
+
+
+sbx.assert(new Rule(Effect.Set(null, root, 'value'), function() {return true;}));
+
+print(";;; outside sandbox");
+print("tree: " + root);
+
+print(";;; inside sandbbox");
+print("tree: " + sbx.call(root.toString, root));
+
+
+quit();
+/*
+Commit(root, 'value')
+
+var r = Policy('name');
+r.commit.add(new Rule(
+      Rule.Set(root, 'name'), function(sandbox, effect) {
+        return true;
+      }))
+
+
+
+
+
+sbx.apply(new Rule.Set(this, 'jQuery'), function() {
+  return true;
+});
+
+
+for(var effect of sbx.writeeffect(this)) {
+  if(effect.name === 'target') effect.commi();
+}
+*/
+
+
+
+
+
+
+
+quit();
+
 var object = {z:{x:1, y:2, z:{x:1, y:2}}};
 
 var sbx = new Sandbox(this, Sandbox.DEFAULT);

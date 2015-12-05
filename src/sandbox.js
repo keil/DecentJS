@@ -1772,6 +1772,32 @@ function Sandbox(global = {}, params = [], prestate = []) {
     snapshots.set(object, clone);
   }
 
+  // TODO, apply
+
+
+  /** Apply 
+  */
+  define("assert", function(rules) {
+    //for(var rule of rules) {
+    var rule = rules;  
+    for(var effect of this.writeeffectsOn(rule.effect.target)) {
+print('***' + rule.predicate())
+        if(effect.name === rule.effect.name && rule.predicate()) effect.commit();
+      
+      }
+    //}
+  }, this);
+
+
+
+
+
+
+
+
+
+
+
   //  _____ _        _   _     _   _      
   // / ____| |      | | (_)   | | (_)     
   //| (___ | |_ __ _| |_ _ ___| |_ _  ___ 
