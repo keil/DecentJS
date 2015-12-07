@@ -83,8 +83,61 @@ print("\n");
 
 
 
-
+/*
 sbx.assert(new Rule(Effect.Set(null, root, 'value'), function() {return true;}));
+
+
+var jquery = new Ploicy("Commit jQuery/$ to this;");
+policy.commit = new Set([
+    new Rule.Set(this, "$", null);
+    new Rule.Set(this, "jQuery", null);
+    ]);
+
+sbx.applyPolicy(jquery);
+
+
+var jquery = new Ploicy("Commit jQuery/$ to this;");
+policy.commit = [
+  new Rule([
+      new Effect.Set(this, "jQuery"),
+      new Effect.Set(this, "$")],
+      null
+      )
+  ];
+
+
+    new Rule.Any(this, null);
+    new Rule.Set(this, "jQuery", null);
+    ]);
+
+sbx.applyPolicy(jquery);
+
+*/
+
+
+/*
+var jquery = new Policy("Commit jQuery/$ to this;");
+jquery.add(
+    Rule.Commit(this, "jQuery", null),
+    Rule.Commit(this, "$", null)
+    );
+sbx.applyPolicy(jquery);
+*/
+
+var jquery = new Policy("Commit jQuery/$ to this;");
+jquery.add(
+    Rule.Commit(root, "value", function() {return true}),
+    Rule.Commit(root, "left", null)
+    );
+sbx.applyPolicy(jquery);
+
+
+// is a combination of permitted operations in combinations 
+// with restrictions.
+// predicate ro restrict 
+
+
+
 
 print(";;; outside sandbox");
 print("tree: " + root);

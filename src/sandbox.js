@@ -1777,15 +1777,12 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
   /** Apply 
   */
-  define("assert", function(rules) {
-    //for(var rule of rules) {
-    var rule = rules;  
-    for(var effect of this.writeeffectsOn(rule.effect.target)) {
-print('***' + rule.predicate())
-        if(effect.name === rule.effect.name && rule.predicate()) effect.commit();
-      
+  define("applyPolicy", function(policy) {
+    for(var rule of policy.rules) {
+      for(var effect of this.writeeffectsOn(rule.target)) {
+        if(effect.name === rule.name && (rule.predicate==null || rule.predicate())) effect.commit();
       }
-    //}
+    }
   }, this);
 
 
