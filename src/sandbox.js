@@ -604,6 +604,25 @@ function Sandbox(global = {}, params = [], prestate = []) {
       // TODO, test if this also happens in the new engine
       if(origin===global && name==='undefined') return undefined;
 
+
+      // Test for getter functions
+      // TODO
+      if(touched(name)) {
+        return shadow[name];
+      } else {
+        var desc = Object.getOwnPropertyDescriptor(origin, name);
+
+        if(desc.get) {
+                var getter = wrap(desc.get);
+                // TODO, Test thia pointer  in a getter call
+                // if the gaetter has a tis pointer to the object than 
+                // also in the toiched mode we need to test fro a getter
+                return getter.apply()
+        } else {
+                return wrap(origin[name])
+        }
+      }
+
       // TODO, implement getter functions
       return touched(name) ? shadow[name] : wrap(origin[name]);
     };
@@ -614,6 +633,23 @@ function Sandbox(global = {}, params = [], prestate = []) {
     this.set = function(shadow, name, value, receiver) {
       __verbose__ && logc("set", name);
       __effect__  && trace(new Effect.Set(self, origin, name));
+
+
+      // Test for setter functions
+      if(touched(name)) {
+              return shadow[name];
+      } else {
+              var desc = Object.getOwnPropertyDescriptor(origin, name);
+
+              if(desc.get) {
+                      var getter = wrap(desc.get);
+                      // TODO, Test thia pointer  in a getter call
+                      return getter.apply()
+              } else {
+                      return wrap(origin[name])
+              }
+      }
+
 
       var desc = touched(name) ? 
         Object.getOwnPropertyDescriptor(shadow, name) : 
@@ -630,6 +666,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
           throw new TypeError(`${shadow} is not extensible`);
         }
       } else {
+              // TODO, does this matter for setter functions?
         // existing property
         if(desc.writable) {
           // writeable property
@@ -1787,6 +1824,11 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
 
 
+ /** Apply 
+  */
+  define("applyRule", function(rule) {
+        if(rule.predicate(self)) rule.operation();
+  }, this);
 
 
 

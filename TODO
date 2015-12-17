@@ -5,6 +5,7 @@ Tests
 *** Native Constructor test
 *** Test scrip mode of direct eval
 
+
 Major Features
 ==============
 
@@ -22,11 +23,18 @@ and revert to rebase
 *** Unwrap 
 - unwrap values when commiting
 
+innerhalb der sbx
+var a = x.a;
+x.b = a;
+
+
+
 *** Pre-State snapshot
 - commit will not work in the current implementation
 
 *** Getter/Setter Function
 - implement handling of getter and setter functions
+
 
 Minor Features
 ==============
