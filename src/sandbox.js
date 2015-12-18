@@ -1596,6 +1596,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
       delete origin[effect.name];
 
     } else throw new TypeError("Invalid Effect" + effect);
+
+    // if snapshot, commit to original target
+    if(origins.has(origin))  commit(effect, shadow, origins.get(origin))
   }
 
   /** Commit Of Target
@@ -1637,7 +1640,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
   //|  _  // _ \| | | '_ \ / _` |/ __| |/ /
   //| | \ \ (_) | | | |_) | (_| | (__|   < 
   //|_|  \_\___/|_|_|_.__/ \__,_|\___|_|\_\
-
 
   function rollback(effect, shadow, origin) {
     if(effect instanceof Effect.SetPrototypeOf) {
@@ -1771,13 +1773,19 @@ function Sandbox(global = {}, params = [], prestate = []) {
     return clone;
   }
 
-  // stores prestate referencex
+  /* Maps origins to snapshots
+   */
   var snapshots = new WeakMap();
+
+  /* Maps snaphots to origins
+   */
+  var origins = new WeakMap();
 
   for(var object of prestate) {
     var snapshot = copy(object);
     proxies.set(object, wrap(snapshot));
     snapshots.set(object, snapshot);
+    origins.set(snapshot, object);
   }
 
   // _____      _                    
