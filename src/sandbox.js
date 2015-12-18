@@ -1893,7 +1893,7 @@ Object.defineProperty(Sandbox.prototype, "toString", {
 // \_/\___|_| /__/_\___/_||_|
 
 Object.defineProperty(Sandbox, "version", {
-  value: "DecentJS 1.2.3 (PoC)"
+  value: "DecentJS 1.3.0 (PoC)"
 });
 
 Object.defineProperty(Sandbox.prototype, "version", {

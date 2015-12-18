@@ -13,24 +13,24 @@
  * http://www.informatik.uni-freiburg.de/~keilr/
  */
 
-function Rule(effect, predicate) {
-  if(!(this instanceof Rule)) return new Rule(effect, predicate);
-
-  Object.defineProperties(this, {
-    "effect" : {
-      value: effect
-    },
-    "predicate": {
-      value: predicate
-    }
-  });
-}
+var Rules = (function() {
 
 
 
 
+  //                       _   
+  // _____ ___ __  ___ _ _| |_ 
+  /// -_) \ / '_ \/ _ \ '_|  _|
+  //\___/_\_\ .__/\___/_|  \__|
+  //        |_|                
 
 
 
+  var Rules = new Package("Rule");
 
+  Package.export("Rule", Rule, Rules);
+  // ...
 
+  return Rules;
+
+})();
