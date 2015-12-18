@@ -317,7 +317,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
       shadow = observer.wrap(shadow);
     }
 
-    var handler = new Membrane(target, native, touched);
+    var handler = new Membrane(!native && snapshots.has(target) ? snapshots.get(target) : target, native, touched);
     var proxy = new Proxy(shadow, __metahandler__ ? new Proxy(handler, metahandler) : handler);
 
     proxies.set(target, proxy);
@@ -1745,6 +1745,14 @@ function Sandbox(global = {}, params = [], prestate = []) {
   //|_____/|_| |_|\__,_| .__/|___/_| |_|\___/ \__|
   //                   | |                        
   //                   |_|                        
+ 
+  /* Maps origins to snapshots
+   */
+  var snapshots = new WeakMap();
+
+  /* Maps snaphots to origins
+   */
+  var origins = new WeakMap();
 
   /**
    * copy(target)
@@ -1756,36 +1764,28 @@ function Sandbox(global = {}, params = [], prestate = []) {
   function copy(target) {
     __verbose__ && log("Copy Snapshot Object.");
 
+    print("COPY", target); // XXX
+
     // If target is a primitive value, then return target
     if (target !== Object(target)) {
       return target;
     }
 
     // creates an empty clone of the traget object
-    var clone = Object.create(Object.getPrototypeOf(target));
+    var snapshot = Object.create(Object.getPrototypeOf(target));
 
     // copies all properties
-    for (var property of Object.getOwnPropertyNames(object)) {
+    for (var property of Object.getOwnPropertyNames(target)) {
       var descriptor = Object.getOwnPropertyDescriptor(target, property);
       if(descriptor.value) descriptor.value = copy(descriptor.value);
-      Object.defineProperty(clone, property, descriptor);
+      Object.defineProperty(snapshot, property, descriptor);
     }
-    return clone;
+
+    return snapshot;
   }
 
-  /* Maps origins to snapshots
-   */
-  var snapshots = new WeakMap();
-
-  /* Maps snaphots to origins
-   */
-  var origins = new WeakMap();
-
   for(var object of prestate) {
-    var snapshot = copy(object);
-    proxies.set(object, wrap(snapshot));
-    snapshots.set(object, snapshot);
-    origins.set(snapshot, object);
+    copy(object);
   }
 
   // _____      _                    
@@ -1801,13 +1801,18 @@ function Sandbox(global = {}, params = [], prestate = []) {
   define("rebaseOn", function(target) {
     if(!prestate.has(target)) throw new TypeError("Invalid Target.");
 
-    // first revert the target
-    revertOn(target);
+    // update snapshot
+    copy(object);
 
+    // first revert the target
+    this.revertOn(target);
+
+    // TODO
     // create a new copy
-    var snapshot = copy(target);
-    proxies.set(target, wrap(snapshot));
-    snapshots.set(target, snapshot);
+    //var snapshot = copy(target);
+    //proxies.set(target, wrap(snapshot));
+    //snapshots.set(target, snapshot);
+    // TODO
   }, this)
 
   /** Rebase

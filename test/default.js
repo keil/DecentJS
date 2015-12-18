@@ -55,7 +55,7 @@ function setValue (node) {
   }
 }
 
-var sbx = new Sandbox(this, Sandbox.DEFAULT);
+var sbx = new Sandbox(this, Sandbox.DEFAULT, new Set([root]));
 
 print(";;; outside sandbox");
 print("tree: " + root);
@@ -71,17 +71,27 @@ print("tree: " + root);
 print(";;; inside sandbbox");
 print("tree: " + sbx.call(root.toString, root));
 
-print(sbx.statistic);
+setValue(root);
 
-var effects = sbx.writeeffects;
-print(";;; All Write Effects ");
-effects.forEach(function(i, e) {print(e)});
-print("\n");
+print(";;; outside sandbox");
+print("tree: " + root);
 
-//print(Array.from(effects)[0]);
-//print(Array.from(effects)[0].commit());
+print(";;; inside sandbbox");
+print("tree: " + sbx.call(root.toString, root));
+
+//sbx.revertOn(root.left);
+sbx.revert();
+//sbx.rollback();
+sbx.rebase();
 
 
+print(";;; outside sandbox");
+print("tree: " + root);
+
+print(";;; inside sandbbox");
+print("tree: " + sbx.call(root.toString, root));
+
+quit();
 
 
 /*
