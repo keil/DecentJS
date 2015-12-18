@@ -232,7 +232,7 @@ var sbx = new Sandbox(this, params);
   difso.forEach(function(i, e) {print(e)});
   print("\n");
 
-  print("HasDifference: " + (sbx.hasDifference));
+  print("HasDifference: " + (sbx.hasDifferences));
 
   var difs = sbx.differences;
   print(";;; All Differences");

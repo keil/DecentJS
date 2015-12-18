@@ -1668,7 +1668,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @return JavaScript Array [Effect]
    */
   define("commitOf", function(effect) {
-    // XXX tst for effect
     if(!writeeffects.get(effect.target).has(effect.hashCode())) throw new TypeError("Invalid Effect."+effect);
     // commit effect
     commit(effect, shadows.get(effect.target), effect.target); 
@@ -1776,9 +1775,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   define("revertOn", function(target) {
     var proxy = proxies.get(target);
-
-    // TODO
-    //if(proxies.has(target) && handlers.has(proxies.get(target))) handlers.get(proxies.get(target)).touchedPropertyNames.clear();
 
     // clean proxies, handler, shadow objects
     proxies.delete(target);

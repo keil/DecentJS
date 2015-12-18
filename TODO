@@ -1,39 +1,8 @@
-Tests
-=====
-
-*** Exceptions
-*** Native Constructor test
-*** Test scrip mode of direct eval
-
-
 Major Features
 ==============
 
-*** Wrap initial state when creating a new som
-
-*** effect specific rollback, make curret roobal to revert
-and revert to rebase
-
-*** rebase as a renew of the snapshot object
-
-*** Make load as external package
-
-*** Make an OPT version
-
-*** Unwrap 
-- unwrap values when commiting
-
-innerhalb der sbx
-var a = x.a;
-x.b = a;
-
-
-
 *** Pre-State snapshot
 - commit will not work in the current implementation
-
-*** Getter/Setter Function
-- implement handling of getter and setter functions
 
 
 Minor Features
@@ -44,10 +13,16 @@ Minor Features
 *** Recursice Pre-state Snapshot
 
 *** Rebase
+- rebase as a renew of the snapshot object
 - only pre-state snapshot, re-clones the target if changes exist
 - (different semantics to revert) reset only the snapshot values
 - (requires that the clone is a target --> revert/rebase do the same)
 
-*** Optimization
-- If a proxy get returns an object/value, then it might replace the shadow value 
-- with this value to increase performance on further accesses
+
+Open Points
+===========
+
+*** Exception Handling 
+- Exceptions will not be catched by the sandbox.
+- Is there a need to catch exceptions?
+

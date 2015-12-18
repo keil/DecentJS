@@ -24,7 +24,7 @@ load("src/statistic.js");
 
 load("src/effect.js");
 load("src/policy.js");
-//load("src/rule.js");
+load("src/rule.js");
 
 load("src/observer.js");
 load("src/sandbox.js");

@@ -47,6 +47,7 @@ var root = Node(0, Node(0, Node(0), Node(0)), Node(0));
 ///__/\___|\__|\_/\__,_|_|\_,_\___|
 
 function setValue (node) {
+
   if (node) {
     node.value=depthOf(node);
     setValue(node.left);
@@ -123,14 +124,14 @@ jquery.add(
     );
 sbx.applyPolicy(jquery);
 */
-
+/*
 var jquery = new Policy("Commit jQuery/$ to this;");
 jquery.add(
     Rule.Commit(root, "value", function() {return true}),
     Rule.Commit(root, "left", null)
     );
 sbx.applyPolicy(jquery);
-
+*/
 
 // is a combination of permitted operations in combinations 
 // with restrictions.
