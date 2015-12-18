@@ -629,14 +629,12 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __verbose__ && logc("set", name);
       __effect__  && trace(new Effect.Set(self, origin, name));
 
-
-
       // Test for setter functions
       if(touched(name)) {
-        return shadow[name]=value;
+        shadow[name]=value;
       } else {
 
-        var desc = wrap(Object.getOwnPropertyDescriptor(origin, name));
+        var desc = Object.getOwnPropertyDescriptor(origin, name);
         
         // create new fields
         // or update existing field
