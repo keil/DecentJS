@@ -15,8 +15,10 @@
 
 var Policy = (function() {
 
-  function Policy(...rules) {
-    if(!(this instanceof Policy)) return new Policy(...rules);
+  function Policy(rules) {
+    if(!(this instanceof Policy)) return new Policy(rules);
+
+    if(!(rules instanceof Set)) throw new TypeError("Invalid set.");
 
     Object.defineProperties(this, {
       "rules": {
@@ -27,6 +29,9 @@ var Policy = (function() {
   Policy.prototype = {};
   Policy.prototype.toString = function() {
     return "[[DecentJS/Policy]]";
+  }
+  Policy.prototype.add = function(...rules) {
+    for(var rule in rules) this.rules.add(rule);
   }
 
   Policy.from = function(rules) {

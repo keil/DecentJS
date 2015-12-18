@@ -307,29 +307,29 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
 
 
-// XXX
-  var touched = __withdom__ && (target===global) ? new Set(Object.getOwnPropertyNames(shadow)) : new Set();
+    // XXX
+    var touched = __withdom__ && (target===global) ? new Set(Object.getOwnPropertyNames(shadow)) : new Set();
 
     if(__withdom__ && (target===global)) {
-//      for(var name of Object.getOwnPropertyNames(target)) print("in Target: " + name);
-//      for(var name of Object.getOwnPropertyNames(DOM)) print("in DOM: " + name);
-//      for(var name of Object.getOwnPropertyNames(DOM.window)) print("in window: " + name);
+      //      for(var name of Object.getOwnPropertyNames(target)) print("in Target: " + name);
+      //      for(var name of Object.getOwnPropertyNames(DOM)) print("in DOM: " + name);
+      //      for(var name of Object.getOwnPropertyNames(DOM.window)) print("in window: " + name);
       //DOM.window = wrap(DOM.window);
       //DOM = wrap(DOM);
-     
-      /*DOM.window = {};
-      
-      print("@@@" + DOM);
-      print("@@@" + DOM.document);
-      print("@@@" + DOM.window);
-      print("@@@" + DOM.window.document);
-      print("@@@" + (DOM.document === DOM.window.document));
 
-      shadow.window = {}; //wrap(shadow.window);*/
-   
+      /*DOM.window = {};
+
+        print("@@@" + DOM);
+        print("@@@" + DOM.document);
+        print("@@@" + DOM.window);
+        print("@@@" + DOM.window.document);
+        print("@@@" + (DOM.document === DOM.window.document));
+
+        shadow.window = {}; //wrap(shadow.window);*/
+
       //var realm = Observer.create(true, false, false, false, log, logc, trace, increment, initialize, self);
       //return realm(target);
-  
+
       shadow = observer.wrap(shadow);
 
       // TODO OLD Code
@@ -406,7 +406,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   function Membrane(origin, native = false, touchedPropertyNames = new Set()) {
     if(!(this instanceof Membrane)) return new Membrane(origin, native, touchedPropertyNames);
-    
+
     /*
      * List of modified properties
      */
@@ -592,10 +592,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __verbose__ && logc("get", (typeof name === 'string') ? name : name.toString());
       __effect__  && trace(new Effect.Get(self, origin, (typeof name === 'string') ? name : name.toString()));
 
-      // TODO, decom
       /** Handles the Symbol.toPrimitive property
       */
-      if(name === Symbol.toPrimitive) return origin[name];
+      if(name === Symbol.toPrimitive) return wrap(origin[name]);
       //if(name === "valueOf") return origin[name];
 
       // Node: Matthias Keil
@@ -604,27 +603,23 @@ function Sandbox(global = {}, params = [], prestate = []) {
       // TODO, test if this also happens in the new engine
       if(origin===global && name==='undefined') return undefined;
 
-
       // Test for getter functions
-      // TODO
       if(touched(name)) {
         return shadow[name];
       } else {
         var desc = Object.getOwnPropertyDescriptor(origin, name);
-
-        if(desc.get) {
-                var getter = wrap(desc.get);
-                // TODO, Test thia pointer  in a getter call
-                // if the gaetter has a tis pointer to the object than 
-                // also in the toiched mode we need to test fro a getter
-                return getter.apply()
+        // if getter exists, call getter function
+        // else forwards operation to the target
+        if(desc && desc.get) {
+          var getter = wrap(desc.get);
+          return getter.apply(this);
         } else {
-                return wrap(origin[name])
+          return wrap(origin[name])
         }
       }
 
       // TODO, implement getter functions
-      return touched(name) ? shadow[name] : wrap(origin[name]);
+      //return touched(name) ? shadow[name] : wrap(origin[name]);
     };
 
     /** 
@@ -635,26 +630,49 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __effect__  && trace(new Effect.Set(self, origin, name));
 
 
+
       // Test for setter functions
       if(touched(name)) {
-              return shadow[name];
+        return shadow[name]=value;
       } else {
-              var desc = Object.getOwnPropertyDescriptor(origin, name);
 
-              if(desc.get) {
-                      var getter = wrap(desc.get);
-                      // TODO, Test thia pointer  in a getter call
-                      return getter.apply()
-              } else {
-                      return wrap(origin[name])
-              }
+        var desc = wrap(Object.getOwnPropertyDescriptor(origin, name));
+        
+        // create new fields
+        // or update existing field
+        if(desc === undefined) {
+          // non-existing property
+          if(Object.isExtensible(shadow)) {
+            // extensible object
+            touch(name);
+            (shadow[name]=value);
+          } else {
+            // non-extensible object
+            throw new TypeError(`${shadow} is not extensible`);
+          }
+        } else {
+          
+          if(desc.set) {
+            var setter = wrap(desc.set);
+            setter.apply(this, [value]);        
+          } else if(desc.writable) {
+            // writeable property
+            touch(name);
+            (shadow[name]=value);
+          } else {
+            // non-writeable property
+            throw new TypeError(`"${name}" is read-only`);
+          }
+        }
       }
 
-
+/**
       var desc = touched(name) ? 
         Object.getOwnPropertyDescriptor(shadow, name) : 
         wrap(Object.getOwnPropertyDescriptor(origin, name));
 
+      // create new fields
+      // or update existing field
       if(desc === undefined) {
         // non-existing property
         if(Object.isExtensible(shadow)) {
@@ -666,7 +684,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
           throw new TypeError(`${shadow} is not extensible`);
         }
       } else {
-              // TODO, does this matter for setter functions?
+        // TODO, does this matter for setter functions?
         // existing property
         if(desc.writable) {
           // writeable property
@@ -677,6 +695,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
           throw new TypeError(`"${name}" is read-only`);
         }
       }
+**/
       return true;
     };
 
@@ -968,7 +987,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   function execute(body) {
     __verbose__ && logc("execute", body);
-    
+
     // return evaluation result
     return sbxeval(body, wrap(global));
   }
@@ -1809,33 +1828,26 @@ function Sandbox(global = {}, params = [], prestate = []) {
     snapshots.set(object, clone);
   }
 
-  // TODO, apply
+  // _____       _           
+  //|  __ \     | |          
+  //| |__) |   _| | ___  ___ 
+  //|  _  / | | | |/ _ \/ __|
+  //| | \ \ |_| | |  __/\__ \
+  //|_|  \_\__,_|_|\___||___/
 
-
-  /** Apply 
+  /** Apply Policy 
   */
   define("applyPolicy", function(policy) {
     for(var rule of policy.rules) {
-      for(var effect of this.writeeffectsOn(rule.target)) {
-        if(effect.name === rule.name && (rule.predicate==null || rule.predicate())) effect.commit();
-      }
+      this.applyRule(rule);
     }
   }, this);
 
-
-
- /** Apply 
+  /** Apply Rule 
   */
   define("applyRule", function(rule) {
-        if(rule.predicate(self)) rule.operation();
+    if(rule.predicate(this)) rule.body(this);
   }, this);
-
-
-
-
-
-
-
 
   //  _____ _        _   _     _   _      
   // / ____| |      | | (_)   | | (_)     
