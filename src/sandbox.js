@@ -590,9 +590,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
           return wrap(origin[name])
         }
       }
-
-      // TODO, implement getter functions
-      //return touched(name) ? shadow[name] : wrap(origin[name]);
     };
 
     /** 
@@ -608,7 +605,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
       } else {
 
         var desc = Object.getOwnPropertyDescriptor(origin, name);
-        
+
         // create new fields
         // or update existing field
         if(desc === undefined) {
@@ -622,7 +619,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
             throw new TypeError(`${shadow} is not extensible`);
           }
         } else {
-          
+
           if(desc.set) {
             var setter = wrap(desc.set);
             setter.apply(this, [value]);        
@@ -637,36 +634,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
         }
       }
 
-/**
-      var desc = touched(name) ? 
-        Object.getOwnPropertyDescriptor(shadow, name) : 
-        wrap(Object.getOwnPropertyDescriptor(origin, name));
-
-      // create new fields
-      // or update existing field
-      if(desc === undefined) {
-        // non-existing property
-        if(Object.isExtensible(shadow)) {
-          // extensible object
-          touch(name);
-          (shadow[name]=value);
-        } else {
-          // non-extensible object
-          throw new TypeError(`${shadow} is not extensible`);
-        }
-      } else {
-        // TODO, does this matter for setter functions?
-        // existing property
-        if(desc.writable) {
-          // writeable property
-          touch(name);
-          (shadow[name]=value);
-        } else {
-          // non-writeable property
-          throw new TypeError(`"${name}" is read-only`);
-        }
-      }
-**/
       return true;
     };
 
@@ -784,23 +751,18 @@ function Sandbox(global = {}, params = [], prestate = []) {
         }
       }
 
-      // TODO
-      //var thisArg = wrap(Object.create(shadow.prototype));
       var thisArg = native ? Object.create(origin.prototype) : Object.create(shadow.prototype);
       var result =  native ? origin.apply(thisArg, argumentsList) : shadow.apply(thisArg, argumentsList);
 
-      // TODO
-      // putstr("#######", origin===Object);
-      // if(origin===Object) {
-      /* copy properties from object.prototype when creating new oejcts
-         var objectsShadow = shadows.get(Object.prototype);
-         for(var property of Object.getOwnPropertyNames(objectsShadow))
-         thisArg[property] = objectsShadow[property];
-         result[property] = objectsShadow[property];
-      // }
-      */
+      // this should be done internally 
+      /*if(origin===Object) {
+      // copies all properties
+      for (var property of Object.getOwnPropertyNames(Object.prototype)) {
+      var descriptor = Object.getOwnPropertyDescriptor(Object.prototype, property);
+      Object.defineProperty(result, property, descriptor);
+      }
+      }*/
 
-      //return result ? result : thisArg;
       return (result instanceof Object) ? result : thisArg;
     }
   };
@@ -859,7 +821,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
       var sbxed = eval("(function() { with(env) { return " + body + " }})();");
       return sbxed.apply(env);
     } catch(error) {
-      print(error); print(error.stack); // TODO
       throw new SyntaxError("Incompatible body." + "\n" + body + "\n" + error + "\n" + error.stack);
     } 
   }
@@ -1814,9 +1775,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
   var snapshots = new WeakMap();
 
   for(var object of prestate) {
-    var copy = copy(object);
-    proxies.set(object, wrap(copy));
-    snapshots.set(object, copy);
+    var snapshot = copy(object);
+    proxies.set(object, wrap(snapshot));
+    snapshots.set(object, snapshot);
   }
 
   // _____      _                    
@@ -1830,22 +1791,22 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param target JavaScript Object
    */
   define("rebaseOn", function(target) {
-    var proxy = proxies.get(target);
+    if(!prestate.has(target)) throw new TypeError("Invalid Target.");
 
-    // clean proxies, handler, shadow objects
-    proxies.delete(target);
-    handlers.delete(proxy);
-    shadows.delete(target);
+    // first revert the target
+    revertOn(target);
 
-    // clean effects 
-    clean(target);
-  }, this);
+    // create a new copy
+    var snapshot = copy(target);
+    proxies.set(target, wrap(snapshot));
+    snapshots.set(target, snapshot);
+  }, this)
 
   /** Rebase
   */
   define("rebase", function() {
-    for(var target of writetargets) {
-      this.revertOn(target);
+    for(var object of prestate) {
+      this.rebaseOn(object);
     }
   }, this);
 
@@ -1926,7 +1887,7 @@ Object.defineProperty(Sandbox.prototype, "toString", {
 // \_/\___|_| /__/_\___/_||_|
 
 Object.defineProperty(Sandbox, "version", {
-  value: "DecentJS 1.3.0 (PoC)"
+  value: "DecentJS 1.3.1 (PoC)"
 });
 
 Object.defineProperty(Sandbox.prototype, "version", {
