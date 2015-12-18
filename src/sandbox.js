@@ -1752,7 +1752,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
   /* Maps snaphots to origins
    */
-  var origins = new WeakMap();
+  var origins = new Set();
 
   /**
    * copy(target)
@@ -1763,8 +1763,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   function copy(target) {
     __verbose__ && log("Copy Snapshot Object.");
-
-    print("COPY", target); // XXX
 
     // If target is a primitive value, then return target
     if (target !== Object(target)) {
@@ -1780,6 +1778,11 @@ function Sandbox(global = {}, params = [], prestate = []) {
       if(descriptor.value) descriptor.value = copy(descriptor.value);
       Object.defineProperty(snapshot, property, descriptor);
     }
+
+    initialize(snapshot);
+
+    snapshots.set(target, snapshot);
+    origins.add(target);
 
     return snapshot;
   }
@@ -1799,7 +1802,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param target JavaScript Object
    */
   define("rebaseOn", function(target) {
-    if(!prestate.has(target)) throw new TypeError("Invalid Target.");
+    if(!origins.has(target)) throw new TypeError("Invalid Target.");
 
     // update snapshot
     copy(object);
@@ -1818,7 +1821,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
   /** Rebase
   */
   define("rebase", function() {
-    for(var object of prestate) {
+    for(var object of origins) {
       this.rebaseOn(object);
     }
   }, this);
