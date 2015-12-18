@@ -12,15 +12,41 @@
  * Author Matthias Keil
  * http://www.informatik.uni-freiburg.de/~keilr/
  */
+function Observer(params = [], log, logc, trace, increment, initialize, self) {
+  if(!(this instanceof Observer)) return new Sandbox(global, params, prestate);
 
-// TODO, build construct like sandbox
-// e.g. use same confiration menue
-//
-function Observer(__verbose__=false, __effect__=false, __statistic__=false, __metahandler__=false, log, logc, trace, increment, initialize, self) {
+  /** 
+   * Verbose Mode
+   * (default: false)
+   */
+  var __verbose__ = configure("verbose", false);
 
-  // TODO, throw if not called with new
+  /** 
+   * Enable Statistic
+   * (default: false)
+   */
+  var __statistic__ = configure("statistic", false);
 
-  //print("^^" + __verbose__ + __effect__ + __statistic__ + __metahandler__);
+  /*
+   * Effect
+   * (default: true)
+   */
+  var __effect__ = configure("effect", true);
+
+  /*
+   * MetaHandler
+   * (default: true)
+   */
+  var __metahandler__ = configure("metahandler", true);
+
+  //              __ _                   
+  // __ ___ _ _  / _(_)__ _ _  _ _ _ ___ 
+  /// _/ _ \ ' \|  _| / _` | || | '_/ -_)
+  //\__\___/_||_|_| |_\__, |\_,_|_| \___|
+  //                  |___/              
+  function configure(param, value) {
+    return (param in (params===undefined ? {} : params)) ? params[param] : value;
+  };
 
   //__ __ ___ _ __ _ _ __ 
   //\ V  V / '_/ _` | '_ \
@@ -43,7 +69,6 @@ function Observer(__verbose__=false, __effect__=false, __statistic__=false, __me
   function unwrap(proxy) {
     return targets.has(proxy) ? targets.get(proxy) : proxy;
   }
-
 
   /** 
    * wrap(target)
@@ -278,35 +303,40 @@ function Observer(__verbose__=false, __effect__=false, __statistic__=false, __me
       __effect__  && trace(new Effect.Construct(self, target));
 
       return new target(...argumentsList);
-
-      /*
-         var thisArg = Object.create(target.prototype);
-         var result =  target.apply(thisArg, argumentsList);
-
-      //return result ? result : thisArg;
-      return (result instanceof Object) ? result : thisArg;
-      */
     }
   };
 
+  //__          __              
+  //\ \        / /              
+  // \ \  /\  / / __ __ _ _ __  
+  //  \ \/  \/ / '__/ _` | '_ \ 
+  //   \  /\  /| | | (_| | |_) |
+  //    \/  \/ |_|  \__,_| .__/ 
+  //                     | |    
+  //                     |_|    
 
-  // TODO
-  this.wrap = wrap;
-  this.unwrap = unwrap;
+  define("wrap", wrap, this);
 
-  /*
-  // ___  __  __        _      
-  //| __|/ _|/ _|___ __| |_ ___
-  //| _||  _|  _/ -_) _|  _(_-<
-  //|___|_| |_| \___\__|\__/__/
+  // _    _                               
+  //| |  | |                              
+  //| |  | |_ ____      ___ __ __ _ _ __  
+  //| |  | | '_ \ \ /\ / / '__/ _` | '_ \ 
+  //| |__| | | | \ V  V /| | | (_| | |_) |
+  // \____/|_| |_|\_/\_/ |_|  \__,_| .__/ 
+  //                               | |    
+  //                               |_|    
 
-  var Observer = new Package("Observer");
-
-  // Realm constructor
-  Package.export("wrap", wrap, Observer);
-  Package.export("unwrap", unwrap, Observer);
-
-  return Observer;
-  */
-
+  define("unwrap", unwrap, this);
 }
+
+// _       ___ _       _           
+//| |_ ___/ __| |_ _ _(_)_ _  __ _ 
+//|  _/ _ \__ \  _| '_| | ' \/ _` |
+// \__\___/___/\__|_| |_|_||_\__, |
+//                           |___/ 
+
+Object.defineProperty(Observer.prototype, "toString", {
+  get: function() {
+    return function() { return "[[DecentJS/Observer]]"; };
+  }
+});

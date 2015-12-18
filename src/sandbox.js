@@ -166,8 +166,12 @@ function Sandbox(global = {}, params = [], prestate = []) {
     __statistic__ && statistic.increment(op);
   }
 
-  // TODO
-  var observer = new Observer(true, true, true, true, log, logc, trace, increment, initialize, self);
+  //     _                            
+  // ___| |__ ___ ___ _ ___ _____ _ _ 
+  /// _ \ '_ (_-</ -_) '_\ V / -_) '_|
+  //\___/_.__/__/\___|_|  \_/\___|_|  
+
+  var observer = new Observer(params, log, logc, trace, increment, initialize, self);
 
   //        _ _   _      ___   ___  __  __ 
   //__ __ _(_) |_| |_   |   \ / _ \|  \/  |
@@ -306,39 +310,11 @@ function Sandbox(global = {}, params = [], prestate = []) {
     if(__effect__) initialize(target);
 
 
-
-    // XXX
+    // merge DOM to global state
     var touched = __withdom__ && (target===global) ? new Set(Object.getOwnPropertyNames(shadow)) : new Set();
 
     if(__withdom__ && (target===global)) {
-      //      for(var name of Object.getOwnPropertyNames(target)) print("in Target: " + name);
-      //      for(var name of Object.getOwnPropertyNames(DOM)) print("in DOM: " + name);
-      //      for(var name of Object.getOwnPropertyNames(DOM.window)) print("in window: " + name);
-      //DOM.window = wrap(DOM.window);
-      //DOM = wrap(DOM);
-
-      /*DOM.window = {};
-
-        print("@@@" + DOM);
-        print("@@@" + DOM.document);
-        print("@@@" + DOM.window);
-        print("@@@" + DOM.window.document);
-        print("@@@" + (DOM.document === DOM.window.document));
-
-        shadow.window = {}; //wrap(shadow.window);*/
-
-      //var realm = Observer.create(true, false, false, false, log, logc, trace, increment, initialize, self);
-      //return realm(target);
-
       shadow = observer.wrap(shadow);
-
-      // TODO OLD Code
-      //target.window = DOM.window;
-      //touched.delete("window");
-
-      //target.document = DOM.document;
-      //touched.delete("document");
-
     }
 
     var handler = new Membrane(target, native, touched);
@@ -348,9 +324,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
     handlers.set(proxy, handler);
     targets.set(shadow, target);
     shadows.set(target, shadow);
-
-    //var realm = Observer.create(true, false, false, false, log, logc, trace, increment, initialize, self);
-    //return realm(target);
 
     return proxy;
   }
@@ -1810,17 +1783,71 @@ function Sandbox(global = {}, params = [], prestate = []) {
   //                   | |                        
   //                   |_|                        
 
+  /**
+   * copy(target)
+   * copies a JavaScript Object
+   *
+   * @param target JavaScript Object
+   * @return JavaScript Object
+   */
+  function copy(target) {
+    __verbose__ && log("Copy Snapshot Object.");
+
+    // If target is a primitive value, then return target
+    if (target !== Object(target)) {
+      return target;
+    }
+
+    // creates an empty clone of the traget object
+    var clone = Object.create(Object.getPrototypeOf(target));
+
+    // copies all properties
+    for (var property of Object.getOwnPropertyNames(object)) {
+      var descriptor = Object.getOwnPropertyDescriptor(target, property);
+      if(descriptor.value) descriptor.value = copy(descriptor.value);
+      Object.defineProperty(clone, property, descriptor);
+    }
+    return clone;
+  }
+
   // stores prestate referencex
   var snapshots = new WeakMap();
 
   for(var object of prestate) {
-    var clone = Object.create(Object.getPrototypeOf(object));
-    for (var property of Object.getOwnPropertyNames(object)) {
-      Object.defineProperty(clone, property, Object.getOwnPropertyDescriptor(object, property));
-    }
-    proxies.set(object, wrap(clone));
-    snapshots.set(object, clone);
+    var copy = copy(object);
+    proxies.set(object, wrap(copy));
+    snapshots.set(object, copy);
   }
+
+  // _____      _                    
+  //|  __ \    | |                   
+  //| |__) |___| |__   __ _ ___  ___ 
+  //|  _  // _ \ '_ \ / _` / __|/ _ \
+  //| | \ \  __/ |_) | (_| \__ \  __/
+  //|_|  \_\___|_.__/ \__,_|___/\___|
+
+  /** Rebase On Target
+   * @param target JavaScript Object
+   */
+  define("rebaseOn", function(target) {
+    var proxy = proxies.get(target);
+
+    // clean proxies, handler, shadow objects
+    proxies.delete(target);
+    handlers.delete(proxy);
+    shadows.delete(target);
+
+    // clean effects 
+    clean(target);
+  }, this);
+
+  /** Rebase
+  */
+  define("rebase", function() {
+    for(var target of writetargets) {
+      this.revertOn(target);
+    }
+  }, this);
 
   // _____       _           
   //|  __ \     | |          
