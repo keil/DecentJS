@@ -75,16 +75,16 @@ print("tree: " + sbx.call(root.toString, root));
 print(";;; set value outside")
 //setValue(root);
 
-print(";;; outside sandbox");
-print("tree: " + root);
+//print(";;; outside sandbox");
+//print("tree: " + root);
 
-print(";;; inside sandbbox");
-print("tree: " + sbx.call(root.toString, root));
+//print(";;; inside sandbbox");
+//print("tree: " + sbx.call(root.toString, root));
 
 print(";;; operation");
-//sbx.revertOn(root.left);
+sbx.revertOn(sbx.wrap(root.left)); // XXX
 //sbx.revert();
-sbx.rollback();
+//sbx.rollback();
 //sbx.rebase();
 
 print(";;; outside sandbox");

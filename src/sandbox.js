@@ -270,6 +270,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __statistic__ && increment(Statistic.CACHEMISS);
     }
 
+    // TODO
+    if(snapshots.has(target)) return wrap(snapshots.get(target))
+
     // Makes a shadow object
     if(target instanceof Function) {
       __verbose__ && log("target instanceOf Function");
@@ -317,8 +320,11 @@ function Sandbox(global = {}, params = [], prestate = []) {
       shadow = observer.wrap(shadow);
     }
 
-    var handler = new Membrane(!native && snapshots.has(target) ? snapshots.get(target) : target, native, touched);
+    var handler = new Membrane(target, native, touched);
     var proxy = new Proxy(shadow, __metahandler__ ? new Proxy(handler, metahandler) : handler);
+
+//    var handler = new Membrane(!native && snapshots.has(target) ? snapshots.get(target) : target, native, touched);
+//    var proxy = new Proxy(shadow, __metahandler__ ? new Proxy(handler, metahandler) : handler);
 
     proxies.set(target, proxy);
     handlers.set(proxy, handler);
@@ -379,6 +385,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   function Membrane(origin, native = false, touchedPropertyNames = new Set()) {
     if(!(this instanceof Membrane)) return new Membrane(origin, native, touchedPropertyNames);
+
+    // TODO
+    //if(!native && snapshots.has(origin)) 
+    //    var origin = snapshots.get(origin);
 
     /*
      * List of modified properties
@@ -1745,14 +1755,15 @@ function Sandbox(global = {}, params = [], prestate = []) {
   //|_____/|_| |_|\__,_| .__/|___/_| |_|\___/ \__|
   //                   | |                        
   //                   |_|                        
- 
+
   /* Maps origins to snapshots
-   */
+  */
   var snapshots = new WeakMap();
 
   /* Maps snaphots to origins
-   */
-  var origins = new Set();
+  */
+  var origins =  new WeakMap();
+//  new Set(); // TODO
 
   /**
    * copy(target)
@@ -1779,10 +1790,12 @@ function Sandbox(global = {}, params = [], prestate = []) {
       Object.defineProperty(snapshot, property, descriptor);
     }
 
-    initialize(snapshot);
+    //initialize(snapshot);
 
+    // stores target and snapshot
     snapshots.set(target, snapshot);
-    origins.add(target);
+    origins.set(snapshot, target);
+    //origins.add(target);
 
     return snapshot;
   }
@@ -1804,6 +1817,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
   define("rebaseOn", function(target) {
     if(!origins.has(target)) throw new TypeError("Invalid Target.");
 
+    // TODO, rebase
     // update snapshot
     copy(object);
 
@@ -1821,8 +1835,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
   /** Rebase
   */
   define("rebase", function() {
-    for(var object of origins) {
-      this.rebaseOn(object);
+    for(var object of prestate) {
+      this.revertOn(object);
+      copy(object);
     }
   }, this);
 
