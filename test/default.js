@@ -73,7 +73,7 @@ print(";;; inside sandbbox");
 print("tree: " + sbx.call(root.toString, root));
 
 print(";;; set value outside")
-//setValue(root);
+setValue(root);
 
 //print(";;; outside sandbox");
 //print("tree: " + root);
@@ -82,7 +82,7 @@ print(";;; set value outside")
 //print("tree: " + sbx.call(root.toString, root));
 
 print(";;; operation");
-sbx.revertOn(sbx.wrap(root.left)); // XXX
+//sbx.revertOn(sbx.wrap(root.left)); // XXX
 //sbx.revert();
 //sbx.rollback();
 //sbx.rebase();
@@ -92,6 +92,20 @@ print("tree: " + root);
 
 print(";;; inside sandbbox");
 print("tree: " + sbx.call(root.toString, root));
+
+print(";;; has changes of sandbbox");
+print(sbx.hasChanges);
+print(";;; has differences of sandbbox");
+print(sbx.hasDifferences);
+
+print(";;; all changes of sandbbox");
+for(var change of sbx.changes) print(change);
+
+print(";;; all differences of sandbbox");
+for(var change of sbx.differences) print(change);
+
+print(";;; all effect on root");
+for(var change of sbx.effectsOn(root)) print(change);
 
 quit();
 

@@ -270,28 +270,28 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __statistic__ && increment(Statistic.CACHEMISS);
     }
 
-    // TODO
+    // If target is a snapshot object, use the snapshot
     if(snapshots.has(target)) return wrap(snapshots.get(target))
 
-    // Makes a shadow object
-    if(target instanceof Function) {
-      __verbose__ && log("target instanceOf Function");
+      // Makes a shadow object
+      if(target instanceof Function) {
+        __verbose__ && log("target instanceOf Function");
 
-      // Allow Strict Mode Eval
-      // Note: Matthias Keil
-      // Eval can't be wrapped it must be nested in the 
-      // function scope directly to support strict mode 
-      // evaluation
-      if(__eval__ && target===GlobalEval) return target;
+        // Allow Strict Mode Eval
+        // Note: Matthias Keil
+        // Eval can't be wrapped it must be nested in the 
+        // function scope directly to support strict mode 
+        // evaluation
+        if(__eval__ && target===GlobalEval) return target;
 
-      // Function pass throught
-      var native =  passThrough(target);
-      __verbose__ && logc("target pass-throught", native);
-      var shadow = cloneFunction(target, native);
-    } else {  
-      __verbose__ && log("target instanceOf Object");
-      var shadow = cloneObject(target);
-    }
+        // Function pass throught
+        var native =  passThrough(target);
+        __verbose__ && logc("target pass-throught", native);
+        var shadow = cloneFunction(target, native);
+      } else {  
+        __verbose__ && log("target instanceOf Object");
+        var shadow = cloneObject(target);
+      }
 
     // Defines Meta-handler 
     var metahandler = {
@@ -322,9 +322,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
     var handler = new Membrane(target, native, touched);
     var proxy = new Proxy(shadow, __metahandler__ ? new Proxy(handler, metahandler) : handler);
-
-//    var handler = new Membrane(!native && snapshots.has(target) ? snapshots.get(target) : target, native, touched);
-//    var proxy = new Proxy(shadow, __metahandler__ ? new Proxy(handler, metahandler) : handler);
 
     proxies.set(target, proxy);
     handlers.set(proxy, handler);
@@ -385,10 +382,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   function Membrane(origin, native = false, touchedPropertyNames = new Set()) {
     if(!(this instanceof Membrane)) return new Membrane(origin, native, touchedPropertyNames);
-
-    // TODO
-    //if(!native && snapshots.has(origin)) 
-    //    var origin = snapshots.get(origin);
 
     /*
      * List of modified properties
@@ -1386,7 +1379,8 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   define("hasChangesOn", function(origin) {
     if(!snapshots.has(origin)) throw new TypeError("No pre-state snapshot target");
-    else {var target = snapshots.get(origin);
+    else {
+      var target = snapshots.get(origin);
       var readeffects = this.readeffectsOn(target);
 
       for(var effect of readeffects) {
@@ -1763,7 +1757,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
   /* Maps snaphots to origins
   */
   var origins =  new WeakMap();
-//  new Set(); // TODO
 
   /**
    * copy(target)
@@ -1790,12 +1783,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
       Object.defineProperty(snapshot, property, descriptor);
     }
 
-    //initialize(snapshot);
-
     // stores target and snapshot
     snapshots.set(target, snapshot);
     origins.set(snapshot, target);
-    //origins.add(target);
 
     return snapshot;
   }
@@ -1816,20 +1806,8 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   define("rebaseOn", function(target) {
     if(!origins.has(target)) throw new TypeError("Invalid Target.");
-
-    // TODO, rebase
-    // update snapshot
     copy(object);
-
-    // first revert the target
     this.revertOn(target);
-
-    // TODO
-    // create a new copy
-    //var snapshot = copy(target);
-    //proxies.set(target, wrap(snapshot));
-    //snapshots.set(target, snapshot);
-    // TODO
   }, this)
 
   /** Rebase
