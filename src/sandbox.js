@@ -824,7 +824,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
       var sbxed = eval("(function() { with(env) { return " + body + " }})();");
       return sbxed.apply(env);
     } catch(error) {
-      throw new SyntaxError("Incompatible body." + "\n" + body + "\n" + error + "\n" + error.stack);
+      throw new SyntaxError("Incompatible body." + "\n" + error + "\n" + error.stack);
     } 
   }
 
@@ -1583,7 +1583,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
   //| |___| (_) | | | | | | | | | | | | |_ 
   // \_____\___/|_| |_| |_|_| |_| |_|_|\__|
 
-  function commit(effect, shadow, origin) {
+  function commit(effect, shadow=origin, origin) {
     if(effect instanceof Effect.SetPrototypeOf) {
       Object.setPrototypeOf(origin, Object.getPrototypeOf(shadow));
 
