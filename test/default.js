@@ -1,3 +1,5 @@
+load("test/default2.js");
+quit();
 
 // _  _         _     
 //| \| |___  __| |___ 

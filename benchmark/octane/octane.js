@@ -29,7 +29,7 @@ var benchmarks = [];
  * Object.prototype
  * benchmarks.push(base_dir + 'deltablue.js');
  */
-benchmarks.push(base_dir + 'deltablue.js');
+//benchmarks.push(base_dir + 'deltablue.js');
 
 //benchmarks.push(base_dir + 'crypto.js');
 //benchmarks.push(base_dir + 'raytrace.js');
@@ -41,7 +41,7 @@ benchmarks.push(base_dir + 'deltablue.js');
 //benchmarks.push(base_dir + 'mandreel.js'); 
 //benchmarks.push([base_dir + 'gbemu-part1.js', base_dir + 'gbemu-part2.js']);
 //benchmarks.push(base_dir + 'code-load.js');
-//benchmarks.push(base_dir + 'box2d.js');
+benchmarks.push(base_dir + 'box2d.js');
 
 /**
  * Note: Matthias Keil
@@ -74,7 +74,7 @@ function getNewSandbox() {
      */ decompile:true,
     /** Effect
      * (default: true)
-     */ effect:true,
+     */ effect:false,
     /** Transparent Mode
      * (default: false)
      */ transparent:false,

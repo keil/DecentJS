@@ -241,6 +241,11 @@ function Sandbox(global = {}, params = [], prestate = []) {
   */
   var targets = new WeakMap();
 
+  /**
+   * TODO
+   */
+  var toucheds = new WeakMap();
+
   /** 
    * wrap(target)
    * Wraps a target object.
@@ -328,6 +333,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
     targets.set(shadow, target);
     shadows.set(target, shadow);
 
+    // TODO
+    toucheds.set(target, touched);
+    
+
     return proxy;
   }
 
@@ -382,6 +391,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   function Membrane(origin, native = false, touchedPropertyNames = new Set()) {
     if(!(this instanceof Membrane)) return new Membrane(origin, native, touchedPropertyNames);
+
+    // TODO
+    var readCache = new WeakMap();
+
 
     /*
      * List of modified properties
@@ -590,7 +603,50 @@ function Sandbox(global = {}, params = [], prestate = []) {
           var getter = wrap(desc.get);
           return getter.apply(this);
         } else {
-          return wrap(origin[name])
+
+          //return wrap(origin[name]);
+
+
+
+          var value = wrap(origin[name]);
+          touch(name);
+          (shadow[name]=value);
+
+          return value;
+
+
+
+          return wrap(origin[name]);
+          var value = origin[name];
+
+          // If target is a primitive value, then return target
+          if (value !== Object(value)) {
+            return value;
+          }
+
+          if(readCache.has(value)) return readCache.get(value);
+          else {
+            var nvalue = wrap(value);
+            readCache.set(value, nvalue);
+            return nvalue;
+          }
+
+
+
+
+          /** XXX **/         
+          //return wrap(origin[name])
+          //
+          var value = origin[name];
+          //var value = wrap(origin[name]);
+
+          if(proxies.has(value)) return proxies.get(value);
+          if(handlers.has(value)) return value;
+
+          //touch(name);
+          //(shadow[name]=value);
+
+          return wrap(value);
         }
       }
     };
@@ -1817,6 +1873,29 @@ function Sandbox(global = {}, params = [], prestate = []) {
       this.revertOn(object);
       copy(object);
     }
+  }, this);
+
+
+/** Rebase
+  */
+  define("reset", function() {
+    for(var target of writetargets) {
+      this.resetOn(target);
+    }
+    for(var target of readtargets) {
+      this.resetOn(target);
+    }
+    for(var target of calltargets) {
+      this.resetOn(target);
+    }
+    /*for(var target of targets) {
+      this.resetOn(target);
+    }*/
+  }, this);
+
+  define("resetOn", function(target) {
+    if(!toucheds.has(target)) throw new TypeError("Invalid Target.");
+      toucheds.get(target).clear();
   }, this);
 
   // _____       _           

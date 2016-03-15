@@ -1,5 +1,113 @@
 
-(function)
+
+// _  _         _     
+//| \| |___  __| |___ 
+//| .` / _ \/ _` / -_)
+//|_|\_\___/\__,_\___|
+
+function Node (value, left, right) {
+  if(!(this instanceof Node)) return new Node (value, left, right);
+
+  this.value = value;
+  this.left = left;
+  this.right = right;
+}
+Node.prototype.toString = function () {
+  return (this.left?this.left + ", ":"") + this.value +(this.right?", "+this.right:"");
+}
+
+function sumOf (node) {
+  return (node) ? node.value + sumOf(node.left) + sumOf(node.right) : 0;
+}
+
+function depthOf (node) {
+  return node ? Math.max(depthOf(node.left), depthOf(node.right))+1 : -1;
+}
+
+//              _   
+// _ _ ___  ___| |_ 
+//| '_/ _ \/ _ \  _|
+//|_| \___/\___/\__|
+
+var root = Node(0, Node(0, Node(0), Node(0)), Node(0));
+
+var sbx = new Sandbox(this, Sandbox.DEFAULT);
+
+print(";;; outside sandbox");
+print("tree: " + root);
+
+print(";;; inside sandbbox");
+print("tree: " + sbx.call(root.toString, root));
+
+print(";;; set value inside")
+sbx.call(sumOf, this, root);
+
+print(sbx.statistic);
+print("#effects", sbx.effects.size);
+print("#readeffects", sbx.readeffects.size);
+print("#writeeffects", sbx.writeeffects.size);
+print("#calleffects", sbx.calleffects.size);
+print("#statistics", sbx.statistic);
+
+sbx.call(sumOf, this, root);
+print("#effects", sbx.effects.size);
+print("#readeffects", sbx.readeffects.size);
+print("#writeeffects", sbx.writeeffects.size);
+print("#calleffects", sbx.calleffects.size);
+print("#statistics", sbx.statistic);
+
+
+
+root.value = 4711;
+
+
+var sbxroot = sbx.wrap(root);
+sbxroot.value = 654654;
+
+
+print(";;; has changes of sandbbox");
+print(sbx.hasChanges);
+print(";;; has differences of sandbbox");
+print(sbx.hasDifferences);
+
+print(";;; all changes of sandbbox");
+for(var change of sbx.changes) print(change);
+
+print(";;; all differences of sandbbox");
+for(var change of sbx.differences) print(change);
+
+print("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+
+sbx.reset();
+
+
+var sbxroot2 = sbx.wrap(root);
+print("!!!" + (sbxroot === sbxroot2));
+
+print(";;; outside sandbox");
+print("tree: " + root);
+
+print(";;; inside sandbbox");
+print("tree: " + sbx.call(root.toString, root));
+
+
+/*
+print(";;; outside sandbox");
+print("tree: " + root);
+
+print(";;; inside sandbbox");
+print("tree: " + sbx.call(root.toString, root));
+
+print(";;; set value outside")
+setValue(root);
+*/
+
+
+
+
+
+quit();
+
 
 
 
