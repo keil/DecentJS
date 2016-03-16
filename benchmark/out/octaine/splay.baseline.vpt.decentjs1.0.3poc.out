@@ -1,0 +1,28 @@
+
+
+
+*** Include benchmark/octane/splay.js ***
+Splay: 8676
+SplayLatency: 12788
+----
+Score (version 9): 10533
+[[--end-of-text--]]
+
+Process 35889 terminated (ok).
+Task completed after 3 sec.
+Charging 4.730s processor usage (0.17 Euro).
+
+Resource usage:
+Average processor load: 133%
+
+Processor idle time: 348 sec
+Total execution time: 4 sec
+Total processing time: 5 sec
+Kernel mode time: 0 sec
+User mode time: 4 sec
+
+Virtual memory size: 535 MByte
+Resident set size: 416 MByte
+Text/Data segment size: 511 MByte
+Shared memory segment: 6 MByte
+

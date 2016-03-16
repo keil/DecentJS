@@ -27,7 +27,7 @@ function getNewSandbox() {
      */ verbose:false,
     /** Enable Statistic
      * (default: false)
-     */ statistic:true,
+     */ statistic:false,
     /** Decompile
      * (default: true)
      */ decompile:true,
@@ -91,9 +91,9 @@ function runBenchmark(inSandbox) {
         //print(";;; read effects")
         //for(var effect of sbx.readeffects)
         //  print(effect);
-        print(";;; write effects");
-        for(var effect of sbx.writeeffects)
-          print(effect);
+        //print(";;; write effects");
+        //for(var effect of sbx.writeeffects)
+        //  print(effect);
       }
       else fun.apply(this);
     }catch(e){
@@ -104,4 +104,4 @@ function runBenchmark(inSandbox) {
   }
 }
 
-runBenchmark(false);
+runBenchmark(true);

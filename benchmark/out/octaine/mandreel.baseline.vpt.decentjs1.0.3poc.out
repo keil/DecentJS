@@ -1,0 +1,28 @@
+
+
+
+*** Include benchmark/octane/mandreel.js ***
+Mandreel: 9102
+MandreelLatency: 12526
+----
+Score (version 9): 10677
+[[--end-of-text--]]
+
+Process 36001 terminated (ok).
+Task completed after 8 sec.
+Charging 9.220s processor usage (0.33 Euro).
+
+Resource usage:
+Average processor load: 122%
+
+Processor idle time: 736 sec
+Total execution time: 8 sec
+Total processing time: 9 sec
+Kernel mode time: 0 sec
+User mode time: 9 sec
+
+Virtual memory size: 305 MByte
+Resident set size: 182 MByte
+Text/Data segment size: 280 MByte
+Shared memory segment: 6 MByte
+

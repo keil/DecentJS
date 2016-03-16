@@ -1,0 +1,32 @@
+
+
+
+*** Include benchmark/octane/code-load.js ***
+CodeLoad: 7348
+----
+Score (version 9): 7348
+Statistic: 
+#effects 0
+#readeffects 0
+#writeeffects 0
+#calleffects 0
+[[--end-of-text--]]
+
+Process 53499 terminated (ok).
+Task completed after 11 sec.
+Charging 13.1s processor usage (0.47 Euro).
+
+Resource usage:
+Average processor load: 119%
+
+Processor idle time: 1069 sec
+Total execution time: 11 sec
+Total processing time: 13 sec
+Kernel mode time: 0 sec
+User mode time: 13 sec
+
+Virtual memory size: 259 MByte
+Resident set size: 138 MByte
+Text/Data segment size: 234 MByte
+Shared memory segment: 6 MByte
+

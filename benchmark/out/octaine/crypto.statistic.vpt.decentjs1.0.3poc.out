@@ -1,0 +1,32 @@
+
+
+
+*** Include benchmark/octane/crypto.js ***
+Crypto: 1103
+----
+Score (version 9): 1103
+Statistic: #wrap:21 #cache miss:17 #decompile:1 #cache hit:1 #trace:4964248 #touched:19 
+#effects 42
+#readeffects 29
+#writeeffects 2
+#calleffects 11
+[[--end-of-text--]]
+
+Process 36336 terminated (ok).
+Task completed after 1 min, 31 sec.
+Charging 131s processor usage (4.69 Euro).
+
+Resource usage:
+Average processor load: 143%
+
+Processor idle time: 8927 sec
+Total execution time: 91 sec
+Total processing time: 131 sec
+Kernel mode time: 1 sec
+User mode time: 130 sec
+
+Virtual memory size: 210 MByte
+Resident set size: 93 MByte
+Text/Data segment size: 185 MByte
+Shared memory segment: 6 MByte
+

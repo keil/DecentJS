@@ -1,0 +1,32 @@
+
+
+
+*** Include benchmark/octane/earley-boyer.js ***
+EarleyBoyer: 954
+----
+Score (version 9): 954
+Statistic: 
+#effects 0
+#readeffects 0
+#writeeffects 0
+#calleffects 0
+[[--end-of-text--]]
+
+Process 52854 terminated (ok).
+Task completed after 3 min, 22 sec.
+Charging 202s processor usage (7.23 Euro).
+
+Resource usage:
+Average processor load: 100%
+
+Processor idle time: 19778 sec
+Total execution time: 202 sec
+Total processing time: 202 sec
+Kernel mode time: 1 sec
+User mode time: 202 sec
+
+Virtual memory size: 374 MByte
+Resident set size: 272 MByte
+Text/Data segment size: 350 MByte
+Shared memory segment: 6 MByte
+

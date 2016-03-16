@@ -1,0 +1,27 @@
+
+
+
+*** Include benchmark/octane/richards.js ***
+Richards: 6552
+----
+Score (version 9): 6552
+[[--end-of-text--]]
+
+Process 35686 terminated (ok).
+Task completed after 9 sec.
+Charging 9.040s processor usage (0.32 Euro).
+
+Resource usage:
+Average processor load: 98.9%
+
+Processor idle time: 896.0 sec
+Total execution time: 9.1 sec
+Total processing time: 9.0 sec
+Kernel mode time: 0.0 sec
+User mode time: 9.0 sec
+
+Virtual memory size: 134 MByte
+Resident set size: 19 MByte
+Text/Data segment size: 109 MByte
+Shared memory segment: 5 MByte
+

@@ -1,0 +1,32 @@
+
+
+
+*** Include benchmark/octane/typescript-input.js,benchmark/octane/typescript-compiler.js,benchmark/octane/typescript.js ***
+Typescript: 792
+----
+Score (version 9): 792
+Statistic: 
+#effects 45
+#readeffects 34
+#writeeffects 2
+#calleffects 9
+[[--end-of-text--]]
+
+Process 51929 terminated (ok).
+Task completed after 5 min, 28 sec.
+Charging 342s processor usage (12.20 Euro).
+
+Resource usage:
+Average processor load: 104%
+
+Processor idle time: 32145 sec
+Total execution time: 328 sec
+Total processing time: 342 sec
+Kernel mode time: 2 sec
+User mode time: 340 sec
+
+Virtual memory size: 631 MByte
+Resident set size: 493 MByte
+Text/Data segment size: 607 MByte
+Shared memory segment: 6 MByte
+

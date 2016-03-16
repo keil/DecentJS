@@ -1,0 +1,32 @@
+
+
+
+*** Include benchmark/octane/raytrace.js ***
+RayTrace: 179
+----
+Score (version 9): 179
+Statistic: 
+#effects 37
+#readeffects 26
+#writeeffects 3
+#calleffects 8
+[[--end-of-text--]]
+
+Process 40373 terminated (ok).
+Task completed after 8 min, 18 sec.
+Charging 501s processor usage (17.88 Euro).
+
+Resource usage:
+Average processor load: 101%
+
+Processor idle time: 48801 sec
+Total execution time: 498 sec
+Total processing time: 501 sec
+Kernel mode time: 2 sec
+User mode time: 499 sec
+
+Virtual memory size: 181 MByte
+Resident set size: 63 MByte
+Text/Data segment size: 157 MByte
+Shared memory segment: 6 MByte
+

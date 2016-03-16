@@ -1,0 +1,32 @@
+
+
+
+*** Include benchmark/octane/navier-stokes.js ***
+NavierStokes: 890
+----
+Score (version 9): 890
+Statistic: 
+#effects 29
+#readeffects 21
+#writeeffects 2
+#calleffects 6
+[[--end-of-text--]]
+
+Process 42087 terminated (ok).
+Task completed after 1 min, 1 sec.
+Charging 60.7s processor usage (2.17 Euro).
+
+Resource usage:
+Average processor load: 100%
+
+Processor idle time: 5950 sec
+Total execution time: 61 sec
+Total processing time: 61 sec
+Kernel mode time: 0 sec
+User mode time: 61 sec
+
+Virtual memory size: 134 MByte
+Resident set size: 19 MByte
+Text/Data segment size: 109 MByte
+Shared memory segment: 5 MByte
+

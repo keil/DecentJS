@@ -1,0 +1,32 @@
+
+
+
+*** Include benchmark/octane/pdfjs.js ***
+PdfJS: 63.0
+----
+Score (version 9): 63.0
+Statistic: 
+#effects 88
+#readeffects 59
+#writeeffects 8
+#calleffects 21
+[[--end-of-text--]]
+
+Process 42170 terminated (ok).
+Task completed after 12 min, 58 sec.
+Charging 786s processor usage (28.08 Euro).
+
+Resource usage:
+Average processor load: 101%
+
+Processor idle time: 76207 sec
+Total execution time: 778 sec
+Total processing time: 786 sec
+Kernel mode time: 1 sec
+User mode time: 785 sec
+
+Virtual memory size: 272 MByte
+Resident set size: 116 MByte
+Text/Data segment size: 248 MByte
+Shared memory segment: 6 MByte
+

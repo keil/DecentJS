@@ -1,0 +1,33 @@
+
+
+
+*** Include benchmark/octane/gbemu-part1.js,benchmark/octane/gbemu-part2.js ***
+65538
+Gameboy: 4044
+----
+Score (version 9): 4044
+Statistic: #wrap:28 #cache miss:22 #decompile:1 #cache hit:1 #trace:1225935 #touched:27 
+#effects 60
+#readeffects 42
+#writeeffects 2
+#calleffects 16
+[[--end-of-text--]]
+
+Process 38473 terminated (ok).
+Task completed after 29 sec.
+Charging 29.0s processor usage (1.03 Euro).
+
+Resource usage:
+Average processor load: 102%
+
+Processor idle time: 2776 sec
+Total execution time: 28 sec
+Total processing time: 29 sec
+Kernel mode time: 0 sec
+User mode time: 29 sec
+
+Virtual memory size: 213 MByte
+Resident set size: 83 MByte
+Text/Data segment size: 189 MByte
+Shared memory segment: 6 MByte
+
