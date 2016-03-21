@@ -273,9 +273,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
       return target;
     }
 
-    // Avoid re-wrapping of sandbox proxies
-    if(handlers.has(target)) return target;
-
     // If target already wrapped, return cached proxy
     if(proxies.has(target)) {
       __verbose__   && log("Cache hit.");
@@ -285,6 +282,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __verbose__   && log("Cache miss.");
       __statistic__ && increment(Statistic.CACHEMISS);
     }
+
+    // Avoid re-wrapping of sandbox proxies
+    if(handlers.has(target)) return target;
 
     // If target is a snapshot object, use the snapshot
     if(snapshots.has(target)) return wrap(snapshots.get(target))
