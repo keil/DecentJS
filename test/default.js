@@ -1,3 +1,6 @@
+load("test/default3.js");
+quit();
+
 load("test/default2.js");
 quit();
 

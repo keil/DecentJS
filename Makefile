@@ -28,7 +28,7 @@ octaine:
 
 
 richards:
-	./js -f bootstrap.js -f benchmark/octane/octane.richards.js -f benchmark/octane/octane.js
+	./$(js) -f bootstrap.js -f benchmark/octane/octane.richards.js -f benchmark/octane/octane.js
 
 crypto:
 	./js -f bootstrap.js -f benchmark/octane/octane.crypto.js -f benchmark/octane/octane.js
