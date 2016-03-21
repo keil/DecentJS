@@ -1,0 +1,32 @@
+
+
+
+*** Include benchmark/octane/regexp.js ***
+RegExp: 1139
+----
+Score (version 9): 1139
+Statistic: 
+#effects 0
+#readeffects 0
+#writeeffects 0
+#calleffects 0
+[[--end-of-text--]]
+
+Process 56710 terminated (ok).
+Task completed after 10 sec.
+Charging 10.2s processor usage (0.36 Euro).
+
+Resource usage:
+Average processor load: 106%
+
+Processor idle time: 938 sec
+Total execution time: 10 sec
+Total processing time: 10 sec
+Kernel mode time: 0 sec
+User mode time: 10 sec
+
+Virtual memory size: 223 MByte
+Resident set size: 108 MByte
+Text/Data segment size: 199 MByte
+Shared memory segment: 6 MByte
+

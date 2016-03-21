@@ -1,0 +1,14 @@
+*** Run: baseline
+- Run without sandboxing.
+
+*** Run: Sandbox
+- Run with isolation only, effect loggings remains disables. 
+
+*** Run: Effect
+- Run with effect logging enables.
+
+*** Run: Statistics
+- Run in full mode to count effects and operations.
+
+*** Run: compare
+- Run with old implementation before caching read proxies.
