@@ -12,7 +12,7 @@ function test() {
   }
   f();
   // ---
-  var g = Function("", 'secret = 4714; print("secret (sbx):", secret);' );
+  var g = new Function('secret = 4714; print("secret (sbx):", secret);' );
   g();
 }
 
@@ -21,3 +21,35 @@ sbx.apply(test);
 
 
 print("secret (global):", secret);
+
+/*
+
+var sbx2 = new Sandbox(this, Sandbox.DEFAULT);
+
+function A(){
+  this.a="4711";
+}
+A.prototype = {};
+function B() {
+  this.b="4711";
+}
+B.prototype = new A();
+
+function test2 (A, B) {
+  var p = Object.getPrototypeOf(B);
+  p.a = 4712;
+
+  var b = new B();
+  print("(Sandbox)", "a:", b.a, "b", b.b);
+
+}
+
+sbx2.call(test2, undefined, A, B);
+
+
+var b = new B();
+print("(Global)", "a:", b.a, "b", b.b);
+
+
+*/
+//Object.getPrototypeOf(obj)

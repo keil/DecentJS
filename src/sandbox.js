@@ -213,12 +213,14 @@ function Sandbox(global = {}, params = [], prestate = []) {
       WeakSet
       ]);
 
-  // _    ___          _ 
-  //(_)__| __|_ ____ _| |
-  //| (_-< _|\ V / _` | |
-  //|_/__/___|\_/\__,_|_|
+  //      _     _          _               _        
+  // __ _| |___| |__  __ _| |  __ ___ _ __(_)___ ___
+  /// _` | / _ \ '_ \/ _` | | / _/ _ \ '_ \ / -_|_-<
+  //\__, |_\___/_.__/\__,_|_| \__\___/ .__/_\___/__/
+  //|___/                            |_|            
 
   var GlobalEval = eval;
+  var GlobalFunction = Function;
 
   //__ __ ___ _ __ _ _ __ 
   //\ V  V / '_/ _` | '_ \
@@ -309,6 +311,20 @@ function Sandbox(global = {}, params = [], prestate = []) {
       }
     };
 
+    // Special Treatment for Function Objects
+    // ======================================
+    // Calling JavaScrip's global Function constructor creates fresh 
+    // functions w.r.t the global scope. 
+    if (target === GlobalFunction) {
+      shadow = new Proxy(target, {apply:function(target, thisArg, argumentsArg) {
+        return wrap(Function.apply(thisArg, argumentsArg));
+      }, construct:function(target, argumentsArg) {
+        return wrap(Function.apply(Function, argumentsArg));
+      }
+      });
+      native = false;
+    }
+
     // Transparent Mode
     if(__transparent__) {
       shadow = target;
@@ -371,8 +387,8 @@ function Sandbox(global = {}, params = [], prestate = []) {
     __verbose__ && log("Clone Function.");
 
     var clone = native ? (function(){}) : __decompile__ ? decompile(target, wrap(global)) : target;
-    clone.prototype = target.prototype; 
-
+    clone.prototype = target.prototype;
+   
     return clone;
   }
 
@@ -604,49 +620,17 @@ function Sandbox(global = {}, params = [], prestate = []) {
           return getter.apply(this);
         } else {
 
-          //return wrap(origin[name]);
-
-
+         return wrap(origin[name]);
 
           var value = wrap(origin[name]);
-          touch(name);
-          (shadow[name]=value);
+          
+          if(name!=="prototype" && Object.isExtensible(shadow))
+          {
+            touch(name);
+            (shadow[name]=value);
+          }
 
           return value;
-
-
-
-          return wrap(origin[name]);
-          var value = origin[name];
-
-          // If target is a primitive value, then return target
-          if (value !== Object(value)) {
-            return value;
-          }
-
-          if(readCache.has(value)) return readCache.get(value);
-          else {
-            var nvalue = wrap(value);
-            readCache.set(value, nvalue);
-            return nvalue;
-          }
-
-
-
-
-          /** XXX **/         
-          //return wrap(origin[name])
-          //
-          var value = origin[name];
-          //var value = wrap(origin[name]);
-
-          if(proxies.has(value)) return proxies.get(value);
-          if(handlers.has(value)) return value;
-
-          //touch(name);
-          //(shadow[name]=value);
-
-          return wrap(value);
         }
       }
     };
@@ -855,7 +839,8 @@ function Sandbox(global = {}, params = [], prestate = []) {
       throw new TypeError("env");
 
     try {
-      var body = "(function() {'use strict'; return " + ("(" + fun.toString() + ")") + "})();";
+      var fdec = Function.prototype.toString.call(fun);
+      var body = "(function() {'use strict'; return " + ("(" + fdec + ")") + "})();";
       var sbxed = eval("(function() { with(env) { return " + body + " }})();");
       return sbxed;
     } catch(error) {
@@ -1975,7 +1960,7 @@ Object.defineProperty(Sandbox.prototype, "toString", {
 // \_/\___|_| /__/_\___/_||_|
 
 Object.defineProperty(Sandbox, "version", {
-  value: "DecentJS 1.3.1 (PoC)"
+  value: "DecentJS 1.3.2 (PoC)"
 });
 
 Object.defineProperty(Sandbox.prototype, "version", {
