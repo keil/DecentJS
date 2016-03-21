@@ -27,6 +27,7 @@ load("src/policy.js");
 load("src/rule.js");
 
 load("src/observer.js");
+load("src/monitor.js");
 load("src/sandbox.js");
 
 load('test/testcase.js');

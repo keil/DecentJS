@@ -137,7 +137,7 @@ function Observer(params = [], log, logc, trace, increment, initialize, self) {
    * @param touchedPropertyNames - List of modified properties 
    */
   function Membrane() {
-    if(!(this instanceof Membrane)) return new Membrane(target, native);
+    if(!(this instanceof Membrane)) return new Membrane();
 
 
     // _______                  

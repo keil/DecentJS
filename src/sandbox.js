@@ -166,12 +166,21 @@ function Sandbox(global = {}, params = [], prestate = []) {
     __statistic__ && statistic.increment(op);
   }
 
+  //          __                                          _ _           
+  // _ _ ___ / _|___ _ _ ___ _ _  __ ___   _ __  ___ _ _ (_) |_ ___ _ _ 
+  //| '_/ -_)  _/ -_) '_/ -_) ' \/ _/ -_) | '  \/ _ \ ' \| |  _/ _ \ '_|
+  //|_| \___|_| \___|_| \___|_||_\__\___| |_|_|_\___/_||_|_|\__\___/_|  
+
+  var monitor = new ReferenceMonitor(params, wrap, log, logc, increment, self);
+
   //     _                            
   // ___| |__ ___ ___ _ ___ _____ _ _ 
   /// _ \ '_ (_-</ -_) '_\ V / -_) '_|
   //\___/_.__/__/\___|_|  \_/\___|_|  
 
   var observer = new Observer(params, log, logc, trace, increment, initialize, self);
+
+
 
   //        _ _   _      ___   ___  __  __ 
   //__ __ _(_) |_| |_   |   \ / _ \|  \/  |
@@ -898,7 +907,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
     // apply constructor function
     var result = sbxed.apply(wrap(thisArg), wrap(argumentsList));
     // return val
-    return result;
+    return monitor.wrap(result);
   }
 
   //                _               _   
@@ -922,7 +931,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
     // apply function
     var result = sbxed.apply(thisArg, wrap(argumentsList)); 
     // return thisArg | val
-    return (result instanceof Object) ? result : thisArg;
+    return (result instanceof Object) ? monitor.wrap(result) : thisArg;
   }
 
   // _    _         _ 
@@ -949,7 +958,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
       bound = bound.bind(null, wrap(arg));
     }
     // return bound function
-    return bound;
+    return monitor.wrap(bound);
   }
 
   //                     _       
@@ -1626,16 +1635,16 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
   function commit(effect, shadow=origin, origin) {
     if(effect instanceof Effect.SetPrototypeOf) {
-      Object.setPrototypeOf(origin, Object.getPrototypeOf(shadow));
+      Object.setPrototypeOf(origin, monitor.wrap(Object.getPrototypeOf(shadow)));
 
     } else if(effect instanceof Effect.PreventExtensions) {
       Object.preventExtensions(origin);
 
     } else if(effect instanceof Effect.DefineProperty) {
-      Object.defineProperty(origin, effect.name,  Object.getOwnPropertyDescriptor(shadow, effect.name));
+      Object.defineProperty(origin, effect.name,  monitor.wrap(Object.getOwnPropertyDescriptor(shadow, effect.name)));
 
     } else if(effect instanceof Effect.Set) {
-      origin[effect.name]=shadow[effect.name];
+      origin[effect.name]=monitor.wrap(shadow[effect.name]);
 
     } else if(effect instanceof Effect.DeleteProperty) {
       delete origin[effect.name];

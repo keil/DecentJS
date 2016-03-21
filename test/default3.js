@@ -2,6 +2,31 @@ var secret = 4711;
 
 var sbx = new Sandbox(this, Sandbox.DEFAULT);
 
+function test () {
+  return function f(thisArg) {
+    thisArg.secret = 4712;
+    print("secret (sbx):", secret);
+  }
+}
+
+var f = sbx.apply(test);
+f(this);
+
+print("secret (global):", secret);
+
+
+
+
+// commit of a function
+// return auf application
+
+
+
+/*
+var secret = 4711;
+
+var sbx = new Sandbox(this, Sandbox.DEFAULT);
+
 function test() {
   secret = 4712;
   print("secret (sbx):", secret);
@@ -21,7 +46,7 @@ sbx.apply(test);
 
 
 print("secret (global):", secret);
-
+*/
 /*
 
 var sbx2 = new Sandbox(this, Sandbox.DEFAULT);
