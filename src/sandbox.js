@@ -418,7 +418,8 @@ function Sandbox(global = {}, params = [], prestate = []) {
     if(!(this instanceof Membrane)) return new Membrane(origin, native, touchedPropertyNames);
 
     // TODO
-    var readCache = new WeakMap();
+    //var readCache = new WeakMap();
+    var snapshot = {};
 
 
     /*
@@ -617,29 +618,42 @@ function Sandbox(global = {}, params = [], prestate = []) {
       // TODO, test if this also happens in the new engine
       if(origin===global && name==='undefined') return undefined;
 
+      // TODO
+      if(name in snapshot) return snapshot[name];
+
       // Test for getter functions
       if(touched(name)) {
         return shadow[name];
       } else {
         var desc = Object.getOwnPropertyDescriptor(origin, name);
+
+        while(desc===undefined && Reflect.getPrototypeOf(origin)) {
+          return wrap(Reflect.getPrototypeOf(origin))[name];
+        }
         // if getter exists, call getter function
         // else forwards operation to the target
         if(desc && desc.get) {
           var getter = wrap(desc.get);
           return getter.apply(this);
-        } else {
+        } else if(desc) {
+          var value = wrap(desc.value);
 
-         return wrap(origin[name]);
-
+          // TODO
+         //return wrap(origin[name]);
           var value = wrap(origin[name]);
+          if(Object.hasOwnProperty(origin, name)) snapshot[name] = value;
+          return value;
           
-          if(name!=="prototype" && Object.isExtensible(shadow))
+/*          if(name!=="prototype" && Object.isExtensible(shadow))
           {
             touch(name);
             (shadow[name]=value);
           }
 
           return value;
+*/
+        } else {
+          return undefined;
         }
       }
     };
@@ -804,7 +818,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
       }
 
       var thisArg = native ? Object.create(origin.prototype) : Object.create(shadow.prototype);
-      var result =  native ? origin.apply(thisArg, argumentsList) : shadow.apply(thisArg, argumentsList);
+      var result =  native ? wrap(origin.apply(thisArg, argumentsList)) : shadow.apply(thisArg, argumentsList);
+
+      // TODO
+      //return wrap(new Array());
 
       // this should be done internally 
       /*if(origin===Object) {
