@@ -254,8 +254,10 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
   /**
    * TODO
+   * New cache for read value.
+   * Combine this with snapshot mode.
    */
-  var toucheds = new WeakMap();
+  var reads = new WeakMap();
 
   /** 
    * wrap(target)
@@ -358,10 +360,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
     targets.set(shadow, target);
     shadows.set(target, shadow);
 
-    // TODO
-    toucheds.set(target, touched);
-    
-
     return proxy;
   }
 
@@ -397,7 +395,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
     var clone = native ? (function(){}) : __decompile__ ? decompile(target, wrap(global)) : target;
     clone.prototype = target.prototype;
-   
+
     return clone;
   }
 
@@ -418,9 +416,8 @@ function Sandbox(global = {}, params = [], prestate = []) {
     if(!(this instanceof Membrane)) return new Membrane(origin, native, touchedPropertyNames);
 
     // TODO
-    //var readCache = new WeakMap();
-    var snapshot = {};
-
+    var snapshot = new Map();
+    reads.set(origin, snapshot);
 
     /*
      * List of modified properties
@@ -607,6 +604,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __verbose__ && logc("get", (typeof name === 'string') ? name : name.toString());
       __effect__  && trace(new Effect.Get(self, origin, (typeof name === 'string') ? name : name.toString()));
 
+      // TODO, new read cache
+      if(snapshot.has(name)) return snapshot.get(name)
+
       /** Handles the Symbol.toPrimitive property
       */
       if(name === Symbol.toPrimitive) return wrap(origin[name]);
@@ -617,9 +617,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
       // property access on the global object.
       // TODO, test if this also happens in the new engine
       if(origin===global && name==='undefined') return undefined;
-
-      // TODO
-      if(name in snapshot) return snapshot[name];
 
       // Test for getter functions
       if(touched(name)) {
@@ -638,20 +635,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
         } else if(desc) {
           var value = wrap(desc.value);
 
-          // TODO
-         //return wrap(origin[name]);
-          var value = wrap(origin[name]);
-          if(Object.hasOwnProperty(origin, name)) snapshot[name] = value;
+          if(Object.hasOwnProperty(origin, name)) snapshot.set(name, value);
           return value;
-          
-/*          if(name!=="prototype" && Object.isExtensible(shadow))
-          {
-            touch(name);
-            (shadow[name]=value);
-          }
 
-          return value;
-*/
         } else {
           return undefined;
         }
@@ -791,7 +777,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
       /* Special treatment for constructing new date objects
       */
       if(origin===Date)
-        return new Date(Date.apply({}, argumentsList));
+        return wrap(new Date(Date.apply({}, argumentsList)));
 
       /* Special treatment for constructing typed arrays
       */
@@ -819,9 +805,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
       var thisArg = native ? Object.create(origin.prototype) : Object.create(shadow.prototype);
       var result =  native ? wrap(origin.apply(thisArg, argumentsList)) : shadow.apply(thisArg, argumentsList);
-
-      // TODO
-      //return wrap(new Array());
 
       // this should be done internally 
       /*if(origin===Object) {
@@ -1887,7 +1870,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
   }, this);
 
 
-/** Rebase
+  /** Rebase
   */
   define("reset", function() {
     for(var target of writetargets) {
@@ -1901,12 +1884,12 @@ function Sandbox(global = {}, params = [], prestate = []) {
     }
     /*for(var target of targets) {
       this.resetOn(target);
-    }*/
+      }*/
   }, this);
 
   define("resetOn", function(target) {
-    if(!toucheds.has(target)) throw new TypeError("Invalid Target.");
-      toucheds.get(target).clear();
+    if(!reads.has(target)) throw new TypeError("Invalid Target.");
+    reads.get(target).clear();
   }, this);
 
   // _____       _           
@@ -1986,7 +1969,7 @@ Object.defineProperty(Sandbox.prototype, "toString", {
 // \_/\___|_| /__/_\___/_||_|
 
 Object.defineProperty(Sandbox, "version", {
-  value: "DecentJS 1.3.2 (PoC)"
+  value: "DecentJS 1.3.3 (PoC)"
 });
 
 Object.defineProperty(Sandbox.prototype, "version", {

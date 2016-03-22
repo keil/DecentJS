@@ -11,35 +11,41 @@ function inc () {
 }
 
 var A = {};
+function B() {
+}
+
 Object.defineProperty(A, "x", {get: inc});
 
-//Object.defineProperty(Date, "x", {get: inc});
-//Object.defineProperty(Date.prototype, "x", {get: inc});
+Object.defineProperty(Date, "x", {get: inc});
+Object.defineProperty(Date.prototype, "x", {get: inc});
 
-//Object.defineProperty(Array, "x", {get: inc});
+Object.defineProperty(Array, "x", {get: inc});
 Object.defineProperty(Array.prototype, "x", {get: inc});
 
-//Object.defineProperty(Function.prototype, "x", {get: inc});
-//Object.defineProperty(Object.prototype, "x", {get: inc});
+Object.defineProperty(Function.prototype, "x", {get: inc});
+Object.defineProperty(Object.prototype, "x", {get: inc});
 
-var sbx = new Sandbox(this, Sandbox.DEFAULT);
+
+var sbx = new Sandbox(this, Sandbox.DEFAULT)
 function test () {
   
-  //var target = A;
+  //var target = A; // OK
 
   //var target = Array; // OK
-  var target = new Array();
-  ///var target = [];
+  //var target = new Array(); // OK
+  //var target = []; // FAILED
   
-  //var target = new Date(); // XXX
+  //var target = new Date(); // OK
   //var target = Date.prototype; // OK
   //var target = Date; // OK
   
-  //var target = new Function("return 1;"); // XXX
-  //var target = (function(){}); // XXX
+  //var target = new Function("return 1;"); // OK
+  //var target = (function(){}); // FAILED
   
-  //var target = new Object();
-  //var target = {};
+  var target = new Object(); // OK
+  //var target = {}; // FAILED
+
+  //var target = new B();
 
   print(target.x,target.x,target.x);
   print("secret (sandbox):", secret);
