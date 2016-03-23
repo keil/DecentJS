@@ -180,8 +180,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
   var observer = new Observer(params, log, logc, trace, increment, initialize, self);
 
-
-
   //        _ _   _      ___   ___  __  __ 
   //__ __ _(_) |_| |_   |   \ / _ \|  \/  |
   //\ V  V / |  _| ' \  | |) | (_) | |\/| |
@@ -253,7 +251,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
   var targets = new WeakMap();
 
   /**
-   * TODO
    * New cache for read value.
    * Combine this with snapshot mode.
    */
@@ -275,6 +272,9 @@ function Sandbox(global = {}, params = [], prestate = []) {
       return target;
     }
 
+    // Avoid re-wrapping of sandbox proxies
+    if(handlers.has(target)) return target;
+
     // If target already wrapped, return cached proxy
     if(proxies.has(target)) {
       __verbose__   && log("Cache hit.");
@@ -284,9 +284,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __verbose__   && log("Cache miss.");
       __statistic__ && increment(Statistic.CACHEMISS);
     }
-
-    // Avoid re-wrapping of sandbox proxies
-    if(handlers.has(target)) return target;
 
     // If target is a snapshot object, use the snapshot
     if(snapshots.has(target)) return wrap(snapshots.get(target))
@@ -395,7 +392,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
     var clone = native ? (function(){}) : __decompile__ ? decompile(target, wrap(global)) : target;
     clone.prototype = target.prototype;
-
+   
     return clone;
   }
 
@@ -415,7 +412,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
   function Membrane(origin, native = false, touchedPropertyNames = new Set()) {
     if(!(this instanceof Membrane)) return new Membrane(origin, native, touchedPropertyNames);
 
-    // TODO
     var snapshot = new Map();
     reads.set(origin, snapshot);
 
@@ -604,9 +600,6 @@ function Sandbox(global = {}, params = [], prestate = []) {
       __verbose__ && logc("get", (typeof name === 'string') ? name : name.toString());
       __effect__  && trace(new Effect.Get(self, origin, (typeof name === 'string') ? name : name.toString()));
 
-      // TODO, new read cache
-      if(snapshot.has(name)) return snapshot.get(name)
-
       /** Handles the Symbol.toPrimitive property
       */
       if(name === Symbol.toPrimitive) return wrap(origin[name]);
@@ -618,30 +611,27 @@ function Sandbox(global = {}, params = [], prestate = []) {
       // TODO, test if this also happens in the new engine
       if(origin===global && name==='undefined') return undefined;
 
-      // Test for getter functions
       if(touched(name)) {
         return shadow[name];
-      } else {
+      } else if(snapshot.has(name)) {
+        return snapshot.get(name)
+      } else if(origin.hasOwnProperty(name)) {
+
         var desc = Object.getOwnPropertyDescriptor(origin, name);
 
-        while(desc===undefined && Reflect.getPrototypeOf(origin)) {
-          return wrap(Reflect.getPrototypeOf(origin))[name];
-        }
-        // if getter exists, call getter function
-        // else forwards operation to the target
-        if(desc && desc.get) {
-          var getter = wrap(desc.get);
-          return getter.apply(this);
-        } else if(desc) {
-          var value = wrap(desc.value);
-
-          if(Object.hasOwnProperty(origin, name)) snapshot.set(name, value);
-          return value;
-
+          if(desc.get) {
+            var getter = wrap(desc.get);
+            return getter.apply(this);
+          } else {
+            var value = wrap(origin[name]);
+            snapshot.set(name, value);
+            return value;
+          }
         } else {
-          return undefined;
+          var prototype = Object.getPrototypeOf(origin);
+          if(prototype) return wrap(prototype)[name];
+          else return undefined;
         }
-      }
     };
 
     /** 
@@ -777,7 +767,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
       /* Special treatment for constructing new date objects
       */
       if(origin===Date)
-        return wrap(new Date(Date.apply({}, argumentsList)));
+        return new Date(Date.apply({}, argumentsList));
 
       /* Special treatment for constructing typed arrays
       */
@@ -907,7 +897,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
     // apply constructor function
     var result = sbxed.apply(wrap(thisArg), wrap(argumentsList));
     // return val
-    return monitor.wrap(result);
+    return result;
   }
 
   //                _               _   
@@ -931,7 +921,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
     // apply function
     var result = sbxed.apply(thisArg, wrap(argumentsList)); 
     // return thisArg | val
-    return (result instanceof Object) ? monitor.wrap(result) : thisArg;
+    return (result instanceof Object) ? result : thisArg;
   }
 
   // _    _         _ 
@@ -1641,7 +1631,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
       Object.preventExtensions(origin);
 
     } else if(effect instanceof Effect.DefineProperty) {
-      Object.defineProperty(origin, effect.name,  monitor.wrap(Object.getOwnPropertyDescriptor(shadow, effect.name)));
+      Object.defineProperty(origin, effect.name, monitor.wrap(Object.getOwnPropertyDescriptor(shadow, effect.name)));
 
     } else if(effect instanceof Effect.Set) {
       origin[effect.name]=monitor.wrap(shadow[effect.name]);
@@ -1870,7 +1860,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
   }, this);
 
 
-  /** Rebase
+/** Rebase
   */
   define("reset", function() {
     for(var target of writetargets) {
@@ -1884,12 +1874,12 @@ function Sandbox(global = {}, params = [], prestate = []) {
     }
     /*for(var target of targets) {
       this.resetOn(target);
-      }*/
+    }*/
   }, this);
 
   define("resetOn", function(target) {
-    if(!reads.has(target)) throw new TypeError("Invalid Target.");
-    reads.get(target).clear();
+    if(!toucheds.has(target)) throw new TypeError("Invalid Target.");
+      toucheds.get(target).clear();
   }, this);
 
   // _____       _           
