@@ -406,7 +406,7 @@ var Effect = (function() {
   }
   Conflict.prototype = {};
   Conflict.prototype.toString = function() {
-    return "Confict: "
+    return "Conflict: "
       + this.effectA.toString() + "@" + this.sbxA.id
       + " - "
       + this.effectB.toString() + "@" + this.sbxB.id;

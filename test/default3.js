@@ -1,9 +1,3 @@
-/*Array.prototype.x = 4711;
-var x = new Array();
-print("s" , Reflect.getPrototypeOf(x)===Array.prototype,  Reflect.getPrototypeOf(x).x);
-
-quit();*/
-
 var secret = 0;
 
 function inc () {
@@ -46,10 +40,10 @@ function test () {
   //var target = {}; // FAILED
 
   //var target = new B();
-
   print(target.x,target.x,target.x);
   print("secret (sandbox):", secret);
 }
+
 sbx.apply(test);
 print("secret (global):", secret);
 

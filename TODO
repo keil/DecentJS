@@ -1,6 +1,9 @@
 Major Features
 ==============
 
+* Wrapping all returns of native constructor increases the run time. 
+
+
 Minor Features
 ==============
 

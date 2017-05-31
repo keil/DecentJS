@@ -1,0 +1,23 @@
+{
+  "name": "decentjs",
+  "version": "1.3.3",
+  "description": "Transaction-based Sandboxing for JavaScript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keil/DecentJS.git"
+  },
+  "keywords": [
+    "JavaScript",
+    "Sandbox"
+  ],
+  "author": "Matthias Keil <keil@rm-keil.de> (http://matthias-keil.de)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/keil/DecentJS/issues"
+  },
+  "homepage": "https://github.com/keil/DecentJS#readme"
+}
