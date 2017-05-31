@@ -1,19 +1,20 @@
 /*
- * TreatJS: Sandbox 
- * http://proglang.informatik.uni-freiburg.de/treatjs/
+ * DecentJS 
+ * https://github.com/keil/DecentJS/
  *
- * Copyright (c) 2014-2015, Proglang, University of Freiburg.
- * http://proglang.informatik.uni-freiburg.de/treatjs/
+ * Copyright (c) 2014-2017, Proglang, University of Freiburg.
  * All rights reserved.
  *
  * Released under the MIT license
- * http://proglang.informatik.uni-freiburg.de/treatjs/license
+ * https://raw.githubusercontent.com/keil/DecentJS/npm/LICENSE
  *
  * Author Matthias Keil
  * http://www.informatik.uni-freiburg.de/~keilr/
  */
 
-var Effect = (function() {
+const Package = require('package');
+
+module.exports = (function() {
 
   //     _     _        _   ___ ___  
   // ___| |__ (_)___ __| |_|_ _|   \ 

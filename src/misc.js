@@ -72,35 +72,3 @@ function getter(name, getter, target) {
     get: getter, enumerable: true
   });
 }
-
-// ___         _                 
-//| _ \__ _ __| |____ _ __ _ ___ 
-//|  _/ _` / _| / / _` / _` / -_)
-//|_| \__,_\__|_\_\__,_\__, \___|
-//                     |___/     
-
-function Package(name) {
-  if(!(this instanceof Package)) return new Package();
-
-  Object.defineProperty(this, "name", {
-    value: name
-  });
-}
-
-Package.prototype = {};
-
-Package.prototype.toString = function() {
-  return "{Package: "+this.name+"}";
-}
-
-Package.extend = function(name, value) {
-  Object.defineProperty(this, name, {
-    value: value, enumerable: true
-  });
-}
-
-Package.export = function(name, value, target) {
-  Object.defineProperty(target, name, {
-    value: value, enumerable: true
-  });
-}
