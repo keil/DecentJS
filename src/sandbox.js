@@ -354,7 +354,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
 
     proxies.set(target, proxy);
     handlers.set(proxy, handler);
-    targets.set(shadow, target);
+    targets.set(proxy, target);
     shadows.set(target, shadow);
 
     return proxy;
@@ -605,7 +605,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
       if(name === Symbol.toPrimitive) return wrap(origin[name]);
       //if(name === "valueOf") return origin[name];
 
-      // Node: Matthias Keil
+      // Note: Matthias Keil
       // Bug in previous versions. Access to undefined causes a 
       // property access on the global object.
       // TODO, test if this also happens in the new engine
@@ -1376,12 +1376,21 @@ function Sandbox(global = {}, params = [], prestate = []) {
   //                           __/ |          
   //                          |___/           
 
-  function hasChanges(effect, shadow, snapshot, origin) {
+
+  function equals(value, origin) {
+    if(value instanceof Object) {
+        return targets.get(value) === origin;
+    }
+    else return (value === origin); 
+  }
+  
+  function hasChanges(effect, snapshot, shadow, origin) {
+
     if(effect instanceof Effect.GetPrototypeOf) {
-      return Object.getPrototypeOf(snapshot) !== Object.getPrototypeOf(origin);
+      return Object.getPrototypeOf(shadow) !== Object.getPrototypeOf(origin);
 
     } else if(effect instanceof Effect.IsExtensible) {
-      return Object.isExtensible(snapshot) !== Object.isExtensible(origin)
+      return Object.isExtensible(shadow) !== Object.isExtensible(origin)
 
     } else if(effect instanceof Effect.GetOwnPropertyDescriptor) {
       return !comparePropertyDescriptor(
@@ -1392,19 +1401,22 @@ function Sandbox(global = {}, params = [], prestate = []) {
       return (effect.name in snapshot) === (effect.name in origin);
 
     } else if(effect instanceof Effect.Get) {
-      return !comparePropertyDescriptor(
-          Object.getOwnPropertyDescriptor(snapshot, effect.name),
-          Object.getOwnPropertyDescriptor(origin, effect.name));
+      if(snapshot.has(effect.name)) return !equals(snapshot.get(effect.name), origin[effect.name]);
+      else return false;
+        /*return !comparePropertyDescriptor(
+            Object.getOwnPropertyDescriptor(shadow, effect.name),
+            Object.getOwnPropertyDescriptor(origin, effect.name));*/
+
 
     } else if(effect instanceof Effect.Enumerate) {
       for(var property in origin) {
-        if(!(proeprty in snapshot)) return true;
+        if(!((proeprty in snapshot) || (proeprty in shadow))) return true;
       }
       return false;
 
     } else if(effect instanceof Effect.OwnKeys) {
       for(var property of Object.getOwnPropertyNames(origin)) {
-        if(!snapshot.hasOwnProperty(property)) return true;
+        if(!(snapshot.hasOwnProperty(property) || shadpw.hasOwnProperty(property))) return true;
       } 
       return false;
 
@@ -1417,14 +1429,12 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param target JavaScript Object
    * return true|false
    */
-  define("hasChangesOn", function(origin) {
-    if(!snapshots.has(origin)) throw new TypeError("No pre-state snapshot target");
+  define("hasChangesOn", function(target) {
+    if(!reads.has(target)) return false;  
     else {
-      var target = snapshots.get(origin);
       var readeffects = this.readeffectsOn(target);
-
       for(var effect of readeffects) {
-        if(hasChanges(effect, shadows.get(target), origin, target)) return true
+        if(hasChanges(effect, reads.get(target), shadows.get(target), target)) return true
         else continue;
       }
       return false;
@@ -1435,7 +1445,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * return true|false
    */
   getter("hasChanges", function() {
-    for(var target of prestate) {
+    for(var target of readtargets) {
       if(this.hasChangesOn(target)) return true
       else continue;
     }
@@ -1446,15 +1456,13 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param target JavaScript Object
    * return [Differences]
    */
-  define("changesOn", function(origin) {
-    if(!snapshots.has(origin)) throw new TypeError("No pre-state snapshot target");
+  define("changesOn", function(target) {
+    if(!reads.has(target)) return new Set();
     else {
-      var target = snapshots.get(origin);
       var readeffects = this.readeffectsOn(target);
-
       var changes = [];
       for(var effect of readeffects) {
-        if(hasChanges(effect, shadows.get(target), origin, target)) {
+        if(hasChanges(effect, reads.get(target), shadows.get(target), target)) {
           changes.push(new Effect.Change(this, effect));
         }
         else continue;
@@ -1469,7 +1477,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
    */
   getter("changes", function() {
     var changes = [];
-    for(var target of prestate) {
+    for(var target of reads) {
       changes = changes.concat([...this.changesOn(target)]);
     }
     changes.sort();
@@ -1544,12 +1552,12 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param target JavaScript Object
    * return true|false
    */
-  define("inConflictWith", function(sbx, target) {
+  define("inConflictOn", function(sbx, target) {
     if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
 
     for(var e of this.effectsOn(target)) {
       for(var f of sbx.effectsOn(target)) {
-        if(inConflict(e, f)) return true;
+        if(inConflict(e, f)) {print(e, f); return true;}
         else continue;
       }
     }
@@ -1561,7 +1569,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param target JavaScript Object
    * return true|false
    */
-  define("inConflict", function(sbx) {
+  define("inConflictWith", function(sbx) {
     if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
 
     var targets = new Set([...readtargets, ...writetargets]);
@@ -1599,7 +1607,7 @@ function Sandbox(global = {}, params = [], prestate = []) {
    * @param sbx Sandbox
    * return [Conflict]
    */
-  define("conflicts", function(sbx) {
+  define("conflictsWith", function(sbx) {
     if(!(sbx instanceof Sandbox)) throw new TypeError("No Sandbox.");
 
     var conflicts = [];
